@@ -19,23 +19,29 @@
 #' to run for Tonsil2, 1to25 with threshold of 2 --> x: Tonsil2; y: 1
 #'
 SN.Ratio.Calculations<-function(data.in,Opal1,Concentration,Thresholds,x,y){
-
+  data.ina <- data.in[Opal1]
   SN.Ratio.Median<-thresholding.medians(
-    data.in = (data.in[Opal1]+.001),
+    data.in = (data.ina +.001),
     threshold = Thresholds[y]+.001,
     Slide.ID = x,
-    Concentration = Concentration[y])
+    Concentration = Concentration[y]
+    )
+
   SN.Ratio.Mean<- thresholding.means(
-    data.in = (data.in[Opal1]+.001),
+    data.in = (data.ina +.001),
     threshold = Thresholds[y]+.001,
     Slide.ID = x,
-    Concentration =Concentration[y])
+    Concentration =Concentration[y]
+    )
+
   Positivity.Inside<-dplyr::mutate(dplyr::summarize(
     thresholding.Signal(
-      data.in = data.in[Opal1],
+      data.in = data.ina,
       threshold = Thresholds[y]),
-    fractions=n()/length(data.in[[Opal1]])),
-    Concentration=Concentration[y])
+    fractions = dplyr::n()/length(data.ina[[1]])),
+    Concentration = Concentration[y]
+    )
+
   out<-list('SN.Ratio.Median' = SN.Ratio.Median,'SN.Ratio.Mean' = SN.Ratio.Mean,
             'Positivity.Inside'=Positivity.Inside)
   out}

@@ -25,30 +25,19 @@ PixelbyPixel.ByImage <- function(out,pb) {
   i=0;Sys.sleep(0.1)
   setWinProgressBar(
     pb, i, title=paste0( i,"% Complete"),label = paste0('Browse For Folder'))
-
-  wd <- choose.dir(caption = 'Select the folder the data is contained in')
-
-  Slide_Descript <- unlist(strsplit(out$Slide_Descript, split = ','))
-
-  Antibody <- out$Antibody
-  Opal1 <- out$Opal1
-  Antibody_Opal <- paste0(Antibody, ' (Opal ', Opal1, ')')
-  Concentration <- as.numeric(unlist(strsplit(out$Concentration, split =',')))
-  Folders <- as.logical(out$Folders.Pixels)
-  Thresholded <- as.logical(out$Thresholded)
-  Naming.convention<-out$Naming.convention
-  titration.type<-out$titration.type
-  Protocol <- out$protocol.type
-
-  if(Naming.convention==T){
-    if(titration.type=='Primary'){
-      titration.type.name<-Antibody
-    }else{titration.type.name<-Opal1}
-  }else{titration.type.name<-''}
-
-  if (Thresholded == T) {
-    Thresholds <- as.numeric(unlist(strsplit(out$Thresholds, split = ',')))}
-
+  #
+  outchecked <- CheckVars(out)
+  wd <- outchecked$wd
+  Slide_Descript <- outchecked$Slide_Descript
+  flowout <- outchecked$flowout
+  Antibody <- outchecked$Antibody
+  Opal1 <- outchecked$Opal1
+  Antibody_Opal <- outchecked$Antibody_Opal
+  Concentration <- outchecked$Concentration
+  Thresholds <- outchecked$Thresholds
+  Protocol <- outchecked$Protocol
+  paths <- outchecked$paths
+  titration.type.name <- outchecked$titration.type.name
   ###############################prepares some parameters for the graphs#############
   colors<-c("forestgreen", "darkorange1", "deepskyblue3",
             "red4", "aquamarine2", "gold2",'',
@@ -152,20 +141,6 @@ PixelbyPixel.ByImage <- function(out,pb) {
   names(Image.IDs)<-Slide_Descript
 
   ###############################Reads in data##########################
-  #setting up paths based on if the data is in one folder or multiple folders
-  #
-  if(Folders==TRUE){
-
-    str = paste0(
-      titration.type.name,'_1to',Concentration[x],'$|',
-      titration.type.name,'_1to',Concentration[x],'[^0]')
-
-    paths<-sapply(1:length(Concentration),function(x)list.files(
-      path=wd,pattern=str,full.names=TRUE))
-
-  }else{
-
-    paths<-sapply(1:length(Concentration),function(x) wd)}
 
   ###############################reads the data in and sends it through each of the processes one
   #image at a time
@@ -174,24 +149,36 @@ PixelbyPixel.ByImage <- function(out,pb) {
     names(Image.IDs[[x]])<- Concentration
 
     for(y in 1:length(Concentration)){
-
+      #
+      # regular expression to grab this concentration and slide descript pair
+      #
       str =  paste0('.*', x, '.*',titration.type.name,
                     '_1to', Concentration[y], '[^0].*_component_data.tif')
-
+      #
+      # grab the image file coordinates for later use
+      #
       Image.IDs[[x]][[y]]<-gsub('.*\\[|\\].*','',list.files(
         paths[[y]], pattern =str))
-
+      #
+      # create a vector in tables to store the data for each image
+      # separately
+      #
       for(i.1 in table.names){
         for(w in 1:length(Tables[[i.1]])){
-
-          Tables[[i.1]][[w]][[x]][[y]]<-vector('list',length(Image.IDs[[x]][[y]]))
-
+          Tables[[i.1]][[w]][[x]][[y]]<-vector(
+            'list',length(Image.IDs[[x]][[y]]))
         }}
-
+      #
+      # update the progress bar
+      #
       pbi<-round(pbi1/length(Image.IDs[[x]][[y]]),digits=2)
-
+      #
+      # for each image gather the stats
+      #
       for (z in 1:length(Image.IDs[[x]][[y]])){
-
+        #
+        # update the progress bar
+        #
         str1 = paste0("Processing ", x, ' 1:',Concentration[[y]],
                       ' Image ', z,' of ',length(Image.IDs[[x]][[y]]))
 
@@ -199,40 +186,58 @@ PixelbyPixel.ByImage <- function(out,pb) {
 
         setWinProgressBar(pb, i, title=paste0(i,"% Complete"),
                           label = paste0(str1,' - Reading Tiff'))
-
+        #
+        # this the current image
+        #
         str = paste0('.*', x, '.*',titration.type.name,
-                     '_1to', Concentration[y], '.*_\\[',Image.IDs[[x]][[y]][[z]], '\\]')
-
+                     '_1to', Concentration[y],
+                     '.*_\\[',Image.IDs[[x]][[y]][[z]], '\\]')
+        #
+        # read that image in
+        #
         data.in<-tiff.list(paths[[y]],pattern.in = str,Protocol)
-
+        #
+        # update the progress bar
+        #
         icount=icount+pbi;i=round(icount,digits = 0);Sys.sleep(0.1)
 
         setWinProgressBar(pb, i, title=paste0(i,"% Complete"),
                           label = paste0(str1,' - Generating Text Files'))
+        #
+        # create the flow output for this image
+        #
+        if (flowout == TRUE){
+          str = paste0(
+            wd,'/Results.pixels/Flow/Text/',Antibody_Opal,'_',x,'_1to',
+            Concentration[y],'_[',Image.IDs[[x]][[y]][[z]],'].csv')
 
-        str = paste0(
-          wd,'/Results.pixels/Flow/Text/',Antibody_Opal,'_',x,'_1to',
-          Concentration[y],'_[',Image.IDs[[x]][[y]][[z]],'].csv')
-
-        data.table::fwrite(data.in, file=str,sep=',')
-
+          data.table::fwrite(data.in, file=str,sep=',')
+        }
+        #
+        # update the progress bar
+        #
         icount=icount+pbi;i=round(icount,digits = 0);Sys.sleep(0.1)
 
         setWinProgressBar(pb, i, title=paste0(i,"% Complete"),label = paste0(
           str1,' - Calculating Graph Data'))
+        #
+        # do the calculations for each type of graph and store
+        #
+        small.tables<-list(
 
-        #do the calculations for each type of graph and store
-
-        small.tables<-list('SN.Ratio' = SN.Ratio.Calculations(
+          'SN.Ratio' = SN.Ratio.Calculations(
           data.in,Opal1,Concentration,Thresholds,x,y),
+
           'T.Tests' = T.Test.Calculations(
             data.in,Opal1,Concentration,Thresholds,x,y),
+
           'Histograms' = Histogram.Calculations(
-            data.in, Opal1,Concentration,Thresholds,x,y))
-
-        #the rest of the loop moves the data into a format that allows
-        #the data to be more readily available
-
+            data.in, Opal1,Concentration,Thresholds,x,y)
+          )
+        #
+        # the rest of the loop moves the data into a format that allows
+        # the data to be more readily available
+        #
         for(i.1 in table.names){
           for(w in 1:length(Tables[[i.1]])){
             Tables[[i.1]][[w]][[x]][[y]][[z]]<- dplyr::mutate(
@@ -257,9 +262,8 @@ PixelbyPixel.ByImage <- function(out,pb) {
       Tables[[i.1]][[w]]<-do.call(
         rbind.data.frame,Tables[[i.1]][[w]])}}
 
-  rm(Folders,i.1,i.2,i.3,icount,
-     paths,Naming.convention,pbi,Thresholded,
-     titration.type,x,y,z,w,small.tables);gc(reset=T)
+  rm(i.1,i.2,i.3,icount,titration.type.name,
+     paths,pbi,x,y,z,w,small.tables);gc(reset=T)
 
   i=90;Sys.sleep(0.1);setWinProgressBar(
     pb, i, title=paste0( i,"% Complete"),
@@ -408,7 +412,12 @@ PixelbyPixel.ByImage <- function(out,pb) {
                     gridExtra::marrangeGrob(glist,nrow=2,ncol=2),
                     height = 6.56, width = 6.56, units = 'in', scale = 1, dpi = 300)
 
-    dev.off()
+   tryCatch({
+      dev.off()},
+      error = function(cond) {
+        message('issue with 1 dev.off()')
+      },
+      finally = {})
 
     data.table::fwrite(Tables[['SN.Ratio']][[x]],file = paste0(str,'.csv'),sep = ',')}
 
@@ -492,11 +501,16 @@ PixelbyPixel.ByImage <- function(out,pb) {
       Antibody_Opal,' ',z,'.pdf')
 
     ggplot2::ggsave(str,
-                    gridExtra::marrangeGrob(glist,nrow=2,ncol=2),
+                    gridExtra::marrangeGrob(glist,nrow=2,ncol=1),
                     height = 6.56, width = 6.56,
                     units = 'in', scale = 1, dpi = 300)
 
-    dev.off()
+    tryCatch({
+      dev.off()},
+      error = function(cond) {
+        message('issue with 2 dev.off()')
+      },
+      finally = {})
 
     str = paste0(
       wd,'/Results.pixels/Graphs/test.statistics/t test of ',
@@ -586,8 +600,12 @@ PixelbyPixel.ByImage <- function(out,pb) {
     ggplot2::ggsave(str,gridExtra::marrangeGrob(glist,ncol=2,nrow=2),
                     height = 6.56, width = 7.55,
                     units = 'in', scale = 1, dpi = 300)
-
-    dev.off()
+    tryCatch({
+      dev.off()},
+      error = function(cond) {
+        #message('issue with 3 dev.off()')
+      },
+      finally = {})
 
     i=i+1;Sys.sleep(0.1);setWinProgressBar(
       pb, i, title=paste( i,"% Complete"),label = 'Generating Histogram Graphs')}

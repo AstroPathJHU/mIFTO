@@ -3,6 +3,7 @@
 export(BoxPlot.Calculations)
 export(CellbyCell.ByImage)
 export(CellbyCell.BySlide)
+export(CheckVars)
 export(FOP)
 export(Histogram.Calculations)
 export(IC.Plots.Calculations)

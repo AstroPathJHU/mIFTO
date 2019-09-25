@@ -6,6 +6,8 @@
 #'
 #'Takes in the data and some constants from the PixelbyPixel script and returns a list with two data.frames
 #'one for a histogram of the log(x+1) of the data and one for a histogram of log(x+.001) of the data
+#' data.in is an col data.frame; Concentration: [25,50,100]; Opal1 540; Thresholds: [2,5,8];
+#' to run for Tonsil2, 1to25 with threshold of 2 --> x: Tonsil2; y: 1
 #'
 #' @param data.in is the vector of 8 column pixelbypixel data
 #' @param Opal1 is the Opal of interest(ie 540)
@@ -17,8 +19,6 @@
 #' @return a list with two data.frames; one with a histogram for shift factor of log(x+1) and one with a shift factor of log(x+.001)
 #' the data.frames hold four columns three for the create.hist output and one for the concentration of interest
 #' @export
-#' @example data.in is an col data.frame; Concentration: [25,50,100]; Opal1 540; Thresholds: [2,5,8];
-#' to run for Tonsil2, 1to25 with threshold of 2 --> x: Tonsil2; y: 1
 #'
 Histogram.Calculations<-function(data.in,Opal1,Concentration,Thresholds,x,y){
 

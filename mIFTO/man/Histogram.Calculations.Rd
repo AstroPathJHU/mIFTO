@@ -32,4 +32,6 @@ Last Edited 11/12/2018
 \details{
 Takes in the data and some constants from the PixelbyPixel script and returns a list with two data.frames
 one for a histogram of the log(x+1) of the data and one for a histogram of log(x+.001) of the data
+data.in is an col data.frame; Concentration: [25,50,100]; Opal1 540; Thresholds: [2,5,8];
+to run for Tonsil2, 1to25 with threshold of 2 --> x: Tonsil2; y: 1
 }

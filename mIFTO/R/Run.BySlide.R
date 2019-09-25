@@ -92,45 +92,102 @@ RUN.BySlide<-function(){
   concentration using a comma to separate them:",type = "gedit",text='',
                   depends.on = "Thresholded",depends.FUN = function(value) as.logical(value) == TRUE,
                   depends.signal = "addHandlerBlur")))))
+  #
+  # display and populate the gui as a tcltk gformlayout
+  #
   options(guiToolkit="tcltk")
-  w <- gWidgets::gwindow(title = 'Titation Script',visible = FALSE)
+  w <- gWidgets::gwindow(
+    title = 'Multiplex Immunofluorescence Titration Optimization (mITFO)',visible = FALSE)
   g <- gWidgets::ggroup(horizontal = FALSE, container = w)
   fl <- gWidgets::gformlayout(Bonzai, container = g, expand = TRUE, align = 'center')
+  #
+  # Run button group
+  #
   button.group<-gWidgets::ggroup(horizontal = T, container = g)
   gWidgets::addSpace(button.group, 100)
+  #
+  # cell by cell button
+  #
   b <- gWidgets::gbutton('Run for Cell Segmented
-                         Based Analysis', container = button.group)
-
+        Based Analysis', container = button.group)
+  #
+  # this is what happens when button is pressed
+  #
   gWidgets::addHandlerChanged(b, function(h, ...) {
+    #
+    # GUI no longer visible
+    #
     visible(w)<-F
+    #
+    # display a progress bar
+    #
     pb <- winProgressBar(
       title = "progress bar", min = 0,
-      max = 100, width = 500,
-      label='Thinking')
+      max = 100, width = 500,label='Thinking'
+    )
+    #
+    # get values from GUI
+    #
     out <- svalue(fl);
+    #
+    # run the code and catch any errors
+    #
+    tryCatch({
+      CellbyCell.BySlide(out,pb)
+    }, warning = function(cond){
+      message('ERROR IN CELL-BY-CELL ANALYSIS')
+      message(cond)
+    },
+    #
+    # display the gui whether there was an error or not
+    #
+    finally = {
+      gc(reset = T);close(pb);
+      visible(w)<-T})
+    print('Script complete')
+  })
 
-    CellbyCell.BySlide(out,pb)
-
-    gc(reset = T);close(pb);
-    visible(w)<-T;print('Script complete')})
-
+  #
+  # pixel by pixel button
+  #
   gWidgets::addSpace(button.group, 50)
-
   b1 <- gWidgets::gbutton(
     'Run for Pixel-by-Pixel
     Based Analysis', container = button.group)
   gWidgets::addHandlerChanged(b1, function(h, ...) {
+    #
+    # GUI no longer visible
+    #
     visible(w)<-F
+    #
+    # display a progress bar
+    #
     pb <- winProgressBar(
       title = "0% Complete", label = 'Thinking',
       min = 0,max = 100, width = 500)
+    #
+    # get values from GUI
+    #
     out <- svalue(fl);
-
-    PixelbyPixel.BySlide(out,pb)
-
-    gc(reset = T);close(pb);
-    visible(w)<-T;print('Script complete')})
-
+    #
+    # run the code and catch any errors
+    #
+    tryCatch({
+      PixelbyPixel.BySlide(out,pb)
+    }, warning = function(cond){
+      message('error in pixel-by-pixel')
+      message(cond)
+    },
+    #
+    # display the gui whether there was an error or not
+    #
+    finally = {
+      gc(reset = T);close(pb);
+      visible(w)<-T
+    })
+    print('Script complete')
+  })
   options(warn=-1)
   visible(w) <- TRUE
   options(warn=0)}
+

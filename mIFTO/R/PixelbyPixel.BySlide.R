@@ -28,30 +28,19 @@ PixelbyPixel.BySlide <- function(out,pb) {
   setWinProgressBar(
     pb, i, title = paste0( i, "% Complete"), label = paste0('Browse For Folder'))
 
-  wd <- choose.dir(caption = 'Select the folder the data is contained in')
-
-  Slide_Descript <- unlist(strsplit(out$Slide_Descript, split = ','))
-  Antibody <- out$Antibody
-  Opal1 <- out$Opal1
-  Antibody_Opal <- paste0('Opal ', Opal1)
-  Concentration <- as.numeric(unlist(strsplit(out$Concentration, split =',')))
-  Folders <- as.logical(out$Folders.Pixels)
-  Thresholded <- as.logical(out$Thresholded)
-  Naming.convention <- out$Naming.convention
-  titration.type <- out$titration.type
-  Protocol <- out$protocol.type
-
-  if(Naming.convention == T){
-    if(titration.type == 'Primary'){
-      titration.type.name <- Antibody
-    }else{
-      titration.type.name <- Opal1}
-  }else{
-    titration.type.name <- ''}
-
-  if (Thresholded == T) {
-    Thresholds <- as.numeric(unlist(strsplit(out$Thresholds, split = ',')))}
-
+  #
+  outchecked <- CheckVars(out)
+  wd <- outchecked$wd
+  Slide_Descript <- outchecked$Slide_Descript
+  flowout <- outchecked$flowout
+  Antibody <- outchecked$Antibody
+  Opal1 <- outchecked$Opal1
+  Antibody_Opal <- outchecked$Antibody_Opal
+  Concentration <- outchecked$Concentration
+  Thresholds <- outchecked$Thresholds
+  Protocol <- outchecked$Protocol
+  paths <- outchecked$paths
+  titration.type.name <- outchecked$titration.type.name
   ###############################graph stuff############################
   colors<-c("forestgreen", "darkorange1", "deepskyblue3",
             "red4", "aquamarine2", "gold2",'',
@@ -165,18 +154,6 @@ PixelbyPixel.BySlide <- function(out,pb) {
   Violin.Plots <- lapply(Violin.Plots, function(x)vector('list',length(Concentration)))
 
   ###############################Reads in data##########################
-  #setting up paths based on if the data is in one folder or multiple folders
-  if(Folders == TRUE){
-
-    str = paste0(
-      titration.type.name,'_1to',Concentration[x],'$|',
-      titration.type.name,'_1to',Concentration[x],'[^0]')
-
-    paths <- sapply(1:length(Concentration), function(x) list.files(
-      path = wd, pattern = str, full.names = TRUE))
-
-  }else{
-    paths <- sapply(1:length(Concentration), function(x) wd)}
 
   ###############################reads the data in and sends it through each of the processes one
   #image at a time
@@ -253,9 +230,8 @@ PixelbyPixel.BySlide <- function(out,pb) {
       Tables[[i.1]][[z]]<-do.call(
       rbind.data.frame,Tables[[i.1]][[z]])}}
 
-  rm(Folders,i.1,i.2,i.3,icount,num.of.images,
-     paths,Naming.convention,pbi,Thresholded,
-     titration.type,x,y,z,small.tables);gc(reset=T)
+  rm(i.1,i.2,i.3,icount,
+     paths,pbi,titration.type.name,x,y,z,small.tables);gc(reset=T)
 
   i=90;Sys.sleep(0.1);setWinProgressBar(
     pb, i, title=paste0( i,"% Complete"),
@@ -328,7 +304,12 @@ PixelbyPixel.BySlide <- function(out,pb) {
     ggplot2::ggsave(paste0(str,'.pdf'),gridExtra::marrangeGrob(glist,nrow=2,ncol=2),
            height = 6.56, width = 6.56, units = 'in', scale = 1, dpi = 300)
 
-    dev.off()
+    tryCatch({
+      dev.off()},
+      error = function(cond) {
+        message('issue with 1 dev.off()')
+      },
+      finally = {})
 
     data.table::fwrite(Tables[['SN.Ratio']][[x]],file = paste0(str,'.csv'),sep = ',')}
 
@@ -381,7 +362,12 @@ PixelbyPixel.BySlide <- function(out,pb) {
     ggplot2::ggsave(paste0(str,'.pdf'),gridExtra::marrangeGrob(glist,nrow=2,ncol=2),
       height = 6.56, width = 6.56,units = 'in', scale = 1, dpi = 300)
 
-    dev.off()
+    tryCatch({
+      dev.off()},
+      error = function(cond) {
+        message('issue with 2 dev.off()')
+      },
+      finally = {})
 
     data.table::fwrite(Tables[['T.Tests']][[z]],file = paste0(
      str,'.csv'),sep = ',')}
@@ -473,7 +459,12 @@ PixelbyPixel.BySlide <- function(out,pb) {
     ggplot2::ggsave(str,gridExtra::marrangeGrob(glist,ncol=2,nrow=2),
       height = 6.56, width = 7.55,units = 'in', scale = 1, dpi = 300)
 
-    dev.off()
+    tryCatch({
+      dev.off()},
+      error = function(cond) {
+       # message('issue with 3 dev.off()')
+      },
+      finally = {})
 
     i=i+1;Sys.sleep(0.1);setWinProgressBar(
       pb, i, title=paste( i,"% Complete"),label = 'Generating Histogram Graphs')
@@ -520,7 +511,13 @@ PixelbyPixel.BySlide <- function(out,pb) {
     i=i+1;Sys.sleep(0.1);setWinProgressBar(
       pb, i, title=paste( i,"% Complete"),label = 'Generating Boxplots')}
 
-  rm(plots);gc(reset = T);dev.off()
+  rm(plots);gc(reset = T);
+  tryCatch({
+    dev.off()},
+    error = function(cond) {
+      message('issue with 4 dev.off()')
+    },
+    finally = {})
 
   ###############################BoxPlots################################
   Tables[['BoxPlots']]<-list(
@@ -584,7 +581,12 @@ PixelbyPixel.BySlide <- function(out,pb) {
   ggplot2::ggsave(str,gridExtra::marrangeGrob(glist,nrow=2,ncol=2),
          height = 6.56, width = 6.56, units = 'in', scale = 1, dpi = 300)
 
-  dev.off()
+  tryCatch({
+    dev.off()},
+    error = function(cond) {
+     # message('issue with 5 dev.off()')
+    },
+    finally = {})
 
   i=i+1;Sys.sleep(0.1);setWinProgressBar(
     pb, i, title=paste( i,"% Complete"),label = 'Generating Boxplots')
@@ -643,7 +645,12 @@ PixelbyPixel.BySlide <- function(out,pb) {
   ggplot2::ggsave(str,gridExtra::marrangeGrob(glist,nrow=2,ncol=2),
          height = 6.56, width = 6.56, units = 'in', scale = 1, dpi = 300)
 
-  dev.off()
+  tryCatch({
+    dev.off()},
+    error = function(cond) {
+      message('issue with 6 dev.off()')
+    },
+    finally = {})
 
   for(x in 1:2){
 
@@ -718,7 +725,12 @@ PixelbyPixel.BySlide <- function(out,pb) {
     ggplot2::ggsave(str,gridExtra::marrangeGrob(glist,nrow=2,ncol=2),
            height = 6.56, width = 6.56, units = 'in', scale = 1, dpi = 300)
 
-    dev.off()})
+    tryCatch({
+      dev.off()},
+      error = function(cond) {
+       # message('issue with 7 dev.off()')
+      },
+      finally = {})})
 
     VP.plots<-vector('list')
 
@@ -774,7 +786,12 @@ PixelbyPixel.BySlide <- function(out,pb) {
     ggplot2::ggsave(str, gridExtra::marrangeGrob(glist,nrow=2,ncol=2),
            height = 6.56, width = 6.56, units = 'in', scale = 1, dpi = 300)
 
-    dev.off()
+    tryCatch({
+      dev.off()},
+      error = function(cond) {
+       # message('issue with 8 dev.off()')
+      },
+      finally = {})
 
     i=i+1;Sys.sleep(0.1);setWinProgressBar(
       pb, i, title=paste( i,"% Complete"),label = 'Printing Thresholds')}
