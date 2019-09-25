@@ -2,8 +2,8 @@
 #'Main app to start analysis on a by image basis. Creates the gui and calls other functions within the package for processing
 #'
 #'RUNG
-#'Created By: Benjamin Green, Charles Roberts
-#'Last Edited 09/17/2019
+#'Created By: Benjamin Green
+#'Last Edited 09/24/2019
 #'
 #'This function is designed to create the GUI for the TitrationScript
 #'Here you should input the parameters for the given dilution series of interest
@@ -26,62 +26,79 @@
 
 library(shiny)
 library(shinyWidgets)
+library(shinydashboard)
 
+w = 1000
+options(width = w)
+w = toString(w)
 # text box font
-commontextstyle = "font-weight: 750; font-size: 12px;color: 0A1232;"
+commontextstyle = "font-weight: 750; font-size: 12px;color: #0A1232;"
+# button font
+buttontextstyle = "font-weight: 600; font-size: 16px;color: green;"
 # subheaders text font
-subheadertextstyle = "font-weight: 600; font-size: 24px;color: #6A7292;"
+subheadertextstyle = "font-weight: 600; font-size: 24px;color: #f0f6ee ;"
 # fine print text
 fineprintstyle = 'font-size: 10px'
 #
 # text boxes style
 #
 commoninputstyleline1 = 'height:115px;'#border: 2px inset lightgrey;'
-commoninputstyle = 'height:100px;border:'# 2px inset lightgrey;'
+commoninputstyle = 'height:100px;'#border:# 2px inset lightgrey;'
 commoninputstylelonglist = 'height:185px;'#border: 2px outset lightgrey;'
+commoninputstylelonglist2 = 'height:145px;'#border: 2px outset lightgrey;'
 #
 # input boxes style
 #
-child2inputstyle = "height: 100 px; width: 1170px; background-color: #95C18A ;
-                      border: 2px outset lightgrey;"
-child4inputstyle = "height: 100 px; width: 600px; background-color: #95C18A ;
-                      border: 2px outset lightgrey;"
+child2inputstyle = paste0("height: 100 px; width: 100%; background-color:  #f0f6ee ;
+                      ")
+child4inputstyle = paste0("height: 100 px; width: 100%; background-color:  #f0f6ee ;
+                      ")
 #
 # General input overlay
 #
-child1inputstyle = "height:400px;background-color: #142464;
-                      border: 2px inset lightgrey;"
+child1inputstyle = paste0("height:400px;width: 100%; background-color: #363a4a;
+                          border: 2px solid lightgrey;")
 #
 # bottom box styles
 #
-child3inputstyle = "height:600px;background-color: #142464;
-                      border: 2px inset lightgrey;"
+child3inputstyle = paste0("height:500px;width: 50%; background-color: #363a4a;
+                          ")
+#
+# over all box 
+#
+childinputstyle = paste0("height:950px;width: ",w,";")
 
-
-ui <- fixedPage( 
-  padding = 13,
+ui <- fluidPage(
+  #tags$head(tags$style(HTML("pre { overflow: auto; word-wrap: normal; }"))),
   #
   # add a title to the GUI with an image
   #
   titlePanel(
-    setBackgroundColor("#6A7292"),
-    title = div(img(src = 'Splash.png', height = 50, width = 50),
+    setBackgroundImage("Splash.png"),#setBackgroundColor("#363a4a"),#
+    title = div(
                 strong("Multiplex Immunofluorescence Titration Optimization (mIFTO)"),
-                style = 'font-color: 0A1232'
+                style = paste0('color: #f0f6ee;')#background-image: url("Splash2.png"); 
+                 #background-repeat: no-repeat;height: 100px;
+                           #    width: 100%;background-size:cover; }')
     )),
+  #
+  # fit the rest of the GUI into this box
+  #
+  column(12, align = "left",
+         style = childinputstyle,
   #
   # create the General Input tab
   #
   br(),
   fluidRow(
-    column(
-      12, align = 'center',
+    column(12, align = 'left',
       fluidRow(
-        h2(div("General Input", style = subheadertextstyle), align = 'left'),
+        h2(div("General Input", style = subheadertextstyle), align = 'left')),
         #
         # generate the first row
         #
-        fluidRow(
+      fluidRow(
+      column( 12, align = 'center',
           fluidRow(
             column(3, align = "center", offset = 1,
                    textInput("Slide_Descript",
@@ -158,25 +175,27 @@ ui <- fixedPage(
                    style = commoninputstyle
             )
           ),
-          style = child2inputstyle
-        ),
+          style = child2inputstyle)),
+      br(),
+    style = child1inputstyle)),
         #
         # create the bottom panels
         #
-        style = child1inputstyle),
+       
       fluidRow(
         #
-        # for PxP data
+        # for cell seg data
         #
         column(6, align = 'left',
                fluidRow(
-                 h2(div(" Information for Cell Segmentation Data Based Analysis", 
-                        style = subheadertextstyle), align = 'left')),
+                 h2(div(" Information for Cell-by-Cell Analysis", 
+                        style = subheadertextstyle), align = 'center')),
                fluidRow(
+                 column(6, align = 'left', 
                  fluidRow(
                    column(6, align = "left", offset = 0,
                           br(),
-                          checkboxGroupInput("Vars",
+                          checkboxGroupInput("Vars_cell",
                                              div("Select all that apply:",
                                                  style = commontextstyle ),
                                              choiceNames = list(
@@ -217,31 +236,84 @@ ui <- fixedPage(
                  ),
                  fluidRow(
                    column(6, align = "center", offset = 1,
-                          textInput("Antibodies",
-                                    div("If the antibodies were named in inForm, list the
-                                        names in order of increasing Opal:",
-                                        br(),span("(separate with a comma)",
-                                        style = fineprintstyle),
-                                        style = commontextstyle),
-                                    placeholder = 'EX: PE, PV30, PV50'),
+                          uiOutput("NamedControls"),
                           style = commoninputstyleline1
                    )
                  ),
-                 style = child4inputstyle),
-               style = child3inputstyle),
+                 style = child4inputstyle)),
+               #
+               # add the 'Go' button
+               #
+               fluidRow(
+                 br(),
+                 column(6, align = 'center',offset = 3,
+                        actionButton('do',
+                                     div('Run ',br(),'Cell-by-Cell Analysis',
+                                         style = buttontextstyle)))),
+               style = paste0(child3inputstyle, "border-bottom: 2px solid lightgrey;
+               border-left: 2px solid lightgrey;")),
         
         #
-        # for cellseg data
+        # for pxp data
         #
-        column(6,
+        column(6, align = 'left',
                fluidRow(
-                 h2(div("Information for Pixel Based Analysis",
-                        style = subheadertextstyle), align = 'left')
-               ),
-               style = child3inputstyle))
-    )
-  )
-  ,
+                 h2(div("Information for Pixel-by-Pixel Analysis",
+                        style = subheadertextstyle), align = 'center')),
+               fluidRow(
+                 column(6, align = 'left', 
+                        fluidRow(
+                          column(6, align = "left", offset = 0,
+                                 br(),
+                                 checkboxGroupInput("Vars_pxp",
+                                                    div("Select all that apply:",
+                                                        style = commontextstyle ),
+                                                    choiceNames = list(
+                                                      'Is the data in separate folders according
+                                                          to dilution?',
+                                                      'Was an IHC thresholded with this
+                                                      titration?',
+                                                      'Were thresholds different for cases?'
+                                                    ),
+                                                    choiceValues = list(
+                                                      'Folders.Pixels',
+                                                      'IHC',
+                                                      'nConsistent'
+                                                    ),
+                                                    inline = TRUE),
+                                 style = commoninputstylelonglist
+                          ),
+                          column(6, align = "center", offset = 0,
+
+                                   div(br(),"List the thresholds in order
+                                      of increasing dilution separated by a comma:",
+                                       style = commontextstyle),
+                          uiOutput("ThreshControls"),
+                          style = commoninputstyleline1
+                          )),
+                      fluidRow(
+                        column(6, align = 'center', 
+                               textInput("ConnectedPixels",
+                                         div(br(),
+                                           "What was the number of connected pixels selected?",
+                                             br(),
+                                             style = commontextstyle)),
+                               style = commoninputstylelonglist2
+                      )),
+                      
+                        style = child4inputstyle)),
+               #
+               # add the 'Go' button
+               #
+               fluidRow(
+                 br(),
+                 column(6, align = 'center',offset = 3,
+                        actionButton('do',
+                                     div('Run ',br(),'Pixel-by-Pixel Analysis',
+                                         style = buttontextstyle)))),
+               style = paste0(child3inputstyle, "border-bottom: 2px solid lightgrey;
+               border-left: 2px solid lightgrey;border-right: 2px solid lightgrey;"))
+    )),
   tags$head(
     tags$style(
       HTML(
@@ -255,13 +327,70 @@ ui <- fixedPage(
           }
         "
       )
-    ) 
+    )
   )
-  
 )
 
 
-server <- function(input, output) {}
+server <- function(input, output) {
+  #
+  # Named is checked then add the following text boxes to
+  # entre names for ABs
+  #
+  output$NamedControls <- renderUI({
+    #
+    # push input Vars_cell to a list Vars_cell so
+    # that we can test strings on it
+    #
+    if (!is.null(input$Vars_cell)){
+      Vars_cell <- paste(input$Vars_cell, collapse = ", ")
+    }else {
+      Vars_cell <- ','}
+    if (grepl("Named",Vars_cell)) {
+      textInput("Antibodies",
+                div("If the antibodies were named in inForm, list the
+                                        names in order of increasing Opal:",
+                    br(),span("(separate with a comma)",
+                              style = fineprintstyle),
+                    style = commontextstyle),
+                placeholder = 'EX: PDL1,CD8,FoxP3,Tumor,PD1,CD163')
+    }
+  })
+  #
+  # if nConsistent is checked then thresholds are not 
+  # Consistent and add thresholds for each specimen
+  # otherwise use a single threshold for each 
+  #
+  output$ThreshControls <- renderUI({
+    #
+    # push input Vars_pxp to a list Vars_pxp so
+    # that we can test strings on it
+    #
+    if (!is.null(input$Vars_pxp)){
+      Vars_pxp <- paste(input$Vars_pxp, collapse = ", ")
+    }else {
+      Vars_pxp <- ','}
+    if (grepl("nConsistent",Vars_pxp)) {
+      #
+      if (!grepl(input$Slide_Descript,'NA')){
+       Slide_Descript <- strsplit(input$Slide_Descript,',')
+       Slide_Descript <- Slide_Descript[[1]]
+        #
+          lapply(1:length(Slide_Descript), function(x){
+              list(textInput("Thresholds", 
+                             div(Slide_Descript[x]),
+                             placeholder = 'EX: 3.2,4.5,2.9'))
+          })
+      }
+    } else {
+      textInput("Thresholds", label = '', placeholder = 'EX: 3.2,4.5,2.9')
+    }
+  })
+  
+  
+  
+}
 
 shinyApp(ui = ui, server = server)
+              #, ,host="192.168.xx.xx",port=5013, launch.browser = TRUE)
 
