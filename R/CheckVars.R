@@ -1,7 +1,7 @@
 #################################CheckVars#####################################
 
 #'Check that the input variables are accurate and get a working directory
-#'CheckVars.ByImage
+#'CheckVars
 #'Created By: Benjamin Green
 #'Last Edited 09/24/2019
 #'
@@ -145,7 +145,8 @@ if (Thresholded == T) {
     Thresholds1 <- as.numeric(
       unlist(strsplit(Thresholds, split =',')))
   }, warning = function(cond) {
-    stop(paste0('Error in Thresholds input: ', Thresholds))
+    stop(paste0('Error in Thresholds input: ', Thresholds),
+         call. = FALSE)
     message(cond)
   },
   finally={
@@ -172,12 +173,19 @@ Protocol <- out$protocol.type
 ## check if the tifs have the proper number of variables
 ##
 ## ***********************************************
+#
+if (out$AB_Sparse==T){num.of.tiles<-100}else{num.of.tiles<-10}
+connected.pixels = matrix(1, length(connected.pixels), 1)
+#
+# output list
+#
 outnew <- list(wd = wd, Slide_Descript = Slide_Descript,
                flowout = flowout,Antibody = Antibody,
                Opal1 = Opal1, Antibody_Opal = Antibody_Opal,
                Concentration = Concentration,
                Thresholded = Thresholded, Thresholds = Thresholds,
                Protocol = Protocol,paths = paths,
-               titration.type.name = titration.type.name)
+               titration.type.name = titration.type.name,num.of.tiles = num.of.tiles,
+               connected.pixels = connected.pixels)
 return(outnew)
 }

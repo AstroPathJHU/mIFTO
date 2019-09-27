@@ -15,16 +15,18 @@
 #' @param y is the numeric value of the current concentration
 #' @return a list with three data.frames; a sn means, sn medians, and a fraction of pos
 #' @export
-#' @example data.in is an col data.frame; Concentration: [25,50,100]; Opal1 540; Thresholds: [2,5,8];
-#' to run for Tonsil2, 1to25 with threshold of 2 --> x: Tonsil2; y: 1
 #'
-SN.Ratio.Calculations<-function(data.in,Opal1,Concentration,Thresholds,x,y){
-  data.ina <- data.in[Opal1]
+SN.Ratio.Calculations<-function(
+  data.in,Opal1,Concentration,Thresholds,x,y, connected.pixels){
+  
+  positivity.data <- DefineImagePositivity(data.in,Thresholds[y],connected.pixels[y])
+  
   SN.Ratio.Median<-thresholding.medians(
     data.in = (data.ina +.001),
     threshold = Thresholds[y]+.001,
     Slide.ID = x,
-    Concentration = Concentration[y]
+    Concentration = Concentration[y],
+    connected
     )
 
   SN.Ratio.Mean<- thresholding.means(

@@ -3,7 +3,7 @@
 \name{CheckVars}
 \alias{CheckVars}
 \title{Check that the input variables are accurate and get a working directory
-CheckVars.ByImage
+CheckVars
 Created By: Benjamin Green
 Last Edited 09/24/2019}
 \usage{

@@ -17,8 +17,6 @@
 #' @return a list with two data.frames; one with a t test for shift factor of log(x+1) and one with a shift factor of log(x+.001)
 #' the data.frames hold two columns one for the t test value and one for the concentration of interest
 #' @export
-#' @example data.in is an col data.frame; Concentration: [25,50,100]; Opal1 540; Thresholds: [2,5,8];
-#' to run for Tonsil2, 1to25 with threshold of 2 --> x: Tonsil2; y: 1
 #'
 T.Test.Calculations<-function(data.in,Opal1,Concentration,Thresholds,x,y){
 

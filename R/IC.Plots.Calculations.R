@@ -21,8 +21,6 @@
 #' @return explots a data.frame with the columns: Median, 1st (corresponds to 25th),
 #'  2nd (corresponds to 75th), top.inner.fence, bottom.inner.fence
 #' @export
-#' @example data.in is an col data.frame; Concentration: [25,50,100]; Opal1 540; Thresholds: [2,5,8];
-#' to run for Tonsil2, 1to25 with threshold of 2 --> x: Tonsil2; y: 1
 #'
 IC.Plots.Calculations<-function(f,data.in,Opal1,Concentration,Thresholds,x,y,colors){
 
