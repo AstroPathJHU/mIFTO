@@ -4,17 +4,14 @@
 \alias{SN.Ratio.Calculations}
 \title{Used by analysis funtions to calculate the signal to noise ratios}
 \usage{
-SN.Ratio.Calculations(data.in, Opal1, Concentration, Thresholds, x, y)
+SN.Ratio.Calculations(positivity.data, Concentration, x, y, q)
 }
 \arguments{
-\item{data.in}{is the vector of 8 column pixelbypixel data}
-
-\item{Opal1}{is the Opal of interest(ie 540)}
+\item{positivity.data}{a list of four images, positive, 
+negative values then positive, negative binary image masks}
 
 \item{Concentration}{is a numeric vector of the denominator of all concentration ratios
 which a boxplot will be created for (ie 25, 50, 100)}
-
-\item{Thresholds}{is a list of the thresholds at each concentration (ie 5,4,3)}
 
 \item{x}{is the Slide Indicator (ie Tonsil2)}
 

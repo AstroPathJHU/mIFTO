@@ -4,19 +4,14 @@
 \alias{T.Test.Calculations}
 \title{Used by analysis functions to do the T-Test calcualtions}
 \usage{
-T.Test.Calculations(data.in, Opal1, Concentration, Thresholds, x, y)
+T.Test.Calculations(positivity.data, Concentration, x, y, q)
 }
 \arguments{
-\item{data.in}{is the vector of 8 column pixelbypixel data}
-
-\item{Opal1}{is the Opal of interest (ie 540)}
+\item{positivity.data}{a list of four images, positive, 
+negative values then positive, negative binary image masks}
 
 \item{Concentration}{is a numeric vector of the denominator of all concentration ratios
 which a boxplot will be created for (ie 25, 50, 100)}
-
-\item{Thresholds}{is a list of the thresholds at each concentration (ie 5,4,3)}
-
-\item{x}{is the Slide Indicator (ie Tonsil2)}
 
 \item{y}{is the numeric value of the current concentration}
 }
@@ -25,9 +20,9 @@ a list with two data.frames; one with a t test for shift factor of log(x+1) and 
 the data.frames hold two columns one for the t test value and one for the concentration of interest
 }
 \description{
-T.Test.Calculations
-Created By: Benjamin Green, Charles Roberts
-Last Edited 11/12/2018
+T.Test.Calculations;
+Created By: Benjamin Green;
+Last Edited 09/27/2019
 }
 \details{
 Takes in the data and some constants from the PixelbyPixel script and returns a T test for postive and negative

@@ -4,19 +4,13 @@
 \alias{Histogram.Calculations}
 \title{Used by analysis funtions to do the calculations for the histogram graphs}
 \usage{
-Histogram.Calculations(data.in, Opal1, Concentration, Thresholds, x, y)
+Histogram.Calculations(data.in, Concentration, x, y, q)
 }
 \arguments{
-\item{data.in}{is the vector of 8 column pixelbypixel data}
-
-\item{Opal1}{is the Opal of interest(ie 540)}
+\item{data.in}{is the image of interest}
 
 \item{Concentration}{is a numeric vector of the denominator of all concentration ratios
 which a boxplot will be created for (ie 25, 50, 100)}
-
-\item{Thresholds}{is a list of the thresholds at each concentration (ie 5,4,3)}
-
-\item{x}{is the Slide Indicator (ie Tonsil2)}
 
 \item{y}{is the numeric value of the current concentration}
 }

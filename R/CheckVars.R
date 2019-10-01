@@ -175,7 +175,7 @@ Protocol <- out$protocol.type
 ## ***********************************************
 #
 if (out$AB_Sparse==T){num.of.tiles<-100}else{num.of.tiles<-10}
-connected.pixels = matrix(1, length(connected.pixels), 1)
+connected.pixels = matrix(1, length(Concentration), 1)
 #
 # output list
 #

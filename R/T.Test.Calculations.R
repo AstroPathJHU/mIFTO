@@ -1,55 +1,56 @@
 #'Used by analysis functions to do the T-Test calcualtions
 #'
-#'T.Test.Calculations
-#'Created By: Benjamin Green, Charles Roberts
-#'Last Edited 11/12/2018
+#'T.Test.Calculations;
+#'Created By: Benjamin Green;
+#'Last Edited 09/27/2019
 #'
 #'Takes in the data and some constants from the PixelbyPixel script and returns a T test for postive and negative
 #'Signal defined by the threshold
 #'
-#' @param data.in is the vector of 8 column pixelbypixel data
-#' @param Opal1 is the Opal of interest (ie 540)
+#' @param positivity.data a list of four images, positive, 
+#'   negative values then positive, negative binary image masks
 #' @param Concentration is a numeric vector of the denominator of all concentration ratios
 #'  which a boxplot will be created for (ie 25, 50, 100)
-#' @param Thresholds is a list of the thresholds at each concentration (ie 5,4,3)
-#' @param x is the Slide Indicator (ie Tonsil2)
 #' @param y is the numeric value of the current concentration
 #' @return a list with two data.frames; one with a t test for shift factor of log(x+1) and one with a shift factor of log(x+.001)
 #' the data.frames hold two columns one for the t test value and one for the concentration of interest
 #' @export
 #'
-T.Test.Calculations<-function(data.in,Opal1,Concentration,Thresholds,x,y){
+T.Test.Calculations<-function(positivity.data,Concentration,x,y,q){
 
-  correction.val<-c(1,.001)
+  epsilon<-c(1,.001)
 
-  Value<-vector('list',length(correction.val))
+  out<-vector('list',length(epsilon))
 
-  for(newcount in 1:length(correction.val)){
+  for(epsilon.count in 1:length(epsilon)){
+    #
+    Signal <- positivity.data[['pos']]
+    SignalOnly <- Signal[positivity.data[['pos.mask']] == 1]
+    SignalOnly <- log(SignalOnly + epsilon[epsilon.count])
+    #
+    Noise <- positivity.data[['neg']]
+    NoiseOnly <- Noise[positivity.data[['neg.mask']] == 1]
+    NoiseOnly <- log(NoiseOnly + epsilon[epsilon.count])
+    #
+    if(length(SignalOnly)<5){
 
-    Signal<-na.omit(log(thresholding.Signal(
-      data.in = data.in[Opal1],
-      threshold = Thresholds[y])
-      +correction.val[newcount]))
-
-    Noise<-na.omit(log(thresholding.Noise(
-      data.in = data.in[Opal1],
-      threshold = Thresholds[y])
-      +correction.val[newcount]))
-
-    if(length(Signal[[1]])<5){
-
-      Value[[newcount]] <-cbind.data.frame(
-        statistic =0,Concentration =Concentration[[y]])
+      out[[epsilon.count]] <-cbind.data.frame(
+        statistic = 0,
+        Concentration = Concentration[y],
+        Slide.ID = x, 
+        Image.ID = q)
 
     }else{
 
-      Value[[newcount]] <-dplyr::mutate(
-        as.data.frame(
+      out[[epsilon.count]] <-cbind.data.frame(
           t.test(
-            Signal,Noise)['statistic']),
-        Concentration=Concentration[y])
+            SignalOnly,NoiseOnly)['statistic'],
+        Concentration=Concentration[y],
+        Slide.ID = x,
+        Image.ID = q)
     }}
 
-  names(Value)<-c('Plus1','Plus001')
+  names(out)<-c('Plus1','Plus001')
 
-  Value}
+  out
+  }
