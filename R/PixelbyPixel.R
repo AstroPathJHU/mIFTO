@@ -1,0 +1,532 @@
+#########################Pixel-by-Pixel#################################
+
+#'Used by RUN to do Pixel by Pixel Analysis on individual images for 
+#'IF titrations;
+#'Created By: Benjamin Green, Charles Roberts;
+#'Last Edited 09/25/2019
+#'
+#'This function is desgined to do analysis for IF titration series 
+#'in Pixel by Pixel data provding output for each IMAGE individually 
+#'grouped by Concentration
+#'
+#'It is meant to be run through the RUN.ByImage function
+#'
+#'decile data will always be outputed; (or 1/100th depending if
+#''sparse' option is choose in the GUI) if threshold information is
+#' filled out in the GUI; threshold analysis will be run
+#'
+#' @param out is the list of vairables given by the GUI function
+#' @param pb is the progress bar created by the GUI
+#' @return exports a variety of graphs displayed in the documentation
+#'  Such as SNRatio graphs, t statisitics and graphs,
+#'  histograms of the log intensity profiles
+#'  for images, positivity measures given thresholds
+#' @export
+#'
+PixelbyPixel <- function(out,pb) {
+  ##############################input parameters########################
+  
+  i=0;Sys.sleep(0.1)
+  setWinProgressBar(
+    pb, i, title=paste0( i,"% Complete"),
+    label = paste0('Browse For Folder'))
+  
+  #
+  outchecked <- mIFTO::CheckVars(out)
+  wd <- outchecked$wd
+  Slide_Descript <- outchecked$Slide_Descript
+  flowout <- outchecked$flowout
+  Antibody <- outchecked$Antibody
+  Opal1 <- outchecked$Opal1
+  Antibody_Opal <- outchecked$Antibody_Opal
+  Concentration <- outchecked$Concentration
+  Thresholds <- outchecked$Thresholds
+  Protocol <- outchecked$Protocol
+  paths <- outchecked$paths
+  titration.type.name <- outchecked$titration.type.name
+  num.of.tiles <- outchecked$num.of.tiles
+  connected.pixels <- outchecked$connected.pixels
+
+  ##################prepares some parameters for the graphs#############
+  
+  graph.out <- mIFTO::CreateMyTheme()
+  theme1 <- graph.out$theme1
+  colors <- graph.out$colors
+  #
+  xcoords<-c(min(Concentration)-((min(Concentration))/2),
+             max(Concentration)+((min(Concentration))/2))
+  ##############################create results folders##################
+ 
+  i=1;Sys.sleep(0.1);setWinProgressBar(
+    pb, i, title=paste0( i,"% Complete"),label ='Generating Folders')
+  mIFTO::CreateDir(wd,'pixels')
+
+  #############preallocating tables to store results####################
+  
+  pbi1<-round(89/(3*length(Slide_Descript)
+                  *length(Concentration)), digits=2)
+  icount=i
+  #
+  tables_out <- PreallocateTables(Slide_Descript,Concentration)
+  Tables <- tables_out$Tables
+  Image.IDs <- tables_out$Image.IDs
+  Violin.Plots <- tables_out$Violin.Plots
+  ## need to add boxplots to by image version ##########################
+  table.names<-c('SN.Ratio','T.Tests','Histograms')
+  #table.names<-c('SN.Ratio','T.Tests','Histograms','BoxPlots')
+  
+  ###############################Reads in data##########################
+  
+  #
+  #reads the data in and sends it through each of the processes one
+  #image at a time
+  #
+  for(x in Slide_Descript){
+    for(y in 1:length(Concentration)){
+      #
+      # create a vector in Tables to store the data for each image
+      # separately
+      #
+      for(i.1 in table.names){
+        for(w in 1:length(Tables[[i.1]])){
+          Tables[[i.1]][[w]][[x]][[y]]<-vector(
+            'list',length(Image.IDs[[x]][[y]]))
+          }}
+      #
+      # update the progress bar
+      #
+      pbi<-round(pbi1/length(Image.IDs[[x]][[y]]),digits=2)
+      #
+      # for each image gather the stats and return the images
+      # to reduce RAM usage the code does this one image at a time
+      # in addition parallel computing was implemented 
+      # to speed this up. Though the actual RAM usage is quite low
+      # if I only carry the part of the image that is needed...
+      #
+      cl <- parallel::makeCluster(11)
+      parallel::clusterExport(
+        cl=cl, varlist=c("Concentration", "x", "y", "Antibody_Opal",
+                         "titration.type.name","Protocol","Thresholds","paths",
+                         "connected.pixels","flowout","Opal1","GeneratePxPData"),
+        envir=environment())
+      time <- system.time(
+        small.tables<- snow::parLapply(cl,Image.IDs[[x]][[y]],function(z)
+          GeneratePxPData(
+            Concentration, x, y, z, Antibody_Opal, 
+            titration.type.name, Protocol, Thresholds, paths, 
+            connected.pixels, flowout, Opal1))
+      )
+      snow::stopCluster(cl)
+      print(time[['elapsed']])
+      #
+      # reorganize to a table format to fit into the main 'Tables' list
+      #
+      All.Images <-list()
+      for (i.3 in 1:length(small.tables)){
+        for (i.1 in table.names){
+          for (i.2 in 1:length(Tables[[i.1]])){
+            
+            Tables[[i.1]][[i.2]][[x]][[y]][[i.3]] <- small.tables[[i.3]][[i.1]][[i.2]]
+          }}
+        #
+        # get the image data out for each image so that total slide-conc. pair metrics can be 
+        # produced
+        #
+        All.Images <- c(All.Images,small.tables[[i.3]][[5]])
+      }
+      #  IC.plots <- IC.Plots.Calculations(
+      #    f,data.in,Opal1,Concentration,Thresholds,x,y,colors)
+      # # 
+      # # #do the calculations for each type of graph and store
+      # # 
+      #  small.tables <- list('SN.Ratio' = SN.Ratio.Calculations(
+      #    data.in,Opal1,Concentration,Thresholds,x,y),
+      #    'T.Tests' = T.Test.Calculations(
+      #      data.in,Opal1,Concentration,Thresholds,x,y),
+      #    'Histograms' = Histogram.Calculations(
+      #      data.in, Opal1,Concentration,Thresholds,x,y),
+      #    'BoxPlots'= IC.plots[['Boxplot.Calculations']])
+      # # 
+      # #the rest of the loop moves the data into a format that allows
+      # #the data to be more readily available
+      # 
+      # Violin.Plots[[x]][[y]]<-IC.plots[['Violin.Calculations']]
+    #
+    # reorganize the data into a workable format for building graphs later 
+    # essentially turning the list into a data table
+    #
+    # for(i.1 in table.names){
+    #   for(i.2 in 1:length(Tables[[i.1]])){
+    #     Tables[[i.1]][[i.2]][[x]][[y]]<-do.call(
+    #       rbind.data.frame,Tables[[i.1]][[i.2]][[x]][[y]])
+    #   }}
+    }
+      
+    #
+    # for each Analysis Table in 'Tables'
+    # pair the data down into a data
+    #
+    for(i.1 in table.names){
+      for(w in 1:length(Tables[[i.1]])){
+
+        Tables[[i.1]][[w]][[x]]<-do.call(
+          rbind.data.frame,Tables[[i.1]][[w]][[x]])}}
+    }
+  #
+  for(i.1 in table.names){
+    for(w in 1:length(Tables[[i.1]])){
+      Tables[[i.1]][[w]]<-do.call(
+        rbind.data.frame,Tables[[i.1]][[w]])}}
+
+  rm(i.1,i.2,i.3,icount,titration.type.name,
+     paths,pbi,x,y,z,w,small.tables);gc(reset=T)
+
+  i=90;Sys.sleep(0.1);setWinProgressBar(
+    pb, i, title=paste0( i,"% Complete"),
+    label =  'Generating Signal to Noise Ratio Graphs')
+
+  ###############################SN.Ratio Graphs#########################
+  SN.Ratio.names<-c('Median','Mean')
+
+  str = paste0(wd,'/Results.pixels/Graphs/Fractions of + Pixels ',Antibody,'.csv')
+
+  data.table::fwrite(Tables[['SN.Ratio']][['Positivity']],file = str,sep = ',')
+
+  for(x in SN.Ratio.names){
+
+    Max<-round(max(Tables[['SN.Ratio']][[x]]
+                   $SN_Ratio[is.finite(
+                     Tables[['SN.Ratio']][[x]]$SN_Ratio)],
+                   Tables[['SN.Ratio']][[x]]
+                   $Signal[is.finite(
+                     Tables[['SN.Ratio']][[x]]$Signal)]),
+               digits = -1)+5
+
+    plots<-list()
+
+    tbl <- dplyr::summarize(dplyr::group_by(
+
+      Tables[['SN.Ratio']][[x]], Concentration),
+
+      sd.Signal = sd(Signal),sd.Noise = sd(Noise), sd.SN_Ratio = sd(SN_Ratio),
+      Signal = mean(Signal), Noise = mean(Noise),SN_Ratio = mean(SN_Ratio))
+
+    #labs
+    titl <- paste0(Antibody,' S/N Ratio\nof ',
+      x,' Signal and ',x,' Noise' )
+    xtitl <- "Ab Dilution (1: )"
+    ytitl <- "S/N Ratio"
+    #scale_color_manual
+    colvals <- c('red'='red','blue'='blue','black'='black')
+    collbls <- c('red'='S/N Ratio','blue'='Median Noise','black'='Median Signal')
+
+    plots<-c(plots,list(
+
+      ggplot2::ggplot(data=tbl,
+
+                      ggplot2::aes(x=as.numeric(Concentration), y = SN_Ratio)) +
+
+        ggplot2::geom_line(ggplot2::aes(
+          x=as.numeric(Concentration), y=SN_Ratio, color='red')) +
+
+        ggplot2::geom_errorbar(
+          ggplot2::aes(ymin =SN_Ratio - sd.SN_Ratio,
+                       ymax = SN_Ratio + sd.SN_Ratio),color = 'red',
+          width=length(Concentration)^(length(Concentration)/2.5),
+          size=.40, alpha=.65) +
+
+        ggplot2::geom_line(ggplot2::aes(
+          x=Concentration, y=Noise, color='blue')) +
+
+        ggplot2::geom_errorbar(ggplot2::aes(ymin = Noise - sd.Noise,
+                                            ymax = Noise+sd.Noise),color = 'blue',
+                               width=length(Concentration)^(length(Concentration)/2.5),
+                               size=.40, alpha=.65) +
+
+        ggplot2::geom_line(ggplot2::aes(
+          x=Concentration, y= Signal, color='black')) +
+
+        ggplot2::geom_errorbar(ggplot2::aes(ymin = Signal - sd.Signal,
+                                            ymax = Signal+sd.Signal),color = 'black',
+                               width=length(Concentration)^(length(Concentration)/2.5),
+                               size=.40, alpha=.65) +
+
+        ggplot2::labs(title = titl, x =  xtitl,y = ytitl) +
+
+        ggplot2::scale_color_manual(name = '',values = colvals,
+                                    labels = collbls) +
+
+
+        ggplot2::coord_cartesian(xlim = xcoords,
+                                 ylim = c(-5,Max), expand = F) +
+
+        ggplot2::scale_y_continuous(breaks=seq(0,100,5)) +
+
+        ggplot2::scale_x_discrete(limits=Concentration) +
+
+        theme1 + ggplot2::theme(legend.position = c(.85,.85))))
+
+    for (i.1 in 1:length(Slide_Descript)) {
+
+      tbl = dplyr::summarize(dplyr::group_by(
+
+        Tables[['SN.Ratio']][[x]][which(Tables[['SN.Ratio']][[x]]
+                                        $'Slide.ID'== Slide_Descript[i.1]),], Concentration),
+
+        sd.Signal = sd(Signal),sd.Noise = sd(Noise),sd.SN_Ratio = sd(SN_Ratio),
+        Signal = mean(Signal),Noise = mean(Noise),SN_Ratio = mean(SN_Ratio))
+
+      plots<-c(plots,list(
+
+        ggplot2::ggplot(data=tbl,
+                        ggplot2::aes(x=as.numeric(Concentration), y=SN_Ratio)) +
+
+          ggplot2::geom_line(ggplot2::aes(
+            x=as.numeric(Concentration), y=SN_Ratio, color='red')) +
+
+          ggplot2::geom_errorbar(
+            ggplot2::aes(ymin =SN_Ratio - sd.SN_Ratio, ymax = SN_Ratio + sd.SN_Ratio),
+            color = 'red',width=length(Concentration)^(length(Concentration)/2.5),
+            size=.40, alpha=.65) +
+
+          ggplot2::geom_line(ggplot2::aes(x=Concentration, y=Noise, color='blue')) +
+
+          ggplot2::geom_errorbar(ggplot2::aes(ymin = Noise - sd.Noise,
+                                              ymax = Noise+sd.Noise),color = 'blue',
+                                 width=length(Concentration)^(length(Concentration)/2.5),
+                                 size=.40, alpha=.65) +
+
+          ggplot2::geom_line(ggplot2::aes(x=Concentration, y= Signal, color='black')) +
+
+          ggplot2::geom_errorbar(ggplot2::aes(ymin = Signal - sd.Signal,
+                                              ymax = Signal+sd.Signal),color = 'black',
+                                 width=length(Concentration)^(length(Concentration)/2.5),
+                                 size=.40, alpha=.65) +
+
+          ggplot2::labs(title = paste0(Slide_Descript[i.1],' ',titl),
+                        x =  xtitl,y = ytitl) +
+
+          ggplot2::scale_color_manual(name = '',values = colvals,
+                                      labels = collbls) +
+
+
+          ggplot2::coord_cartesian(
+            xlim = xcoords,ylim = c(-5,Max), expand = F) +
+
+          ggplot2::scale_y_continuous(breaks=seq(0,100,5)) +
+
+          ggplot2::scale_x_discrete(limits=Concentration) +
+
+          theme1 + ggplot2::theme(legend.position = c(.85,.85))))}
+
+    glist <- lapply(plots, ggplot2::ggplotGrob)
+
+    str = paste0(wd,'/Results.pixels/Graphs/',x,
+                 '/',x,' SN Ratio of ',Antibody_Opal)
+
+    ggplot2::ggsave(paste0(str,'.pdf'),
+                    gridExtra::marrangeGrob(glist,nrow=2,ncol=2),
+                    height = 6.56, width = 6.56, units = 'in', scale = 1, dpi = 300)
+
+   tryCatch({
+      dev.off()},
+      error = function(cond) {
+        message('issue with 1 dev.off()')
+      },
+      finally = {})
+
+    data.table::fwrite(Tables[['SN.Ratio']][[x]],file = paste0(str,'.csv'),sep = ',')}
+
+  rm(SN.Ratio.names,Max,i.1,x)
+
+  i=i+1;Sys.sleep(0.1);setWinProgressBar(
+    pb, i, title=paste( i,"% Complete"),label = 'Generating T Test Graphs')
+
+  ###############################T.Test Graphs##########################
+  correction.val.name<-c('Plus1','Plus001')
+
+  for(z in correction.val.name){
+
+    plots<-vector('list',length(2))
+
+    tbl = dplyr::summarize(dplyr::group_by(
+      Tables[['T.Tests']][[z]],Concentration),
+      sd.statistic = sd(statistic),
+      statistic = mean(statistic))
+
+    plots[[1]]<-ggplot2::ggplot(data=tbl,
+                                ggplot2::aes(x=Concentration,y=statistic)) +
+
+      ggplot2::geom_line(size=.40, alpha=.65, color = 'blue') +
+
+      ggplot2::geom_errorbar(ggplot2::aes(ymin = statistic - `sd.statistic`,
+                                          ymax = `statistic`+`sd.statistic`),
+                             width=length(Concentration)^(length(Concentration)/2.5),
+                             size=.40, alpha=.65,color = 'blue') +
+
+      ggplot2::labs(title=paste0(Antibody_Opal,' t test'),
+                    x='Concentration',y='Statistic') +
+
+      ggplot2::scale_color_manual(values=colors) +
+
+      ggplot2::scale_x_discrete(limits=Concentration) +
+
+      ggplot2::coord_cartesian(
+        xlim = xcoords,ylim = c(
+          round(min(Tables[['T.Tests']][[z]]
+                    ['statistic'])-75,digits = -2),
+          round(max(Tables[['T.Tests']][[z]]
+                    ['statistic'])+75,digits = -2)),expand = F) +
+      theme1 + ggplot2::theme(legend.position = c(.85,.77))
+
+    tbl = dplyr::summarize(dplyr::group_by(
+      Tables[['T.Tests']][[z]],Concentration,Slide.ID),
+      sd.statistic = sd(statistic),statistic = mean(statistic))
+
+    plots[[2]]<-ggplot2::ggplot(
+      data=tbl,ggplot2::aes(x=Concentration,y=statistic,group=Slide.ID)) +
+
+      ggplot2::geom_line(size=.40, alpha=.65,ggplot2::aes(color=factor(Slide.ID))) +
+
+      ggplot2::geom_errorbar(ggplot2::aes(
+        ymin = statistic - `sd.statistic`,ymax = `statistic`+`sd.statistic`,
+        color=factor(Slide.ID)),
+        width=length(Concentration)^(length(Concentration)/2.5),
+        size=.40, alpha=.65) +
+
+      ggplot2::labs(title=paste0(Antibody_Opal,' t test \n Individual'),
+                    x='Concentration',y='Statistic',color='Slide.ID') +
+
+      ggplot2::scale_color_manual(breaks=Slide_Descript,
+                                  labels=Slide_Descript,values=colors) +
+
+      ggplot2::scale_x_discrete(limits=Concentration) +
+
+      ggplot2::coord_cartesian(
+        xlim = xcoords,ylim = c(
+          round(min(Tables[['T.Tests']][[z]]
+                    ['statistic'])-75,digits = -2),
+          round(max(Tables[['T.Tests']][[z]]
+                    ['statistic'])+75,digits = -2)),expand = F) +
+      theme1 + ggplot2::theme(legend.position = c(.85,.77))
+
+    glist <- lapply(plots, ggplot2::ggplotGrob)
+
+    str = paste0(
+      wd,'/Results.pixels/Graphs/test.statistics/t test of ',
+      Antibody_Opal,' ',z,'.pdf')
+
+    ggplot2::ggsave(str,
+                    gridExtra::marrangeGrob(glist,nrow=2,ncol=1),
+                    height = 6.56, width = 6.56,
+                    units = 'in', scale = 1, dpi = 300)
+
+    tryCatch({
+      dev.off()},
+      error = function(cond) {
+        message('issue with 2 dev.off()')
+      },
+      finally = {})
+
+    str = paste0(
+      wd,'/Results.pixels/Graphs/test.statistics/t test of ',
+      Antibody,' ',z,'.csv')
+
+    data.table::fwrite(Tables[['T.Tests']][[z]],file = str,sep = ',')}
+
+  rm(plots, correction.val.name)
+
+  i=i+1;Sys.sleep(0.1);setWinProgressBar(
+    pb, i, title=paste( i,"% Complete"),label = 'Generating Histogram Graphs')
+  ###############################Histogram Graphs########################
+  gc(reset=T)
+
+  correction.val<-c(1,.001)
+
+  Histograms.names<-c('Plus1','Plus001')
+
+  names(correction.val)<-Histograms.names
+
+  for(i.1 in Histograms.names){
+    for( x in Slide_Descript){
+      for(y in Concentration){
+        for(z in Image.IDs[[x]][[paste0(y)]]){
+
+          tbl = dplyr::filter(
+            Tables[['Histograms']][[i.1]],grepl(paste0('1to',y),Concentration),
+            Slide.ID==x,Image.ID ==paste0('[',z,']'))
+
+          str = paste0(wd,'/Results.pixels/Histograms/Data/',
+                       i.1,'/',Antibody_Opal,'_',x,'_1to',y,' [',z,'].csv')
+
+          data.table::fwrite(tbl,file = str,sep=',')}}}
+
+    MAX_X<-max(Tables[['Histograms']][[i.1]][['mids']])
+
+    MIN_X<-min(Tables[['Histograms']][[i.1]][['mids']])
+
+    if(i.1=='Plus1'){if(.1>MIN_X){MIN_X<-.1}}else{if(-4>MIN_X){MIN_X<--4}}
+
+    MAX_Y<-max(Tables[['Histograms']][[i.1]][
+      Tables[['Histograms']][[i.1]][['mids']]>MIN_X,][['density']])
+
+    names(Thresholds)<-Concentration
+
+    plots<-vector('list',length=length(unlist(Image.IDs)))
+
+    plot.count<-1
+
+    for (x in 1:length(Slide_Descript)){
+      for (y in Concentration){
+        for(z in Image.IDs[[x]][[paste0(y)]]){
+
+          tbl = dplyr::filter(Tables[['Histograms']][[i.1]], grepl(
+            paste0('1to',y,'$'),Concentration),Slide.ID==Slide_Descript[x],
+            Image.ID==paste0('[',z,']'))
+
+          plots[[plot.count]]<-ggplot2::ggplot(
+            data=tbl,ggplot2::aes(x=mids, y=density)) +
+
+            ggplot2::geom_line() +
+
+            ggplot2::labs(title= paste0(
+              Antibody_Opal, ' ',Slide_Descript[x], ' 1:', y,'\n[',z,']'),
+              x = paste0('ln(Intensity)'),y = 'Density') +
+
+            ggplot2::scale_x_continuous(breaks = seq(
+              from=round(MIN_X),to = round(MAX_X), by=1)) +
+
+            ggplot2::coord_cartesian(
+              xlim = c(round(MIN_X), round(MAX_X)), expand = F,
+              ylim = c(0, round(MAX_Y+.001, digits = 3))) +
+
+            theme1 + ggplot2::theme(legend.position = c(.9,.8)) +
+
+            ggplot2::geom_vline(
+              xintercept = log(Thresholds[which(
+                Concentration==y)]+correction.val[i.1]))
+
+          plot.count<-plot.count+1}}}
+
+    glist <- lapply(plots, ggplot2::ggplotGrob)
+
+    str = paste0(wd,'/Results.pixels/Histograms/Histograms for ',
+                 Antibody_Opal,' ',i.1,'.pdf')
+
+    ggplot2::ggsave(str,gridExtra::marrangeGrob(glist,ncol=2,nrow=2),
+                    height = 6.56, width = 7.55,
+                    units = 'in', scale = 1, dpi = 300)
+    tryCatch({
+      dev.off()},
+      error = function(cond) {
+        #message('issue with 3 dev.off()')
+      },
+      finally = {})
+
+    i=i+1;Sys.sleep(0.1);setWinProgressBar(
+      pb, i, title=paste( i,"% Complete"),label = 'Generating Histogram Graphs')}
+
+  rm(plots);gc(reset = T)
+
+  i=100;Sys.sleep(0.1);setWinProgressBar(
+    pb, i, title=paste0( i,"% Complete"),label ='Fin')}
