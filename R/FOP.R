@@ -242,7 +242,7 @@ findposFOP<-function(Positive.table,out,Slide_Descript,fraction.type){
           count3, CellSeg$`Sample Name`)}
       ##find positive cells and generate output file
       ##Positive_cells data.table can be added to for additional AB with the same SlideIDs.
-      Positive.table<-rbind(Positive.table,resahpe2::dcast(dplyr::mutate(dplyr::summarise(dplyr::group_by(
+      Positive.table<-rbind(Positive.table,reshape2::dcast(dplyr::mutate(dplyr::summarise(dplyr::group_by(
         CellSeg, `Sample Name`,Concentration),
         Total.Tumor.Area = sum(`Tumor`), Total.NonTumor.Area = sum(`Non Tumor`)),
         Fraction=(Total.Tumor.Area/(Total.NonTumor.Area+Total.Tumor.Area))),
