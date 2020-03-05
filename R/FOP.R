@@ -203,7 +203,7 @@ findposFOP<-function(Positive.table,out,Slide_Descript,fraction.type){
             rbind,lapply(
               list.files(wd,
                          pattern = '.*]_cell_seg_data.txt$',full.names=TRUE),
-              function(x) fread(x, na.strings=c('NA', '#N/A'),
+              function(x) data.table::fread(x, na.strings=c('NA', '#N/A'),
                                 select=c('Slide ID','Phenotype'),
                                 data.table = FALSE))),
           c('Slide.ID','Phenotype')),
@@ -231,7 +231,7 @@ findposFOP<-function(Positive.table,out,Slide_Descript,fraction.type){
             rbind,lapply(
               list.files(wd,
                          pattern = '.*]_tissue_seg_data_summary.txt$',full.names=TRUE),
-              function(x) fread(x, na.strings=c('NA', '#N/A'),
+              function(x) data.table::fread(x, na.strings=c('NA', '#N/A'),
                                 select = c('Sample Name','Tissue Category','Region Area (pixels)'),
                                 data.table= FALSE))),
           `Sample Name`~`Tissue Category`, value.var = 'Region Area (pixels)'),
@@ -242,7 +242,7 @@ findposFOP<-function(Positive.table,out,Slide_Descript,fraction.type){
           count3, CellSeg$`Sample Name`)}
       ##find positive cells and generate output file
       ##Positive_cells data.table can be added to for additional AB with the same SlideIDs.
-      Positive.table<-rbind(Positive.table,resahpe2::dcast(dplyr::mutate(dplyr::summarise(dplyr::group_by(
+      Positive.table<-rbind(Positive.table,reshape2::dcast(dplyr::mutate(dplyr::summarise(dplyr::group_by(
         CellSeg, `Sample Name`,Concentration),
         Total.Tumor.Area = sum(`Tumor`), Total.NonTumor.Area = sum(`Non Tumor`)),
         Fraction=(Total.Tumor.Area/(Total.NonTumor.Area+Total.Tumor.Area))),
