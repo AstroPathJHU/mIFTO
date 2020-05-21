@@ -24,9 +24,9 @@ if(is.na(wd)) { stop('Directory is invalid', call. = FALSE)}
 # check the slide names
 #
 if( grepl('[-|+|&]',out$Slide_Descript,perl = TRUE ) ) warning(
-'Slide Descriptors contain an illegal character this may cause issues')
+'Slide Descriptors contain a illegal character(s); this may cause issues')
 if( grepl(' ',out$Slide_Descript,perl = TRUE ) ) {
-  warning('Slide Descriptors contain spaces, removing spaces in names')
+  warning('Slide Descriptors contain spaces ... removing spaces in names')
   Slide_Descript <- gsub(" ", "",out$Slide_Descript, fixed = TRUE)
 } else {
   Slide_Descript <- out$Slide_Descript
@@ -53,7 +53,7 @@ Antibody_Opal <- paste0(Antibody, ' (Opal ', Opal1, ')')
 # get the concentration values
 #
 if( grepl(' ',out$Concentration,perl = TRUE ) ) {
-  warning('Concentrations contain spaces, removing spaces in names')
+  warning('Concentrations contain spaces ... removing spaces in names')
   Concentration <- gsub(" ", "",out$Concentration, fixed = TRUE)
 } else {
   Concentration <- out$Concentration
@@ -63,10 +63,9 @@ tryCatch({
 }, warning = function(cond) {
   stop(paste0('Error in Concentration input: ', Concentration))
   message(cond)
-},
-finally={
-  Concentration <- Concentration1
 })
+#
+Concentration <- Concentration1
 #
 # put the names together to find the proper dilutions
 #
@@ -132,7 +131,7 @@ Thresholded <- as.logical(out$Thresholded)
 #
 if (Thresholded == T) {
   if( grepl(' ',out$Thresholds,perl = TRUE ) ) {
-    warning('Concentrations contain spaces,
+    warning('Concentrations contain spaces ...
             removing spaces in names')
     Thresholds <- gsub(" ", "",out$Thresholds, fixed = TRUE)
   } else {

@@ -1,9 +1,12 @@
 #################################GUI#####################################
-#'Main app to start analysis on a by image basis. Creates the gui and calls other functions within the package for processing
+#'Main app to start analysis on a by image basis. 
+#'Creates the gui and calls other functions within the package for processing
 #'
 #'RUNG
 #'Created By: Benjamin Green
 #'Last Edited 09/24/2019
+#'
+#'Version 0.00201B
 #'
 #'This function is designed to create the GUI for the TitrationScript
 #'Here you should input the parameters for the given dilution series of interest
@@ -23,18 +26,25 @@
 #'
 #'
 #'
-
+#
+# install libraries
+#
 library(shiny)
 library(shinyWidgets)
 library(shinydashboard)
-
+#
+# page width
+#
 w = 1000
 options(width = w)
 w = toString(w)
+# 
+# set up text box type and format  -------------------------------------
+#
 # text box font
 commontextstyle = "font-weight: 750; font-size: 12px;color: #0A1232;"
 # button font
-buttontextstyle = "font-weight: 600; font-size: 16px;color: green;"
+buttontextstyle = "font-weight: 600; font-size: 13px;color: green;"
 # subheaders text font
 subheadertextstyle = "font-weight: 600; font-size: 24px;color: #f0f6ee ;"
 # fine print text
@@ -49,25 +59,28 @@ commoninputstylelonglist2 = 'height:145px;'#border: 2px outset lightgrey;'
 #
 # input boxes style
 #
-child2inputstyle = paste0("height: 100 px; width: 100%; background-color:  #f0f6ee ;
-                      ")
-child4inputstyle = paste0("height: 100 px; width: 100%; background-color:  #f0f6ee ;
-                      ")
+child2inputstyle = paste0(
+  "height: 100 px; width: 100%; background-color:  #f0f6ee ;")
+child4inputstyle = paste0(
+  "height: 100 px; width: 100%; background-color:  #f0f6ee ;")
 #
 # General input overlay
 #
-child1inputstyle = paste0("height:400px;width: 100%; background-color: #363a4a;
-                          border: 2px solid lightgrey;")
+child1inputstyle = paste0(
+  "height:400px;width: 100%; background-color: #363a4a;
+  border: 2px solid lightgrey;")
 #
 # bottom box styles
 #
-child3inputstyle = paste0("height:500px;width: 50%; background-color: #363a4a;
-                          ")
+child3inputstyle = paste0(
+  "height:500px;width: 50%; background-color: #363a4a;")
 #
 # over all box 
 #
 childinputstyle = paste0("height:950px;width: ",w,";")
-
+#
+# set up the buttons  ----------------------------------------------------------------
+#
 ui <- fluidPage(
   #tags$head(tags$style(HTML("pre { overflow: auto; word-wrap: normal; }"))),
   #
@@ -87,13 +100,13 @@ ui <- fluidPage(
   column(12, align = "left",
          style = childinputstyle,
   #
-  # create the General Input tab
-  #
+  # create the General Input tab  --------------------------------------------------------
+  # 
   br(),
   fluidRow(
     column(12, align = 'left',
       fluidRow(
-        h2(div("General Input", style = subheadertextstyle), align = 'left')),
+        h2(div("   General Input", style = subheadertextstyle), align = 'left')),
         #
         # generate the first row
         #
@@ -179,12 +192,11 @@ ui <- fluidPage(
       br(),
     style = child1inputstyle)),
         #
-        # create the bottom panels
-        #
-       
+        # create the bottom panels -------------------------------------------------------------
+        # 
       fluidRow(
-        #
-        # for cell seg data
+        # 
+        # for cell seg data --------------------------------------------------------------------
         #
         column(6, align = 'left',
                fluidRow(
@@ -211,6 +223,7 @@ ui <- fluidPage(
                                                'Named',
                                                'AB_Sparse'
                                              ),
+                                             selected = 'Folders',
                                              inline = TRUE),
                           style = commoninputstylelonglist
                    ),
@@ -252,9 +265,8 @@ ui <- fluidPage(
                                          style = buttontextstyle)))),
                style = paste0(child3inputstyle, "border-bottom: 2px solid lightgrey;
                border-left: 2px solid lightgrey;")),
-        
-        #
-        # for pxp data
+        # 
+        # for pxp data  --------------------------------------------------------------------
         #
         column(6, align = 'left',
                fluidRow(
@@ -280,6 +292,7 @@ ui <- fluidPage(
                                                       'IHC',
                                                       'nConsistent'
                                                     ),
+                                                    selected = 'Folders.Pixels',
                                                     inline = TRUE),
                                  style = commoninputstylelonglist
                           ),
@@ -303,7 +316,7 @@ ui <- fluidPage(
                       
                         style = child4inputstyle)),
                #
-               # add the 'Go' button
+               # add the 'Go' button --------------------------------------------------------------------
                #
                fluidRow(
                  br(),
@@ -330,7 +343,9 @@ ui <- fluidPage(
     )
   )
 )
-
+#
+# define the server side and its functions   ----------------------------
+# 
 
 server <- function(input, output) {
   #
