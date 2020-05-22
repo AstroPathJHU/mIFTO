@@ -84,7 +84,7 @@ RUN.ByImage<-function(){
 
       list(type = 'fieldset',columns = 2,label = 'Information for Pixel Based Analysis',
            children = list(
-             list(name = "Folders.Pixels",
+             list(name = "Folders.pixels",
                   label = "Is data in separate folders according to dilution?",type = "gcheckbox"),
              list(name = "Thresholded",label = "Were pixel thresholds created in inForm? ",
                   type = "gcheckbox"),

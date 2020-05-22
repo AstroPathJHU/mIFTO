@@ -35,13 +35,13 @@ SN.Ratio.Calculations<-function(
   #
   SN.Ratio.Median <- cbind.data.frame(
     Signal = SignalMed,Noise = NoiseMed,
-    SN_Raio = SignalMed/NoiseMed, Slide.ID = x,
+    SN_Ratio = SignalMed/NoiseMed, Slide.ID = x,
     Concentration = Concentration[y],
     Image.ID = q)
   #
   SN.Ratio.Mean <- cbind.data.frame(
     Signal = SignalMean,Noise = NoiseMean,
-    SN_Raio = SignalMean/NoiseMean, Slide.ID = x,
+    SN_Ratio = SignalMean/NoiseMean, Slide.ID = x,
     Concentration = Concentration[y],
     Image.ID = q)
   #

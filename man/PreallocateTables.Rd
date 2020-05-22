@@ -6,7 +6,7 @@
 Created By: Benjamin Green;
 Last Edited 09/25/2019}
 \usage{
-PreallocateTables(Slide_Descript, Concentration)
+PreallocateTables(Slide_Descript, Concentration, titration.type.name, paths)
 }
 \arguments{
 \item{Concentration}{a numeric vector of concentrations used in the titration}

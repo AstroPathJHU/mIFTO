@@ -11,8 +11,21 @@
 #'It is meant to be run through the RUN function
 #'
 #'
-# @param 
-# @return 
+#' @param Concentration a numeric vector of concentrations used in the titration
+#' @param x a unique identifier for the slide to be analyzed
+#' @param y the numeric of which index from the concentration vector to use
+#' @param q the image coordinates of the current image as a comma separated pair
+#' @param Antibody_Opal the paired string for an antibody opal pair, designated as 
+#' "AB (Opal NNN)"
+#' @param titration.type.name the type of titration that was performed (TSA or Primary)
+#' @param Protocol the scanning protocol used (7color or 9color)
+#' @param Thresholds a list of thresholds used for each concentration and slide
+#' @param paths the paths to the data as a list, with an element for each concentration
+#' @param connected.pixels the number of pixels that a pixel must be connected to for 
+#' positivity measures
+#' @param flowout logical for whether or not flow like results will be produced
+#' @param Opal1 the opal value of interest
+#' @return 
 #' @export
 #'
 GeneratePxPData <- function(
@@ -33,8 +46,8 @@ GeneratePxPData <- function(
   tryCatch({
     data.in <- mIFTO::tiff.list(paths[[y]], pattern.in = str, Protocol)
   }, error = function(cond){
-    message(paste0(' Search failed for ', str, ';'))
-    stop(paste0('Please check slide names and check that files for ',
+    stop(paste0(' Search failed for ', str,
+                '; Please check slide names and check that files for ',
     x, ' 1to',Concentration[[y]],' exist'), call. = F)
   }, finally = {})
   #
@@ -59,7 +72,7 @@ GeneratePxPData <- function(
     }
     names(data.in.write) <- names(data.in)
     str = paste0(
-      wd,'/Results.pixels/Flow/Text/',Antibody_Opal,'_',x,'_1to',
+      wd,'/Results.pixels/flow_like_tables/csv/',Antibody_Opal,'_',x,'_1to',
       Concentration[y],'_[',q,'].csv')
     
     data.table::fwrite(data.in.write, file=str,sep=',')

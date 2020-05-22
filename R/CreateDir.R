@@ -8,45 +8,34 @@
 #'Create the output directories for either Results.pixels or 
 #'Results.cell recursively checking that the full file tree will be created
 #'
-#' @param wd the directory where the results folder belongs
+#' @param wd the main data root directory
 #' @param type the second half of the results name (either pixels or cell)
+#' @param flowout logical for whether or not flow like results will be produced
 #' @export
 #'
-CreateDir <- function(wd,type){
+CreateDir <- function(wd, type, flowout){
 #
 results_name <- paste0('Results.',type)
 #
-if (dir.exists(file.path(wd, results_name)) == FALSE) {
-  dir.create(file.path(wd, results_name, 'Flow', 'Text'), recursive = TRUE)
-  dir.create(file.path(wd, results_name, 'Flow', 'FCS'), recursive = TRUE)
-  dir.create(file.path(wd,results_name,'Graphs', 'BoxPlots'),recursive = T)
-  dir.create(file.path(wd,results_name,'Graphs', 'Median'),recursive = T)
-  dir.create(file.path(wd,results_name,'Graphs', 'Mean'),recursive = T)
-  dir.create(file.path(wd,results_name,'Graphs', 'test.statistics'),recursive = T)
-  dir.create(file.path(wd, results_name, 'Histograms', 'Data', 'Plus1'),recursive = TRUE)
-  dir.create(file.path(wd, results_name, 'Histograms', 'Data', 'Plus001'),recursive = TRUE)}
-if (dir.exists(file.path(wd, results_name,'Flow')) == FALSE) {
-  dir.create(file.path(wd, results_name, 'Flow', 'Text'), recursive = TRUE)
-  dir.create(file.path(wd, results_name, 'Flow', 'FCS'), recursive = TRUE)}
-if (dir.exists(file.path(wd, results_name,'Flow','Text')) == FALSE) {
-  dir.create(file.path(wd, results_name, 'Flow', 'Text'), recursive = TRUE)}
-if (dir.exists(file.path(wd, results_name,'Flow','FCS')) == FALSE) {
-  dir.create(file.path(wd, results_name, 'Flow', 'FCS'), recursive = TRUE)}
-if(dir.exists(file.path(wd,results_name,'Graphs'))==F){
-  dir.create(file.path(wd,results_name,'Graphs', 'BoxPlots'),recursive = T)
-  dir.create(file.path(wd,results_name,'Graphs', 'Median'),recursive = T)
-  dir.create(file.path(wd,results_name,'Graphs', 'Mean'),recursive = T)
-  dir.create(file.path(wd,results_name,'Graphs', 'test.statistics'),recursive = T)}
-if(dir.exists(file.path(wd,results_name,'Graphs', 'BoxPlots'))==F){
-  dir.create(file.path(wd,results_name,'Graphs', 'BoxPlots'),recursive = T)}
-if(dir.exists(file.path(wd,results_name,'Graphs', 'Median'))==F){
-  dir.create(file.path(wd,results_name,'Graphs', 'Median'),recursive = T)}
-if(dir.exists(file.path(wd,results_name,'Graphs', 'Mean'))==F){
-  dir.create(file.path(wd,results_name,'Graphs', 'Mean'),recursive = T)}
-if(dir.exists(file.path(wd,results_name,'Graphs', 'test.statistics'))==F){
-  dir.create(file.path(wd,results_name,'Graphs', 'test.statistics'),recursive = T)}
-if (dir.exists(file.path(wd, results_name,'Histograms','Data','Plus1')) == FALSE) {
-  dir.create(file.path(wd, results_name, 'Histograms', 'Data','Plus1'),recursive = TRUE)}
-if (dir.exists(file.path(wd, results_name,'Histograms','Data','Plus001')) == FALSE) {
-  dir.create(file.path(wd, results_name, 'Histograms', 'Data','Plus001'),recursive = TRUE)}
+if (flowout) {
+  if (dir.exists(file.path(wd, results_name, 'flow_like_tables', 'csv')) == FALSE) {
+    dir.create(file.path(wd, results_name, 'flow_like_tables', 'csv'), recursive = TRUE)
+  }
+  if (dir.exists(file.path(wd, results_name, 'flow_like_tables', 'FCS')) == FALSE) {
+    dir.create(file.path(wd, results_name, 'flow_like_tables', 'FCS'), recursive = TRUE)
+  }
+}
+if (dir.exists(file.path(wd, results_name,'stats', 'BoxPlots')) == FALSE) {
+  dir.create(file.path(wd,results_name,'stats', 'BoxPlots'),recursive = T)
+}
+if (dir.exists(file.path(wd, results_name,'stats', 'Graphs')) == FALSE) {
+  dir.create(file.path(wd,results_name,'stats', 'Graphs'),recursive = T)
+}
+if (dir.exists(file.path(wd, results_name,'stats', 'fractions')) == FALSE) {
+  dir.create(file.path(wd,results_name,'stats', 'fractions'),recursive = T)
+}
+if (dir.exists(file.path(wd, results_name,'histograms','Data','Plus1')) == FALSE) {
+  dir.create(file.path(wd, results_name, 'histograms', 'Data','Plus1'),recursive = TRUE)}
+if (dir.exists(file.path(wd, results_name,'histograms','Data','Plus001')) == FALSE) {
+  dir.create(file.path(wd, results_name, 'histograms', 'Data','Plus001'),recursive = TRUE)}
 }

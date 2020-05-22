@@ -7,12 +7,14 @@ Results.cell recursively checking that the full file tree will be created;
 Created By: Benjamin Green;
 Last Edited 09/25/2019}
 \usage{
-CreateDir(wd, type)
+CreateDir(wd, type, flowout)
 }
 \arguments{
-\item{wd}{the directory where the results folder belongs}
+\item{wd}{the main data root directory}
 
 \item{type}{the second half of the results name (either pixels or cell)}
+
+\item{flowout}{logical for whether or not flow like results will be produced}
 }
 \description{
 Create the output directories for either Results.pixels or 

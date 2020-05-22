@@ -41,7 +41,7 @@ CreateMyTheme <- function(){
     legend.title = ggplot2::element_text(size = 8),
     text = ggplot2::element_text(size = 10),
     panel.border = ggplot2::element_rect(
-      size=1, color='black',fill=NA))
+      size=.5, color='black',fill=NA))
   out <- list(colors = colors, theme1 = theme1)
   return(out)
 }

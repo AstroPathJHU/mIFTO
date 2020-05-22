@@ -432,29 +432,27 @@ PixelbyPixel.ByImage <- function(out,pb) {
   for(z in correction.val.name){
 
     plots<-vector('list',length(2))
-
+    #
+    # aggregate average t test
+    #
     tbl = dplyr::summarize(dplyr::group_by(
       Tables[['T.Tests']][[z]],Concentration),
       sd.statistic = sd(statistic),
       statistic = mean(statistic))
-
+    #
+    # plot average t test 
+    #
     plots[[1]]<-ggplot2::ggplot(data=tbl,
                                 ggplot2::aes(x=Concentration,y=statistic)) +
-
       ggplot2::geom_line(size=.40, alpha=.65, color = 'blue') +
-
       ggplot2::geom_errorbar(ggplot2::aes(ymin = statistic - `sd.statistic`,
                                           ymax = `statistic`+`sd.statistic`),
                              width=length(Concentration)^(length(Concentration)/2.5),
                              size=.40, alpha=.65,color = 'blue') +
-
       ggplot2::labs(title=paste0(Antibody_Opal,' t test'),
                     x='Concentration',y='Statistic') +
-
       ggplot2::scale_color_manual(values=colors) +
-
       ggplot2::scale_x_discrete(limits=Concentration) +
-
       ggplot2::coord_cartesian(
         xlim = xcoords,ylim = c(
           round(min(Tables[['T.Tests']][[z]]
@@ -462,30 +460,25 @@ PixelbyPixel.ByImage <- function(out,pb) {
           round(max(Tables[['T.Tests']][[z]]
                     ['statistic'])+75,digits = -2)),expand = F) +
       theme1 + ggplot2::theme(legend.position = c(.85,.77))
-
+    #
+    # plot individual t test
+    #
     tbl = dplyr::summarize(dplyr::group_by(
       Tables[['T.Tests']][[z]],Concentration,Slide.ID),
       sd.statistic = sd(statistic),statistic = mean(statistic))
-
     plots[[2]]<-ggplot2::ggplot(
       data=tbl,ggplot2::aes(x=Concentration,y=statistic,group=Slide.ID)) +
-
       ggplot2::geom_line(size=.40, alpha=.65,ggplot2::aes(color=factor(Slide.ID))) +
-
       ggplot2::geom_errorbar(ggplot2::aes(
         ymin = statistic - `sd.statistic`,ymax = `statistic`+`sd.statistic`,
         color=factor(Slide.ID)),
         width=length(Concentration)^(length(Concentration)/2.5),
         size=.40, alpha=.65) +
-
       ggplot2::labs(title=paste0(Antibody_Opal,' t test \n Individual'),
                     x='Concentration',y='Statistic',color='Slide.ID') +
-
       ggplot2::scale_color_manual(breaks=Slide_Descript,
                                   labels=Slide_Descript,values=colors) +
-
       ggplot2::scale_x_discrete(limits=Concentration) +
-
       ggplot2::coord_cartesian(
         xlim = xcoords,ylim = c(
           round(min(Tables[['T.Tests']][[z]]
@@ -493,18 +486,20 @@ PixelbyPixel.ByImage <- function(out,pb) {
           round(max(Tables[['T.Tests']][[z]]
                     ['statistic'])+75,digits = -2)),expand = F) +
       theme1 + ggplot2::theme(legend.position = c(.85,.77))
-
+    #
+    # print to pdf
+    #
     glist <- lapply(plots, ggplot2::ggplotGrob)
-
     str = paste0(
       wd,'/Results.pixels/Graphs/test.statistics/t test of ',
       Antibody_Opal,' ',z,'.pdf')
-
     ggplot2::ggsave(str,
                     gridExtra::marrangeGrob(glist,nrow=2,ncol=1),
                     height = 6.56, width = 6.56,
                     units = 'in', scale = 1, dpi = 300)
-
+    #
+    # turn off the dev object
+    #
     tryCatch({
       dev.off()},
       error = function(cond) {

@@ -6,8 +6,50 @@
 Created By: Benjamin Green;
 Last Edited 09/25/2019}
 \usage{
-GeneratePxPData(Concentration, x, y, q, Antibody_Opal, titration.type.name,
-  Protocol, Thresholds, paths, connected.pixels, flowout, Opal1)
+GeneratePxPData(
+  Concentration,
+  x,
+  y,
+  q,
+  Antibody_Opal,
+  titration.type.name,
+  Protocol,
+  Thresholds,
+  paths,
+  connected.pixels,
+  flowout,
+  Opal1
+)
+}
+\arguments{
+\item{Concentration}{a numeric vector of concentrations used in the titration}
+
+\item{x}{a unique identifier for the slide to be analyzed}
+
+\item{y}{the numeric of which index from the concentration vector to use}
+
+\item{q}{the image coordinates of the current image as a comma separated pair}
+
+\item{Antibody_Opal}{the paired string for an antibody opal pair, designated as 
+"AB (Opal NNN)"}
+
+\item{titration.type.name}{the type of titration that was performed (TSA or Primary)}
+
+\item{Protocol}{the scanning protocol used (7color or 9color)}
+
+\item{Thresholds}{a list of thresholds used for each concentration and slide}
+
+\item{paths}{the paths to the data as a list, with an element for each concentration}
+
+\item{connected.pixels}{the number of pixels that a pixel must be connected to for 
+positivity measures}
+
+\item{flowout}{logical for whether or not flow like results will be produced}
+
+\item{Opal1}{the opal value of interest}
+}
+\value{
+
 }
 \description{
 This function is desgined to do analysis for IF titration series 

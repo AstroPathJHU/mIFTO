@@ -4,8 +4,16 @@
 \alias{IC.Plots.Calculations}
 \title{Usedby analysis functions for violin plot calculations}
 \usage{
-IC.Plots.Calculations(f, data.in, Opal1, Concentration, Thresholds, x, y,
-  colors)
+IC.Plots.Calculations(
+  f,
+  data.in,
+  Opal1,
+  Concentration,
+  Thresholds,
+  x,
+  y,
+  colors
+)
 }
 \arguments{
 \item{f}{is the number of tiles to use when making boxplots}

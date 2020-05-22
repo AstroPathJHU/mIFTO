@@ -26,7 +26,7 @@ if(is.na(wd)) { stop('Directory is invalid', call. = FALSE)}
 if( grepl('[-|+|&]',out$Slide_Descript,perl = TRUE ) ) warning(
 'Slide Descriptors contain an illegal character this may cause issues')
 if( grepl(' ',out$Slide_Descript,perl = TRUE ) ) {
-  warning('Slide Descriptors contain spaces, removing spaces in names')
+  warning('Slide Descriptors contain spaces ... removing spaces in names')
   Slide_Descript <- gsub(" ", "",out$Slide_Descript, fixed = TRUE)
 } else {
   Slide_Descript <- out$Slide_Descript
@@ -53,7 +53,7 @@ Antibody_Opal <- paste0(Antibody, ' (Opal ', Opal1, ')')
 # get the concentration values
 #
 if( grepl(' ',out$Concentration,perl = TRUE ) ) {
-  warning('Concentrations contain spaces, removing spaces in names')
+  warning('Concentrations contain spaces ... removing spaces in names')
   Concentration <- gsub(" ", "",out$Concentration, fixed = TRUE)
 } else {
   Concentration <- out$Concentration
@@ -63,10 +63,9 @@ tryCatch({
 }, warning = function(cond) {
   stop(paste0('Error in Concentration input: ', Concentration))
   message(cond)
-},
-finally={
-  Concentration <- Concentration1
 })
+#
+Concentration <- Concentration1
 #
 # put the names together to find the proper dilutions
 #
@@ -84,7 +83,7 @@ if(Naming.convention==T){
 #
 # get the folders tag for processing
 #
-Folders <- as.logical(out$Folders.Pixels)
+Folders <- as.logical(out$Folders.pixels)
 #
 # setting up paths based on if the data is
 # in one folder or multiple folders
@@ -148,10 +147,9 @@ if (Thresholded == T) {
     stop(paste0('Error in Thresholds input: ', Thresholds),
          call. = FALSE)
     message(cond)
-  },
-  finally={
-    Thresholds <- Thresholds1
   })
+  #
+  Thresholds <- Thresholds1
   #
   # check that the number of thresholds
   # == the number of concentrations
