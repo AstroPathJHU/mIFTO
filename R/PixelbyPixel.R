@@ -26,10 +26,7 @@
 PixelbyPixel <- function(out,pb) {
   ##############################input parameters########################
   #
-  i=0;Sys.sleep(0.1)
-  setWinProgressBar(
-    pb, i, title=paste0( i,"% Complete"),
-    label = paste0('Browse For Folder'))
+  ii = 0; update_pgbar(ii, pb, 'Browse For Folder')
   #
   # check input parameters and allocate some for eaiser indexing
   #
@@ -58,17 +55,21 @@ PixelbyPixel <- function(out,pb) {
   #
   #############preallocating tables to store results####################
   #
-  pbi1<-round(89/(length(Slide_Descript)
+  pbi1<-round(89/(2*length(Slide_Descript)
                   *length(Concentration)), digits=2)
   #
-  tables_out <- PreallocateTables(Slide_Descript,Concentration,
-                                  outchecked$titration.type.name, outchecked$paths)
-  Tables <- tables_out$Tables
+  table.names.byimage <-c('SN.Ratio','T.Tests','Histograms')
+  ## need to add boxplots to by image version ##########################
+  table.names.wholeslide<-c('SN.Ratio','T.Tests','Histograms','BoxPlots')
+  #
+  tables_out <- mIFTO::PreallocateTables(
+    Slide_Descript, Concentration, outchecked$titration.type.name, 
+    table.names.wholeslide, outchecked$paths)
+  Tables.byimage <- tables_out$Tables.byimage
+  Tables.wholeslide <- tables_out$Tables.wholeslide
   Image.IDs <- tables_out$Image.IDs
   Violin.Plots <- tables_out$Violin.Plots
-  ## need to add boxplots to by image version ##########################
-  table.names<-c('SN.Ratio','T.Tests','Histograms')
-  #table.names<-c('SN.Ratio','T.Tests','Histograms','BoxPlots')
+  #
   a<-installed.packages()
   packages<-a[,1] 
   if (!is.element("EBImage", packages)){
@@ -78,8 +79,10 @@ PixelbyPixel <- function(out,pb) {
   ###############################Reads in data##########################
   #
   Tables <- populate_mIFTO_tables(
-    Slide_Descript, Tables, Image.IDs, Concentration, Antibody_Opal, 
-    Thresholds, Opal1, table.names,outchecked, pbi1, ii, pb)
+    Slide_Descript, Tables.byimage, Tables.wholeslide, Image.IDs,
+    Concentration, Antibody_Opal, Thresholds, Opal1, 
+    table.names.byimage, tables.names.wholeslide, outchecked, pbi1, ii, pb
+    )
   #
   gc(reset=T)
   #

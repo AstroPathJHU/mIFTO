@@ -15,13 +15,12 @@
 #' @return exports the Tables list and the Image.IDs sublists 
 #' @export
 #'
-PreallocateTables <- function(Slide_Descript,Concentration, titration.type.name,paths){
+PreallocateTables <- function(Slide_Descript,Concentration, titration.type.names, table.names, paths){
   #
   # preallocate tables with 4 sub tables for each type of graph/
   # analysis
   #
   Tables<-vector('list',4)
-  table.names<-c('SN.Ratio','T.Tests','Histograms','BoxPlots')
   names(Tables)<-table.names
   #
   # Populate the signal to noise ratio table with 3 sublists
@@ -44,10 +43,10 @@ PreallocateTables <- function(Slide_Descript,Concentration, titration.type.name,
   # positivity.
   #
   Tables[['BoxPlots']] <- lapply(
-    vector('list', 3), function(x) 
+    vector('list', 2), function(x) 
       vector('list', length(Slide_Descript)))
   
-  names(Tables[['BoxPlots']]) <- c('Decile','Noise','Signal')
+  names(Tables[['BoxPlots']]) <- c('Noise','Signal')
   #
   # Make a plus 1 and a plus 001 list for the different epsilons 
   # added to opal intensities when creating t-tests and histograms.
@@ -74,7 +73,8 @@ PreallocateTables <- function(Slide_Descript,Concentration, titration.type.name,
         }
       
       names(Tables[[i.1]][[i.3]]) <- Slide_Descript
-      }}
+    }}
+  Tables.wholeslide <- Tables
   #
   # The result of this is that there will be a data structure as
   # follows:
@@ -114,6 +114,15 @@ PreallocateTables <- function(Slide_Descript,Concentration, titration.type.name,
       Image.IDs[[x]][[y]]<-gsub('.*\\[|\\].*','',cImage.IDs)
       #
       Image.ID.fullstrings <- c(Image.ID.fullstrings,cImage.IDs)
+      #
+      # create a vector in Tables to store the data for each image
+      # separately
+      #
+      for(i.1 in table.names){
+        for(w in 1:length(Tables[[i.1]])){
+          Tables[[i.1]][[w]][[x]][[y]]<-vector(
+            'list',length(Image.IDs[[x]][[y]]))
+        }}
     }
   }
   #
@@ -124,7 +133,8 @@ PreallocateTables <- function(Slide_Descript,Concentration, titration.type.name,
                          function(x)vector('list',length(Concentration)))
   names(Violin.Plots) <- Slide_Descript
   
-  out <- list(Tables = Tables, Image.IDs = Image.IDs,
+  out <- list(Tables.byimage = Tables, Tables.wholeslide = Tables.wholeslide,
+              Image.IDs = Image.IDs,
               Violin.Plots = Violin.Plots, 
               Image.ID.fullstrings = Image.ID.fullstrings)
   

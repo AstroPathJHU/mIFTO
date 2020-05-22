@@ -130,38 +130,44 @@ Thresholded <- as.logical(out$Thresholded)
 # create the threshold values
 #
 if (Thresholded == T) {
-  if( grepl(' ',out$Thresholds,perl = TRUE ) ) {
-    warning('Concentrations contain spaces,
+  Thresholds = lapply(1:length(Slide_Descript), function(x)out$Thresholds)
+  for (x in 1:length(Slide_Descript)){
+    if( grepl(' ',Thresholds[[x]],perl = TRUE ) ) {
+      warning('Concentrations contain spaces ...
             removing spaces in names')
-    Thresholds <- gsub(" ", "",out$Thresholds, fixed = TRUE)
-  } else {
-    Thresholds <- out$Thresholds
-  }
-  #
-  # try to convert to a valid string
-  #
-  tryCatch({
-    Thresholds1 <- as.numeric(
-      unlist(strsplit(Thresholds, split =',')))
-  }, warning = function(cond) {
-    stop(paste0('Error in Thresholds input: ', Thresholds),
-         call. = FALSE)
-    message(cond)
-  })
-  #
-  Thresholds <- Thresholds1
-  #
-  # check that the number of thresholds
-  # == the number of concentrations
-  #
-  if (length(Concentration) != length(Thresholds)){
-    stop('the length of concentrations does
+      Thresholds[[x]] <- gsub(" ", "",Thresholds[[x]], fixed = TRUE)
+    } else {
+      Thresholds[[x]] <- Thresholds[[x]]
+    }
+    
+    #
+    # try to convert to a valid string
+    #
+    tryCatch({
+      Thresholds1 <- as.numeric(
+        unlist(strsplit(Thresholds[[x]], split =',')))
+    }, warning = function(cond) {
+      stop(paste0('Error in Thresholds input: ', Thresholds[[x]]))
+      message(cond)
+    },
+    finally={
+      Thresholds[[x]] <- Thresholds1
+    }
+    )
+    #
+    # check that the number of thresholds
+    # == the number of concentrations
+    #
+    if (length(Concentration) != length(Thresholds[[x]])){
+      stop('the length of concentrations does
          not equal the length of thresholds', call. = FALSE)
+    }
   }
+  names(Thresholds)<-Slide_Descript
 } else {
   stop('not thresholded pixel approach is not yet supported',
        call. = FALSE)
-  }
+}
 #
 # get the protocol type
 #
@@ -173,7 +179,10 @@ Protocol <- out$protocol.type
 ## ***********************************************
 #
 if (out$AB_Sparse==T){num.of.tiles<-100}else{num.of.tiles<-10}
-connected.pixels = matrix(1, length(Concentration), 1)
+#
+connected.pixels <- lapply(vector('list',length(Slide_Descript)), function(x) 
+  lapply(vector('list',length(Concentration)), function(x) 1))
+names(connected.pixels)<-Slide_Descript
 #
 # output list
 #
