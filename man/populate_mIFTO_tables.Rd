@@ -8,13 +8,15 @@ Last Edited 09/25/2019}
 \usage{
 populate_mIFTO_tables(
   Slide_Descript,
-  Tables,
+  Tables.byimage,
+  Tables.wholeslide,
   Image.IDs,
   Concentration,
   Antibody_Opal,
   Thresholds,
   Opal1,
-  table.names,
+  table.names.byimage,
+  tables.names.wholeslide,
   outchecked,
   pbi1,
   ii,
@@ -22,7 +24,9 @@ populate_mIFTO_tables(
 )
 }
 \arguments{
-\item{Tables}{the table of statistics gathered by PxP}
+\item{Tables.byimage}{the table of statistics gathered by PxP}
+
+\item{Tables.wholeslide}{the table of statistics gathered by PxP}
 
 \item{Image.IDs}{the list of image coordinates index as slide then concentration}
 

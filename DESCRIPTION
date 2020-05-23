@@ -16,7 +16,7 @@ Imports:
     tcltk,
     gWidgets,
     gWidgetstcltk,
-    snow,
+    parallel,
     BiocManager,
     reshape2
 License: What license it uses

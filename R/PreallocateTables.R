@@ -15,7 +15,8 @@
 #' @return exports the Tables list and the Image.IDs sublists 
 #' @export
 #'
-PreallocateTables <- function(Slide_Descript,Concentration, titration.type.names, table.names, paths){
+PreallocateTables <- function(
+  Slide_Descript,Concentration, titration.type.name, table.names, paths){
   #
   # preallocate tables with 4 sub tables for each type of graph/
   # analysis

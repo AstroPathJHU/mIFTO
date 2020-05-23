@@ -26,7 +26,7 @@
 PixelbyPixel <- function(out,pb) {
   ##############################input parameters########################
   #
-  ii = 0; update_pgbar(ii, pb, 'Browse For Folder')
+  ii = 0; mIFTO::update_pgbar(ii, pb, 'Browse For Folder')
   #
   # check input parameters and allocate some for eaiser indexing
   #
@@ -59,7 +59,6 @@ PixelbyPixel <- function(out,pb) {
                   *length(Concentration)), digits=2)
   #
   table.names.byimage <-c('SN.Ratio','T.Tests','Histograms')
-  ## need to add boxplots to by image version ##########################
   table.names.wholeslide<-c('SN.Ratio','T.Tests','Histograms','BoxPlots')
   #
   tables_out <- mIFTO::PreallocateTables(
@@ -73,7 +72,7 @@ PixelbyPixel <- function(out,pb) {
   a<-installed.packages()
   packages<-a[,1] 
   if (!is.element("EBImage", packages)){
-    BiocManager::install("EBImage", quietly=TRUE,ask=FALSE)
+    BiocManager::install("EBImage", ask=FALSE)
   }
   #
   ###############################Reads in data##########################

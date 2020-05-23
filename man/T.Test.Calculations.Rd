@@ -4,7 +4,7 @@
 \alias{T.Test.Calculations}
 \title{Used by analysis functions to do the T-Test calcualtions}
 \usage{
-T.Test.Calculations(positivity.data, Concentration, x, y, q)
+T.Test.Calculations(positivity.data, Concentration, x, q)
 }
 \arguments{
 \item{positivity.data}{a list of four images, positive, 
@@ -13,7 +13,9 @@ negative values then positive, negative binary image masks}
 \item{Concentration}{is a numeric vector of the denominator of all concentration ratios
 which a boxplot will be created for (ie 25, 50, 100)}
 
-\item{y}{is the numeric value of the current concentration}
+\item{x}{is the slide ID}
+
+\item{q}{is image id}
 }
 \value{
 a list with two data.frames; one with a t test for shift factor of log(x+1) and one with a shift factor of log(x+.001)

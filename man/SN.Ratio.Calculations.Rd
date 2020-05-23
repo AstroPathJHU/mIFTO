@@ -4,7 +4,7 @@
 \alias{SN.Ratio.Calculations}
 \title{Used by analysis funtions to calculate the signal to noise ratios}
 \usage{
-SN.Ratio.Calculations(positivity.data, Concentration, x, y, q)
+SN.Ratio.Calculations(positivity.data, Concentration, x, q)
 }
 \arguments{
 \item{positivity.data}{a list of four images, positive, 
@@ -15,7 +15,7 @@ which a boxplot will be created for (ie 25, 50, 100)}
 
 \item{x}{is the Slide Indicator (ie Tonsil2)}
 
-\item{y}{is the numeric value of the current concentration}
+\item{q}{is the imageid}
 }
 \value{
 a list with three data.frames; a sn means, sn medians, and a fraction of pos

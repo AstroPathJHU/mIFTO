@@ -4,36 +4,19 @@
 \alias{IC.Plots.Calculations}
 \title{Usedby analysis functions for violin plot calculations}
 \usage{
-IC.Plots.Calculations(
-  f,
-  data.in,
-  Opal1,
-  Concentration,
-  Thresholds,
-  x,
-  y,
-  colors
-)
+IC.Plots.Calculations(All.Images, Opal1, Concentration, x, y, colors)
 }
 \arguments{
-\item{f}{is the number of tiles to use when making boxplots}
-
-\item{data.in}{is a data.frame column of intensity values for the desired Opal}
-
 \item{Opal1}{is the Opal of interest (ie 540)}
 
 \item{Concentration}{is a numeric vector of the denominator of all concentration ratios
 which a boxplot will be created for (ie 25, 50, 100)}
-
-\item{Thresholds}{is a list of the thresholds at each concentration (ie 5,4,3)}
 
 \item{x}{is the Slide Indicator (ie Tonsil2)}
 
 \item{y}{is the numeric value of the current concentration}
 
 \item{colors}{is a vector of at least the length of the concentration vector}
-
-\item{Antibody}{is the name of the antibody which the boxplot data is being created for}
 }
 \value{
 explots a data.frame with the columns: Median, 1st (corresponds to 25th),

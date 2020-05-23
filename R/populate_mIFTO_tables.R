@@ -53,14 +53,11 @@ populate_mIFTO_tables <- function(
   for(x in Slide_Descript){
     for(y in 1:length(Concentration)){
       #
-      # update progress bar
-      #
-      #
       # update the progress bar
       #
       str1 = paste0("Processing ", x, ' 1:',Concentration[[y]])
       ii <- ii + pbi1; ii2 <- round(ii, digits = 0);
-      update_pgbar(ii, pb, paste0(
+      update_pgbar(ii2, pb, paste0(
         str1,' - Reading Tiffs and Generating Image-by-Image Statistics'))
       #
       # for each image gather the stats and return the images
@@ -83,14 +80,14 @@ populate_mIFTO_tables <- function(
       )
       #
       time <- round(time[['elapsed']], digits = 0)
-      update_pgbar(ii, pb, paste0(str1,' - Elapsed Time: ', time,' secs'))
+      update_pgbar(ii2, pb, paste0(str1,' - Elapsed Time: ', time,' secs'))
       #
       # reorganize to a table format to fit into the main 'Tables' list
       #
-      All.Images <-list()
+      All.Images <-vector('list',4)
       for (i.3 in 1:length(small.tables)){ # for each image
-        for (i.1 in table.names){
-          for (i.2 in 1:length(Tables[[i.1]])){
+        for (i.1 in table.names.byimage){
+          for (i.2 in 1:length(Tables.byimage[[i.1]])){
             Tables.byimage[[i.1]][[i.2]][[x]][[y]][[i.3]] <-
               small.tables[[i.3]][[i.1]][[i.2]]
           }
@@ -104,7 +101,7 @@ populate_mIFTO_tables <- function(
       }
       names(All.Images) <- c('pos','neg','pos.mask','neg.mask')
       ii <- ii + pbi1; ii2 <- round(ii, digits = 0);
-      update_pgbar(ii, pb, paste0(str1,' - Generating Whole Slide Statistics'))
+      update_pgbar(ii2, pb, paste0(str1,' - Generating Whole Slide Statistics'))
       #
       # do the calculations for each type of graph and store for whole slide
       #
@@ -114,11 +111,12 @@ populate_mIFTO_tables <- function(
         #
         small.wholeslide.tables<-list(
           'SN.Ratio' = mIFTO::SN.Ratio.Calculations(
-            positivity.data,Concentration,x,y,'All'),
+            All.Images,Concentration[y],x,'All'),
           'T.Tests' = mIFTO::T.Test.Calculations(
-            positivity.data,Concentration,x,y,'All'),
+            All.Images,Concentration[y],x,'All'),
           'Histograms' = mIFTO::Histogram.Calculations(
-            data.in,Concentration,x,y,'All'),
+            c(All.Images[[1]],All.Images[[2]]),
+            Concentration[y],x,'All'),
           'Boxplots' = IC.plots[['Boxplot.Calculations']]
         )
         for(i.1 in table.names.wholeslide){
@@ -132,13 +130,13 @@ populate_mIFTO_tables <- function(
       })
       #
       time <- round(time[['elapsed']], digits = 0)
-      update_pgbar(ii, pb, paste0(str1,' - Elapsed Time: ', time,' secs'))
+      update_pgbar(ii2, pb, paste0(str1,' - Elapsed Time: ', time,' secs'))
       #
       # reorganize the data into a workable format for building graphs later 
       # essentially turning the list into a data table
       #
       for(i.1 in table.names.byimage){
-        for(i.2 in 1:length(Tables[[i.1]])){
+        for(i.2 in 1:length(Tables.byimage[[i.1]])){
           Tables.byimage[[i.1]][[i.2]][[x]][[y]]<-do.call(
             rbind.data.frame,Tables.byimage[[i.1]][[i.2]][[x]][[y]])
         }}
@@ -178,6 +176,6 @@ populate_mIFTO_tables <- function(
     }
   }
   # 
-  return(c(Tables.byimage,Tables.wholeslide))
+  return(c(Tables.byimage,Tables.wholeslide, Violin.Plots))
   #
 }

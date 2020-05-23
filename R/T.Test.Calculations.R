@@ -11,12 +11,13 @@
 #'   negative values then positive, negative binary image masks
 #' @param Concentration is a numeric vector of the denominator of all concentration ratios
 #'  which a boxplot will be created for (ie 25, 50, 100)
-#' @param y is the numeric value of the current concentration
+#' @param x is the slide ID
+#' @param q is image id
 #' @return a list with two data.frames; one with a t test for shift factor of log(x+1) and one with a shift factor of log(x+.001)
 #' the data.frames hold two columns one for the t test value and one for the concentration of interest
 #' @export
 #'
-T.Test.Calculations<-function(positivity.data,Concentration,x,y,q){
+T.Test.Calculations<-function(positivity.data,Concentration,x,q){
 
   epsilon<-c(1,.001)
 
@@ -36,7 +37,7 @@ T.Test.Calculations<-function(positivity.data,Concentration,x,y,q){
 
       out[[epsilon.count]] <-cbind.data.frame(
         statistic = 0,
-        Concentration = Concentration[y],
+        Concentration = Concentration,
         Slide.ID = x, 
         Image.ID = q)
 
@@ -45,7 +46,7 @@ T.Test.Calculations<-function(positivity.data,Concentration,x,y,q){
       out[[epsilon.count]] <-cbind.data.frame(
           t.test(
             SignalOnly,NoiseOnly)['statistic'],
-        Concentration=Concentration[y],
+        Concentration=Concentration,
         Slide.ID = x,
         Image.ID = q)
     }}

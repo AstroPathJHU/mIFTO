@@ -4,7 +4,7 @@
 \alias{Histogram.Calculations}
 \title{Used by analysis funtions to do the calculations for the histogram graphs}
 \usage{
-Histogram.Calculations(data.in, Concentration, x, y, q)
+Histogram.Calculations(data.in, Concentration, x, q)
 }
 \arguments{
 \item{data.in}{is the image of interest}
@@ -12,7 +12,9 @@ Histogram.Calculations(data.in, Concentration, x, y, q)
 \item{Concentration}{is a numeric vector of the denominator of all concentration ratios
 which a boxplot will be created for (ie 25, 50, 100)}
 
-\item{y}{is the numeric value of the current concentration}
+\item{x}{is the slide id}
+
+\item{q}{is the image id}
 }
 \value{
 a list with two data.frames; one with a histogram for shift factor of log(x+1) and one with a shift factor of log(x+.001)

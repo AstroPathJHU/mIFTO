@@ -52,8 +52,8 @@ GeneratePxPData <- function(
   }, finally = {})
   #
   if(length(data.in) != 1){
-    message('Error in Slide names or input')
-    stop(paste0('Search for', str,' turned up more than one image'),
+    stop(paste0('Error in Slide names or input: ',
+                'Search for', str,' turned up more than one image'),
          call. = FALSE)
   }
   data.in <- data.in[[1]]
@@ -84,25 +84,24 @@ GeneratePxPData <- function(
   #
   # get the positvity data
   #
-  positivity.data <- mIFTO::DefineImagePositivity(data.in,Thresholds[y],connected.pixels[y])
+  positivity.data <- mIFTO::DefineImagePositivity(
+    data.in,Thresholds[[x]][y],connected.pixels[[x]][y])
+  positivity.data.out <- lapply(
+    1:length(positivity.data),
+    function(x) c(positivity.data[[x]]))
   #
   # do the calculations for each type of graph and store
   #
   small.tables<-list(
-    
     'SN.Ratio' = mIFTO::SN.Ratio.Calculations(
-      positivity.data,Concentration,x,y,q),
-    
+      positivity.data,Concentration[y],x,q),
     'T.Tests' = mIFTO::T.Test.Calculations(
-      positivity.data,Concentration,x,y,q),
-    
+      positivity.data,Concentration[y],x,q),
     'Histograms' = mIFTO::Histogram.Calculations(
-      data.in,Concentration,x,y,q),
-    
+      data.in,Concentration[y],x,q),
     'Image.ID' = paste0(
       '[',q,']'),
-    
-    'Image' = data.in
+    'Image' = positivity.data.out
   )
   #
   # the rest of the loop moves the data into a format that allows

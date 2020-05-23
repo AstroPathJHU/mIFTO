@@ -11,12 +11,12 @@
 #' @param Concentration is a numeric vector of the denominator of all concentration ratios
 #'  which a boxplot will be created for (ie 25, 50, 100)
 #' @param x is the Slide Indicator (ie Tonsil2)
-#' @param y is the numeric value of the current concentration
+#' @param q is the imageid
 #' @return a list with three data.frames; a sn means, sn medians, and a fraction of pos
 #' @export
 #'
 SN.Ratio.Calculations<-function(
- positivity.data,Concentration,x,y,q){
+ positivity.data,Concentration,x,q){
   
   #
   Signal <- positivity.data[['pos']]
@@ -36,18 +36,18 @@ SN.Ratio.Calculations<-function(
   SN.Ratio.Median <- cbind.data.frame(
     Signal = SignalMed,Noise = NoiseMed,
     SN_Ratio = SignalMed/NoiseMed, Slide.ID = x,
-    Concentration = Concentration[y],
+    Concentration = Concentration,
     Image.ID = q)
   #
   SN.Ratio.Mean <- cbind.data.frame(
     Signal = SignalMean,Noise = NoiseMean,
     SN_Ratio = SignalMean/NoiseMean, Slide.ID = x,
-    Concentration = Concentration[y],
+    Concentration = Concentration,
     Image.ID = q)
   #
   Positivity.Inside <- cbind.data.frame(
     fraction = SignalN / Npixels, Slide.ID = x,
-    Concentration = Concentration[y],
+    Concentration = Concentration,
     Image.ID = q
   )
   #
