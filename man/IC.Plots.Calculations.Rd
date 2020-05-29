@@ -7,6 +7,8 @@
 IC.Plots.Calculations(All.Images, Opal1, Concentration, x, y, colors)
 }
 \arguments{
+\item{All.Images}{the full image vector of a case}
+
 \item{Opal1}{is the Opal of interest (ie 540)}
 
 \item{Concentration}{is a numeric vector of the denominator of all concentration ratios

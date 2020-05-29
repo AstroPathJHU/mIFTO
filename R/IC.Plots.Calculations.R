@@ -8,7 +8,7 @@
 #'of decile, thresholded, and all data given IF pixel data; the function;
 #' is also designed to return boxplots of the selected data
 #'
-#' @param All.Images
+#' @param All.Images the full image vector of a case
 #' @param Opal1 is the Opal of interest (ie 540)
 #' @param Concentration is a numeric vector of the denominator of all concentration ratios
 #'  which a boxplot will be created for (ie 25, 50, 100)

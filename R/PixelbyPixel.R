@@ -31,6 +31,7 @@ PixelbyPixel <- function(out,pb) {
   # check input parameters and allocate some for eaiser indexing
   #
   outchecked <- mIFTO::CheckVars(out)
+  
   wd <- outchecked$wd
   Slide_Descript <- outchecked$Slide_Descript
   Antibody <- outchecked$Antibody
@@ -39,9 +40,14 @@ PixelbyPixel <- function(out,pb) {
   Concentration <- outchecked$Concentration
   Thresholds <- outchecked$Thresholds
   num.of.tiles <- outchecked$num.of.tiles
+  flowout <- outchecked$flowout
+  Protocol <- outchecked$Protocol
+  paths <- outchecked$paths
+  titration.type.name <- outchecked$titration.type.name
+  connected.pixels <- outchecked$connected.pixels
   #
   ##################prepares some parameters for the graphs#############
-  #  
+  # 
   graph.out <- mIFTO::CreateMyTheme()
   theme1 <- graph.out$theme1
   colors <- graph.out$colors
@@ -51,7 +57,7 @@ PixelbyPixel <- function(out,pb) {
   ##############################create results folders##################
   #
   ii = 1; update_pgbar(ii, pb, 'Generating Folders')
-  mIFTO::CreateDir(wd,'pixels', outchecked$flowout)
+  mIFTO::CreateDir(wd,'pixels', flowout)
   #
   #############preallocating tables to store results####################
   #
@@ -62,8 +68,8 @@ PixelbyPixel <- function(out,pb) {
   table.names.wholeslide<-c('SN.Ratio','T.Tests','Histograms','BoxPlots')
   #
   tables_out <- mIFTO::PreallocateTables(
-    Slide_Descript, Concentration, outchecked$titration.type.name, 
-    table.names.wholeslide, outchecked$paths)
+    Slide_Descript, Concentration, titration.type.name, 
+    table.names.wholeslide, paths)
   Tables.byimage <- tables_out$Tables.byimage
   Tables.wholeslide <- tables_out$Tables.wholeslide
   Image.IDs <- tables_out$Image.IDs
@@ -77,13 +83,18 @@ PixelbyPixel <- function(out,pb) {
   #
   ###############################Reads in data##########################
   #
-  Tables <- populate_mIFTO_tables(
-    Slide_Descript, Tables.byimage, Tables.wholeslide, Image.IDs,
-    Concentration, Antibody_Opal, Thresholds, Opal1, 
-    table.names.byimage, tables.names.wholeslide, outchecked, pbi1, ii, pb
-    )
+  time <- system.time(
+    Tables <- populate_mIFTO_tables(
+      Slide_Descript, Tables.byimage, Tables.wholeslide, Image.IDs,
+      Concentration, Antibody_Opal, Thresholds, Opal1, 
+      table.names.byimage, tables.names.wholeslide, flowout, Protocols,
+      paths, titration.type.name, connected.pixels,
+      pbi1, ii, pb)
+      )
+  time <- round(time[['elapsed']], digits = 0)
+  update_pgbar(90, pb, paste0('Finished gathering image data - Elapsed Time: ', time,' secs'))
   #
-  gc(reset=T)
+  gc(reset=T, verbose = F)
   #
   ###############################generate plots#########################
   #

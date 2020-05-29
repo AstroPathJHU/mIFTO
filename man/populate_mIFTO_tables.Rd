@@ -17,7 +17,11 @@ populate_mIFTO_tables(
   Opal1,
   table.names.byimage,
   tables.names.wholeslide,
-  outchecked,
+  flowout,
+  Protocols,
+  paths,
+  titration.type.name,
+  connected.pixels,
   pbi1,
   ii,
   pb
@@ -39,9 +43,9 @@ populate_mIFTO_tables(
 
 \item{Opal1}{the opal value of interest}
 
-\item{outchecked}{the checked version (by mIFTO::CheckVars) of the UI output}
-
 \item{Slide_Desctipt}{a unique identifier for each slide to be analyzed}
+
+\item{outchecked}{the checked version (by mIFTO::CheckVars) of the UI output}
 }
 \value{
 

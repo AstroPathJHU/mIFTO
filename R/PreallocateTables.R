@@ -12,6 +12,9 @@
 #'
 #' @param Slide_Desctipt a unique identifier for each slide to be analyzed
 #' @param Concentration a numeric vector of concentrations used in the titration
+#' @param titration.type.name the titration type for a given dilution set (Primary or TSA)
+#' @param table.names the table names for whole slide names 
+#' @param paths the data paths, one data path for each concentration
 #' @return exports the Tables list and the Image.IDs sublists 
 #' @export
 #'

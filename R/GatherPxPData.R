@@ -107,5 +107,7 @@ GeneratePxPData <- function(
   # the rest of the loop moves the data into a format that allows
   # the data to be more readily available
   #
+  rm(positivity.data, positivity.data.out, data.in)
   return(small.tables)
+  rm(small.tables)
   }
