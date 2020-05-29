@@ -10,7 +10,7 @@
 #'occur
 #'
 #'
-#' @param out is the list of vairables given by the GUI function
+#' @param out is the list of variables given by the GUI function
 #' @return exports multiple variables for use in the main titration codes
 #' @export
 #'

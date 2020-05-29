@@ -18,7 +18,8 @@ parallel_invoke_gpxp(
   paths,
   connected.pixels,
   flowout,
-  Opal1
+  Opal1,
+  cl
 )
 }
 \arguments{
@@ -28,21 +29,24 @@ parallel_invoke_gpxp(
 
 \item{y}{the numeric of which index from the concentration vector to use}
 
-\item{Image.IDs}{the image coordinates of the current image as a comma separated pair}
+\item{Image.IDs}{the image coordinates of the current image as a comma 
+separated pair}
 
-\item{Antibody_Opal}{the paired string for an antibody opal pair, designated as 
-"AB (Opal NNN)"}
+\item{Antibody_Opal}{the paired string for an antibody opal pair, 
+designated as "AB (Opal NNN)"}
 
-\item{titration.type.name}{the type of titration that was performed (TSA or Primary)}
+\item{titration.type.name}{the type of titration that was performed 
+(TSA or Primary)}
 
 \item{Protocol}{the scanning protocol used (7color or 9color)}
 
 \item{Thresholds}{a list of thresholds used for each concentration and slide}
 
-\item{paths}{the paths to the data as a list, with an element for each concentration}
+\item{paths}{the paths to the data as a list, with an element for each
+concentration}
 
-\item{connected.pixels}{the number of pixels that a pixel must be connected to for 
-positivity measures}
+\item{connected.pixels}{the number of pixels that a pixel must be connected 
+to for positivity measures}
 
 \item{flowout}{logical for whether or not flow like results will be produced}
 
@@ -53,8 +57,8 @@ positivity measures}
 }
 \description{
 This function is desgined launch the parallelization of the gpxp function in 
-the mIFTO code. It is used to create a local environment with only necessary data
-for the cluster objects.
+the mIFTO code. It is used to create a local environment with only necessary 
+data for the cluster objects.
 }
 \details{
 It is meant to be run through the RUN function

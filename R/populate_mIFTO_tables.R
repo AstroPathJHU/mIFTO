@@ -1,8 +1,9 @@
 #########################populate_mIFTO_tables#################################
 
-#'Used to loop through each image, call the generate func and map back to Tables;
+#'Used to loop through each image, call the generate func and map back to 
+#'Tables;
 #'Created By: Benjamin Green;
-#'Last Edited 09/25/2019
+#'Last Edited 05/29/2020
 #'
 #'This function is desgined to do analysis for IF titration series 
 #'in Pixel by Pixel data provding output for each IMAGE individually 
@@ -14,23 +15,26 @@
 #' @param Slide_Desctipt a unique identifier for each slide to be analyzed
 #' @param Tables.byimage the table of statistics gathered by PxP
 #' @param Tables.wholeslide the table of statistics gathered by PxP
-#' @param Image.IDs the list of image coordinates index as slide then concentration 
+#' @param Image.IDs the list of image coordinates index as slide then 
+#' concentration 
 #' @param Concentration a numeric vector of concentrations used in the titration
-#' @param Antibody_Opal the paired string for an antibody opal pair, designated as 
-#' "AB (Opal NNN)"
+#' @param Antibody_Opal the paired string for an antibody opal pair, designated
+#'  as "AB (Opal NNN)"
 #' @param Thresholds a list of thresholds used for each concentration and slide
 #' @param Opal1 the opal value of interest
 #' @param table.names.byimage the table names for the by-image table
 #' @param table.names.wholeslide the table names for the whole slide table
 #' @param flowout logical for whether or not flow like results will be produced
 #' (1 for produce, 0 for don't)
-#' @param Protocols the protcol type (7color or 9color)
+#' @param Protocols the protocol type (7color or 9color)
 #' @param paths the data paths, one data path for each concentration
-#' @param titration.type.name the 
-#' @param connected.pixels
-#' @param pb.step
-#' @param pb.count
-#' @param pb.Object
+#' @param titration.type.name the titration type for a given dilution set 
+#' (Primary or TSA)
+#' @param connected.pixels the number of pixels that a pixel must be connected 
+#' to for positivity measures
+#' @param pb.step step size for progress bar
+#' @param pb.count current count for progress bar
+#' @param pb.Object progress bar object
 #' @return 
 #' @export
 #'  
@@ -44,7 +48,7 @@ populate_mIFTO_tables <- function(
   # reads the data in and sends it through each of the processes one
   # image at a time
   #
-  update_pgbar(pb.count, pb.Object, 'Reading in Images')
+  mIFTO::update_pgbar(pb.count, pb.Object, 'Reading in Images')
   #
   # start a parallel cluster
   #
@@ -52,6 +56,8 @@ populate_mIFTO_tables <- function(
   if (numcores > 10){
     numcores <- 10
   }
+  cl <- parallel::makeCluster(
+    getOption("cl.cores", numcores), useXDR = FALSE, methods = FALSE)
   #
   for(x in Slide_Descript){
     for(y in 1:length(Concentration)){
@@ -60,7 +66,7 @@ populate_mIFTO_tables <- function(
       #
       str1 = paste0("Processing ", x, ' 1:',Concentration[[y]])
       pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-      update_pgbar(pb.count2, pb.Object, paste0(
+      mIFTO::update_pgbar(pb.count2, pb.Object, paste0(
         str1,' - Reading Tiffs and Generating Image-by-Image Statistics - ',
         length(Image.IDs[[x]][[y]])))
       #
@@ -68,12 +74,13 @@ populate_mIFTO_tables <- function(
         small.tables.byimage <- mIFTO::parallel_invoke_gpxp(
           Concentration, x, y, Image.IDs, Antibody_Opal, 
           titration.type.name, Protocol, Thresholds, paths, 
-          connected.pixels, flowout, Opal1
+          connected.pixels, flowout, Opal1, cl
           )
       )
       #
       time <- round(time[['elapsed']], digits = 0)
-      update_pgbar(pb.count2, pb.Object, paste0(str1,' - Elapsed Time: ', time,' secs'))
+      mIFTO::update_pgbar(pb.count2, pb.Object, paste0(
+        str1,' - Elapsed Time: ', time,' secs'))
       #
       # reorganize to a table format to fit into the main 'Tables' list
       #
@@ -86,15 +93,16 @@ populate_mIFTO_tables <- function(
           }
         }
         #
-        # get the image data out for each image so that total slide-conc. pair metrics can be 
-        # produced
+        # get the image data out for each image so that total slide-conc.
+        # pair metrics can be produced
         #
         All.Images <- lapply(1:4, function(x) c(
           All.Images[[x]],small.tables.byimage[[i.3]][[5]][[x]]))
       }
       names(All.Images) <- c('pos','neg','pos.mask','neg.mask')
       pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-      update_pgbar(pb.count2, pb.Object, paste0(str1,' - Generating Whole Slide Statistics'))
+      mIFTO::update_pgbar(pb.count2, pb.Object, paste0(
+        str1,' - Generating Whole Slide Statistics'))
       #
       # do the calculations for each type of graph and store for whole slide
       #
@@ -127,7 +135,8 @@ populate_mIFTO_tables <- function(
       })
       #
       time <- round(time[['elapsed']], digits = 0)
-      update_pgbar(pb.count2, pb.Object, paste0(str1,' - Elapsed Time: ', time,' secs'))
+      mIFTO::update_pgbar(pb.count2, pb.Object, paste0(
+        str1,' - Elapsed Time: ', time,' secs'))
       #
       # reorganize the data into a workable format for building graphs later 
       # essentially turning the list into a data table
@@ -139,6 +148,8 @@ populate_mIFTO_tables <- function(
         }
       }
     }
+    #
+    parallel::stopCluster(cl)
     #
     # for each Analysis Table in 'Tables'
     # pair the data down into a data

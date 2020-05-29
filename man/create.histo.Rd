@@ -9,7 +9,8 @@ create.histo(data.in, bin.estimate)
 \arguments{
 \item{data.in}{is a vector of the data of interest}
 
-\item{bin.estimate}{is the estimation of the bin to use if the FD choice fails}
+\item{bin.estimate}{is the estimation of the bin to use if the FD
+choice fails}
 }
 \value{
 a data.frame with mids, density, and counts columns
@@ -20,6 +21,8 @@ Created By: Benjamin Green, Charles Roberts
 Last Edited 11/12/2018
 }
 \details{
-Takes in a list of values as a data.frame and outputs a histogram caculated based of the Freedman-Diaconis' choice for
-bin number if that calculation fails it creates a histogram based off the bin.estimate value
+Takes in a list of values as a data.frame and outputs a 
+histogram caculated based of the Freedman-Diaconis' choice for
+bin number if that calculation fails it creates a histogram 
+based off the bin.estimate value
 }

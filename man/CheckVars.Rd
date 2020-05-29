@@ -10,7 +10,7 @@ Last Edited 09/24/2019}
 CheckVars(out)
 }
 \arguments{
-\item{out}{is the list of vairables given by the GUI function}
+\item{out}{is the list of variables given by the GUI function}
 }
 \value{
 exports multiple variables for use in the main titration codes

@@ -7,10 +7,10 @@ IF titrations;
 Created By: Benjamin Green, Charles Roberts;
 Last Edited 09/25/2019}
 \usage{
-PixelbyPixel(out, pb)
+PixelbyPixel(out, pb.Object)
 }
 \arguments{
-\item{out}{is the list of vairables given by the GUI function}
+\item{out}{is the list of variables given by the GUI function}
 
 \item{pb}{is the progress bar created by the GUI}
 }

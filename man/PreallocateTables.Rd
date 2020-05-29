@@ -17,6 +17,12 @@ PreallocateTables(
 \arguments{
 \item{Concentration}{a numeric vector of concentrations used in the titration}
 
+\item{titration.type.name}{the titration type for a given dilution set (Primary or TSA)}
+
+\item{table.names}{the table names for whole slide names}
+
+\item{paths}{the data paths, one data path for each concentration}
+
 \item{Slide_Desctipt}{a unique identifier for each slide to be analyzed}
 }
 \value{

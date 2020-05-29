@@ -15,7 +15,7 @@
 #''sparse' option is choose in the GUI) if threshold information is
 #' filled out in the GUI; threshold analysis will be run
 #'
-#' @param out is the list of vairables given by the GUI function
+#' @param out is the list of variables given by the GUI function
 #' @param pb is the progress bar created by the GUI
 #' @return exports a variety of graphs displayed in the documentation
 #'  Such as SNRatio graphs, t statisitics and graphs,
@@ -23,15 +23,14 @@
 #'  for images, positivity measures given thresholds
 #' @export
 #'
-PixelbyPixel <- function(out,pb) {
+PixelbyPixel <- function(out,pb.Object) {
   ##############################input parameters########################
   #
-  ii = 0; mIFTO::update_pgbar(ii, pb, 'Browse For Folder')
+  pb.count = 0; mIFTO::update_pgbar(pb.count, pb.Object, 'Browse For Folder')
   #
   # check input parameters and allocate some for eaiser indexing
   #
   outchecked <- mIFTO::CheckVars(out)
-  
   wd <- outchecked$wd
   Slide_Descript <- outchecked$Slide_Descript
   Antibody <- outchecked$Antibody
@@ -56,12 +55,12 @@ PixelbyPixel <- function(out,pb) {
              max(Concentration)+((min(Concentration))/2))
   ##############################create results folders##################
   #
-  ii = 1; update_pgbar(ii, pb, 'Generating Folders')
+  pb.count = 1; mIFTO::update_pgbar(pb.count, pb.Object, 'Generating Folders')
   mIFTO::CreateDir(wd,'pixels', flowout)
   #
-  #############preallocating tables to store results####################
+  #############pre-allocating tables to store results###################
   #
-  pbi1<-round(89/(2*length(Slide_Descript)
+  pb.step<-round(89/(2*length(Slide_Descript)
                   *length(Concentration)), digits=2)
   #
   table.names.byimage <-c('SN.Ratio','T.Tests','Histograms')
@@ -84,38 +83,39 @@ PixelbyPixel <- function(out,pb) {
   ###############################Reads in data##########################
   #
   time <- system.time(
-    Tables <- populate_mIFTO_tables(
+    Tables <- mIFTO::populate_mIFTO_tables(
       Slide_Descript, Tables.byimage, Tables.wholeslide, Image.IDs,
       Concentration, Antibody_Opal, Thresholds, Opal1, 
-      table.names.byimage, tables.names.wholeslide, flowout, Protocols,
+      table.names.byimage, table.names.wholeslide, flowout, Protocols,
       paths, titration.type.name, connected.pixels,
-      pbi1, ii, pb)
+      pb.step, pb.count, pb.Object)
       )
   time <- round(time[['elapsed']], digits = 0)
-  update_pgbar(90, pb, paste0('Finished gathering image data - Elapsed Time: ', time,' secs'))
+  mIFTO::update_pgbar(90, pb.Object, paste0(
+    'Finished gathering image data - Elapsed Time: ', time, ' secs'))
   #
   gc(reset=T, verbose = F)
   #
   ###############################generate plots#########################
   #
-  update_pgbar(90, pb, 'Write out the fractions tables')
+  mIFTO::update_pgbar(90, pb.Object, 'Write out the fractions tables')
   #
   write_fracs(wd, Antibody_Opal, Slide_Descript,
               Concentration, Tables, IHC)
   #
-  update_pgbar(91, pb, 'Generating Signal to Noise Ratio Graphs')
+  mIFTO::update_pgbar(91, pb.Object, 'Generating Signal to Noise Ratio Graphs')
   #
   sn_plots <- map_snratio_plots(wd, Antibody_Opal, Slide_Descript,
                                 Concentration, Tables, theme1)
   #
-  update_pgbar(92, pb, 'Generating T Test Graphs')
+  mIFTO::update_pgbar(92, pb.Object, 'Generating T Test Graphs')
   #
   tplots <- map_ttest_plots(wd, Antibody_Opal, Slide_Descript,
                             Concentration, Tables, theme1, colors)
   #
   # print some graphs
   #
-  update_pgbar(93, pb, 'Printing Graphs')
+  mIFTO::update_pgbar(93, pb.Object, 'Printing Graphs')
   #
   plots <- c(tplots, sn_plots)
   glist <- lapply(plots, ggplot2::ggplotGrob)
@@ -135,16 +135,16 @@ PixelbyPixel <- function(out,pb) {
     finally = {})
   gc(reset=T)
   #
-  ###############################Histogram Graphs########################
+  ###############################Histogram Graphs ########################
   #
-  ii = 94;update_pgbar(ii, pb, 'Generating Histogram Graphs')
+  ii = 94;mIFTO::update_pgbar(ii, pb.Object, 'Generating Histogram Graphs')
   #    
   map_and_write_histograms(wd, Antibody_Opal, Slide_Descript,
                            Concentration, Tables, theme1, colors)
   #
   ############################### Finished ###############################
   #
-  update_pgbar(100, pb, 'Fin')
+  mIFTO::update_pgbar(100, pb.Object, 'Fin')
   gc(reset=T)
   #
 }

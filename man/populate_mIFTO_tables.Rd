@@ -2,9 +2,10 @@
 % Please edit documentation in R/populate_mIFTO_tables.R
 \name{populate_mIFTO_tables}
 \alias{populate_mIFTO_tables}
-\title{Used to loop through each image, call the generate func and map back to Tables;
+\title{Used to loop through each image, call the generate func and map back to 
+Tables;
 Created By: Benjamin Green;
-Last Edited 09/25/2019}
+Last Edited 05/29/2020}
 \usage{
 populate_mIFTO_tables(
   Slide_Descript,
@@ -16,15 +17,15 @@ populate_mIFTO_tables(
   Thresholds,
   Opal1,
   table.names.byimage,
-  tables.names.wholeslide,
+  table.names.wholeslide,
   flowout,
   Protocols,
   paths,
   titration.type.name,
   connected.pixels,
-  pbi1,
-  ii,
-  pb
+  pb.step,
+  pb.count,
+  pb.Object
 )
 }
 \arguments{
@@ -32,20 +33,42 @@ populate_mIFTO_tables(
 
 \item{Tables.wholeslide}{the table of statistics gathered by PxP}
 
-\item{Image.IDs}{the list of image coordinates index as slide then concentration}
+\item{Image.IDs}{the list of image coordinates index as slide then 
+concentration}
 
 \item{Concentration}{a numeric vector of concentrations used in the titration}
 
-\item{Antibody_Opal}{the paired string for an antibody opal pair, designated as 
-"AB (Opal NNN)"}
+\item{Antibody_Opal}{the paired string for an antibody opal pair, designated
+as "AB (Opal NNN)"}
 
 \item{Thresholds}{a list of thresholds used for each concentration and slide}
 
 \item{Opal1}{the opal value of interest}
 
-\item{Slide_Desctipt}{a unique identifier for each slide to be analyzed}
+\item{table.names.byimage}{the table names for the by-image table}
 
-\item{outchecked}{the checked version (by mIFTO::CheckVars) of the UI output}
+\item{table.names.wholeslide}{the table names for the whole slide table}
+
+\item{flowout}{logical for whether or not flow like results will be produced
+(1 for produce, 0 for don't)}
+
+\item{Protocols}{the protocol type (7color or 9color)}
+
+\item{paths}{the data paths, one data path for each concentration}
+
+\item{titration.type.name}{the titration type for a given dilution set 
+(Primary or TSA)}
+
+\item{connected.pixels}{the number of pixels that a pixel must be connected 
+to for positivity measures}
+
+\item{pb.step}{step size for progress bar}
+
+\item{pb.count}{current count for progress bar}
+
+\item{pb.Object}{progress bar object}
+
+\item{Slide_Desctipt}{a unique identifier for each slide to be analyzed}
 }
 \value{
 
