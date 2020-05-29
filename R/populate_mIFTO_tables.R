@@ -58,6 +58,7 @@ populate_mIFTO_tables <- function(
   }
   cl <- parallel::makeCluster(
     getOption("cl.cores", numcores), useXDR = FALSE, methods = FALSE)
+  parallel::clusterEvalQ(cl, library(mIFTO))
   #
   for(x in Slide_Descript){
     for(y in 1:length(Concentration)){
