@@ -9,7 +9,7 @@ map_snratio_plots(
   Antibody_Opal,
   Slide_Descript,
   Concentration,
-  Tables,
+  tables_in,
   theme1
 )
 }
@@ -21,11 +21,11 @@ map_snratio_plots(
 
 \item{Concentration}{a numeric vector of concentrations used in the titration}
 
-\item{Tables}{the table of statistics gathered by PxP}
-
 \item{theme1}{the theme for the graphs}
 
 \item{Slide_Desctipt}{a unique identifier for each slide to be analyzed}
+
+\item{Tables}{the table of statistics gathered by PxP}
 }
 \value{
 exports a ggplot object to be printed for viewing

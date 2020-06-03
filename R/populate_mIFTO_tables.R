@@ -58,7 +58,7 @@ populate_mIFTO_tables <- function(
   }
   cl <- parallel::makeCluster(
     getOption("cl.cores", numcores), useXDR = FALSE, methods = FALSE)
-  parallel::clusterEvalQ(cl, library(mIFTO))
+  parallel::clusterEvalQ(cl, library(mIFTO));
   #
   for(x in Slide_Descript){
     for(y in 1:length(Concentration)){
@@ -150,8 +150,6 @@ populate_mIFTO_tables <- function(
       }
     }
     #
-    parallel::stopCluster(cl)
-    #
     # for each Analysis Table in 'Tables'
     # pair the data down into a data
     #
@@ -170,6 +168,8 @@ populate_mIFTO_tables <- function(
     }
   }
   #
+  parallel::stopCluster(cl)
+  #
   for(i.1 in table.names.byimage){
     for(w in 1:length(Tables.byimage[[i.1]])){
       Tables.byimage[[i.1]][[w]]<-do.call(
@@ -184,6 +184,8 @@ populate_mIFTO_tables <- function(
     }
   }
   # 
-  return(c(Tables.byimage,Tables.wholeslide, Violin.Plots))
+  out <- list(Tables.byimage = Tables.byimage,
+              Tables.wholeslide = Tables.wholeslide,
+              Violin.Plots = Violin.Plots)
   #
 }

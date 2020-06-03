@@ -17,21 +17,17 @@
 #'
 SN.Ratio.Calculations<-function(
  positivity.data,Concentration,x,q){
-  
   #
   Signal <- positivity.data[['pos']]
   SignalOnly <- Signal[positivity.data[['pos.mask']] == 1]
   SignalMed <- median(SignalOnly)
   SignalMean <- mean(SignalOnly)
-  SignalN <- length(SignalOnly)
   #
   Noise <- positivity.data[['neg']]
   NoiseOnly <- Noise[positivity.data[['neg.mask']] == 1]
   NoiseMed <- median(NoiseOnly)
   NoiseMean <- mean(NoiseOnly)
   NoiseN <- length(NoiseOnly)
-  #
-  Npixels <- length(Signal)
   #
   SN.Ratio.Median <- cbind.data.frame(
     Signal = SignalMed,Noise = NoiseMed,
@@ -45,13 +41,27 @@ SN.Ratio.Calculations<-function(
     Concentration = Concentration,
     Image.ID = q)
   #
-  Positivity.Inside <- cbind.data.frame(
-    fraction = SignalN / Npixels, Slide.ID = x,
-    Concentration = Concentration,
-    Image.ID = q
-  )
+  if (q == 'All'){
+    #
+    out<-list('SN.Ratio.Median' = SN.Ratio.Median,
+              'SN.Ratio.Mean' = SN.Ratio.Mean)
+    #
+  } else {
+    #
+    SignalN <- length(SignalOnly)
+    Npixels <- length(Signal)
+    #
+    Positivity.Inside <- cbind.data.frame(
+      fraction = SignalN / Npixels, Slide.ID = x,
+      Concentration = Concentration,
+      Image.ID = q
+    )
+    #
+    out<-list('SN.Ratio.Median' = SN.Ratio.Median,
+              'SN.Ratio.Mean' = SN.Ratio.Mean,
+              'Positivity.Inside'=Positivity.Inside)
+    #
+  }
   #
-  out<-list('SN.Ratio.Median' = SN.Ratio.Median,
-            'SN.Ratio.Mean' = SN.Ratio.Mean,
-            'Positivity.Inside'=Positivity.Inside)
+
   out}

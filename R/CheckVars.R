@@ -194,5 +194,4 @@ outnew <- list(wd = wd, Slide_Descript = Slide_Descript,
                Protocol = Protocol,paths = paths,
                titration.type.name = titration.type.name,num.of.tiles = num.of.tiles,
                connected.pixels = connected.pixels)
-return(outnew)
 }

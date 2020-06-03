@@ -19,6 +19,10 @@
 #' @export
 #'
 sn_ratio_theme <- function(tbl, titl, xtitl, ytitl, theme1){
+  #
+  colvals <- c('red'='red','blue'='blue','black'='black')
+  collbls <- c('red'='S/N Ratio','blue'='Median Noise','black'='Median Signal')
+  #
   ggplot2::ggplot(
     data=tbl,ggplot2::aes(x=as.numeric(Concentration), y=SN_Ratio)) +
     ggplot2::geom_line(ggplot2::aes(

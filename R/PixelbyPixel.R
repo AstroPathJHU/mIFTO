@@ -71,6 +71,7 @@ PixelbyPixel <- function(out,pb.Object) {
     table.names.wholeslide, paths)
   Tables.byimage <- tables_out$Tables.byimage
   Tables.wholeslide <- tables_out$Tables.wholeslide
+  Tables.wholeslide$SN.Ratio$Positivity <- NULL
   Image.IDs <- tables_out$Image.IDs
   Violin.Plots <- tables_out$Violin.Plots
   #
@@ -101,17 +102,19 @@ PixelbyPixel <- function(out,pb.Object) {
   mIFTO::update_pgbar(90, pb.Object, 'Write out the fractions tables')
   #
   write_fracs(wd, Antibody_Opal, Slide_Descript,
-              Concentration, Tables, IHC)
+              Concentration, Tables$Tables.byimage, IHC)
   #
   mIFTO::update_pgbar(91, pb.Object, 'Generating Signal to Noise Ratio Graphs')
   #
-  sn_plots <- map_snratio_plots(wd, Antibody_Opal, Slide_Descript,
-                                Concentration, Tables, theme1)
+  sn_plots <- map_snratio_plots(
+    wd, Antibody_Opal, Slide_Descript,
+    Concentration, Tables$Tables.byimage, theme1)
   #
   mIFTO::update_pgbar(92, pb.Object, 'Generating T Test Graphs')
   #
-  tplots <- map_ttest_plots(wd, Antibody_Opal, Slide_Descript,
-                            Concentration, Tables, theme1, colors)
+  tplots <- map_ttest_plots(
+    wd, Antibody_Opal, Slide_Descript,
+    Concentration, Tables$Tables.wholeslide, theme1, colors)
   #
   # print some graphs
   #

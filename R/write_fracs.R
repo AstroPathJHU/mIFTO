@@ -19,13 +19,15 @@
 #' @return exports the fraction spreadsheets
 #' @export
 #'
-write_fracs <- function (wd, Antibody_Opal, Slide_Descript, Concentration, Tables, IHC){
+write_fracs <- function (wd, Antibody_Opal, Slide_Descript, Concentration,
+                         tables_in, IHC){
   #
   # write out fractions for positivity
   #
   str = paste0(
-    wd,'/Results.pixels/stats/fractions/Raw Fractions of + Pixels ',Antibody_Opal,'.csv')
-  tbl <- Tables[['SN.Ratio']][['Positivity']]
+    wd,'/Results.pixels/stats/fractions/Raw Fractions of + Pixels ',
+    Antibody_Opal,'.csv')
+  tbl <- tables_in[['SN.Ratio']][['Positivity']]
   #
   tbl <- dplyr::mutate(
     dplyr::group_by(
@@ -37,7 +39,8 @@ write_fracs <- function (wd, Antibody_Opal, Slide_Descript, Concentration, Table
   tbl2 <- reshape2::dcast(
     tbl, Concentration + r ~ Slide.ID, value.var = c("Image.ID"))
   tbl <- dplyr::full_join(tbl1, tbl2, c('r','Concentration'), name = c('l', 'r'))
-  nn = c('Concentration','r',paste0('fracs.', Slide_Descript), paste0('Image.IDs.', Slide_Descript))
+  nn = c('Concentration','r',paste0('fracs.', Slide_Descript), paste0(
+    'Image.IDs.', Slide_Descript))
   colnames(tbl) <- nn
   #
   data.table::fwrite(tbl,file = str,sep = ',')
@@ -47,8 +50,8 @@ write_fracs <- function (wd, Antibody_Opal, Slide_Descript, Concentration, Table
   str = paste0(
     wd,'/Results.pixels/stats/fractions/Average Fractions of + Pixels ',Antibody,'.csv')
   tbl_avg <- dplyr::summarise_at(
-    dplyr::group_by(tbl, Concentration, r),
-    paste0('fracs.',Slide_Descript), mean)
+    dplyr::group_by(tbl, Concentration),
+    paste0('fracs.',Slide_Descript), mean, na.rm = T)
   #
   data.table::fwrite(tbl_avg,file = str,sep = ',')
   #

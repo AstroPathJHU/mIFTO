@@ -39,20 +39,6 @@ parallel_invoke_gpxp <- function (
   #
   # define the environment for the cluster
   #
-  # my_env <- new.env()
-  # my_env$Concentration <- Concentration
-  # my_env$x <- x
-  # my_env$y <- y
-  # my_env$Image.IDs <- Image.IDs
-  # my_env$Antibody_Opal <- Antibody_Opal
-  # my_env$titration.type.name <- titration.type.name
-  # my_env$Protocol <- Protocol
-  # my_env$Thresholds <- Thresholds
-  # my_env$paths <- paths
-  # my_env$connected.pixels <- connected.pixels
-  # my_env$flowout <- flowout
-  # my_env$Opal1 <- Opal1
-  #
   my_env <- environment()
   parent.env(my_env) <- .GlobalEnv
   #
@@ -62,13 +48,12 @@ parallel_invoke_gpxp <- function (
   # to speed this up. Though the actual RAM usage is quite low
   # if I only carry the part of the image that is needed...
   #
-  #
   parallel::clusterExport(
     cl=cl, varlist=c("Concentration", "x", "y", "Antibody_Opal",
                      "titration.type.name","Protocol","Thresholds","paths",
                      "connected.pixels","flowout","Opal1","GeneratePxPData"),
     envir=my_env)
-  
+  #
   ###### need to add a try catch, but also need to determine what happens 
   ###### when I throw an error instead of the envir
     small.tables.byimage<- parallel::parLapply(cl,Image.IDs[[x]][[y]],function(z)
@@ -77,7 +62,4 @@ parallel_invoke_gpxp <- function (
         titration.type.name, Protocol, Thresholds, paths, 
         connected.pixels, flowout, Opal1))
   #
-  
-  #
-  return(small.tables.byimage)
 }

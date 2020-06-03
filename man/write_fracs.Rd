@@ -4,7 +4,7 @@
 \alias{write_fracs}
 \title{Used by PxP script to write out the fraction of positivity data}
 \usage{
-write_fracs(wd, Antibody_Opal, Slide_Descript, Concentration, Tables, IHC)
+write_fracs(wd, Antibody_Opal, Slide_Descript, Concentration, tables_in, IHC)
 }
 \arguments{
 \item{wd}{the main data root directory}
@@ -14,11 +14,11 @@ write_fracs(wd, Antibody_Opal, Slide_Descript, Concentration, Tables, IHC)
 
 \item{Concentration}{a numeric vector of concentrations used in the titration}
 
-\item{Tables}{the table of statistics gathered by PxP}
-
 \item{IHC}{whether or not an IHC was done on this slide}
 
 \item{Slide_Desctipt}{a unique identifier for each slide to be analyzed}
+
+\item{Tables}{the table of statistics gathered by PxP}
 }
 \value{
 exports the fraction spreadsheets

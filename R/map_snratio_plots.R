@@ -19,7 +19,8 @@
 #' @return exports a ggplot object to be printed for viewing
 #' @export
 #'
-map_snratio_plots <- function(wd, Antibody_Opal, Slide_Descript, Concentration, Tables, theme1){
+map_snratio_plots <- function(
+  wd, Antibody_Opal, Slide_Descript, Concentration, tables_in, theme1){
   #
   SN.Ratio.names<-c('Median','Mean')
   plots<-list()
@@ -32,20 +33,21 @@ map_snratio_plots <- function(wd, Antibody_Opal, Slide_Descript, Concentration, 
     #
     str <- paste0(wd,'/Results.pixels/stats/Graphs/',
                   x,' SN Ratio of ',Antibody_Opal)
-    data.table::fwrite(Tables[['SN.Ratio']][[x]],file = paste0(str,'.csv'),sep = ',')
+    data.table::fwrite(
+      tables_in[['SN.Ratio']][[x]],file = paste0(str,'.csv'),sep = ',')
     #
     # find upper limit for graphs
     #
     Max<-round(
-      max(Tables[['SN.Ratio']][[x]]$SN_Ratio[is.finite(
-        Tables[['SN.Ratio']][[x]]$SN_Ratio)],
-        Tables[['SN.Ratio']][[x]]$Signal[is.finite(
-          Tables[['SN.Ratio']][[x]]$Signal)]), digits = -1)+5
+      max(tables_in[['SN.Ratio']][[x]]$SN_Ratio[is.finite(
+        tables_in[['SN.Ratio']][[x]]$SN_Ratio)],
+        tables_in[['SN.Ratio']][[x]]$Signal[is.finite(
+          tables_in[['SN.Ratio']][[x]]$Signal)]), digits = -1)+5
     #
     # aggregate data for average table
     #
     tbl <- dplyr::summarize(dplyr::group_by(
-      Tables[['SN.Ratio']][[x]], Concentration),
+      tables_in[['SN.Ratio']][[x]], Concentration),
       sd.Signal = sd(Signal),sd.Noise = sd(Noise), sd.SN_Ratio = sd(SN_Ratio),
       Signal = mean(Signal), Noise = mean(Noise),SN_Ratio = mean(SN_Ratio))
     #
@@ -54,12 +56,9 @@ map_snratio_plots <- function(wd, Antibody_Opal, Slide_Descript, Concentration, 
     titl_o <- paste0('S/N Ratio of ', x,' Signal and ',x,' Noise \n')
     xtitl <- "Dilution (1: )"
     ytitl <- "S/N Ratio"
-    colvals <- c('red'='red','blue'='blue','black'='black')
-    collbls <- c('red'='S/N Ratio','blue'='Median Noise','black'='Median Signal')
     #
     # generate plots with desired settings for average table
     #
-    
     plots<-c(plots,list(
       sn_ratio_theme(tbl, paste0(
           titl_o,'Averaged Across Slides for ', Antibody_Opal),
@@ -72,7 +71,7 @@ map_snratio_plots <- function(wd, Antibody_Opal, Slide_Descript, Concentration, 
       # aggregate the data for the slide table
       #
       tbl = dplyr::summarize(dplyr::group_by(
-        Tables[['SN.Ratio']]
+        tables_in[['SN.Ratio']]
         [[x]][which(Tables[['SN.Ratio']][[x]]
                     $'Slide.ID'== Slide_Descript[i.1]),], Concentration),
         sd.Signal = sd(Signal),sd.Noise = sd(Noise),sd.SN_Ratio = sd(SN_Ratio),
