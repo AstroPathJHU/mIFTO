@@ -1,4 +1,4 @@
-#########################Pixel-by-Pixel#################################
+#########################Pixel-by-Pixel################################
 
 #'Used by RUN to do Pixel by Pixel Analysis on individual images for 
 #'IF titrations;
@@ -26,11 +26,12 @@
 PixelbyPixel <- function(out,pb.Object) {
   ##############################input parameters########################
   #
-  pb.count = 0; mIFTO::update_pgbar(pb.count, pb.Object, 'Browse For Folder')
+  pb.count = 0; mIFTO::doupdate.pgbar(
+    pb.count, pb.Object, 'Browse For Folder')
   #
   # check input parameters and allocate some for eaiser indexing
   #
-  outchecked <- mIFTO::CheckVars(out)
+  outchecked <- mIFTO::check.vars(out)
   wd <- outchecked$wd
   Slide_Descript <- outchecked$Slide_Descript
   Antibody <- outchecked$Antibody
@@ -45,109 +46,134 @@ PixelbyPixel <- function(out,pb.Object) {
   titration.type.name <- outchecked$titration.type.name
   connected.pixels <- outchecked$connected.pixels
   #
+  rm(outchecked, out)
+  #
+  ##############################create results folders##################
+  #
+  pb.count = 1; mIFTO::doupdate.pgbar(
+    pb.count, pb.Object, 'Generating Folders')
+  mIFTO::create.dir(wd,'pixels', flowout)
+  #
+  ###############################Reads in data##########################
+  #
+  time <- system.time(
+    Tables <- mIFTO::populate.tables(
+      Slide_Descript, Concentration, Antibody_Opal, Thresholds, Opal1, 
+      flowout, Protocols, paths, titration.type.name, connected.pixels,
+      pb.count, pb.Object)
+      )
+  time1 <- time[['elapsed']]/60
+  mins <- round(time1, digits = 0)
+  secs <- round(60 * (time1 - mins), digits = 0)
+  #
+  if (sign(secs) == -1 ){
+    mins = mins - 1
+    secs = 60 + secs
+  }
+  #
+  mIFTO::doupdate.pgbar(90, pb.Object, paste0(
+    'Finished gathering image data - Elapsed Time: ',
+    mins, ' mins ', secs,' secs'))
+  Sys.sleep(0.5)
+  #
   ##################prepares some parameters for the graphs#############
   # 
-  graph.out <- mIFTO::CreateMyTheme()
+  graph.out <- mIFTO::create.my.theme()
   theme1 <- graph.out$theme1
   colors <- graph.out$colors
   #
   xcoords<-c(min(Concentration)-((min(Concentration))/2),
              max(Concentration)+((min(Concentration))/2))
-  ##############################create results folders##################
-  #
-  pb.count = 1; mIFTO::update_pgbar(pb.count, pb.Object, 'Generating Folders')
-  mIFTO::CreateDir(wd,'pixels', flowout)
-  #
-  #############pre-allocating tables to store results###################
-  #
-  pb.step<-round(89/(2*length(Slide_Descript)
-                  *length(Concentration)), digits=2)
-  #
-  table.names.byimage <-c('SN.Ratio','T.Tests','Histograms')
-  table.names.wholeslide<-c('SN.Ratio','T.Tests','Histograms','BoxPlots')
-  #
-  tables_out <- mIFTO::PreallocateTables(
-    Slide_Descript, Concentration, titration.type.name, 
-    table.names.wholeslide, paths)
-  Tables.byimage <- tables_out$Tables.byimage
-  Tables.wholeslide <- tables_out$Tables.wholeslide
-  Tables.wholeslide$SN.Ratio$Positivity <- NULL
-  Image.IDs <- tables_out$Image.IDs
-  Violin.Plots <- tables_out$Violin.Plots
-  #
-  a<-installed.packages()
-  packages<-a[,1] 
-  if (!is.element("EBImage", packages)){
-    BiocManager::install("EBImage", ask=FALSE)
+  if (nchar(Antibody_Opal) > 14){
+    Antibody_Opal.ttest <- paste0('\n', Antibody_Opal)
+  } else {
+    Antibody_Opal.ttest <- Antibody_Opal
   }
   #
-  ###############################Reads in data##########################
-  #
-  time <- system.time(
-    Tables <- mIFTO::populate_mIFTO_tables(
-      Slide_Descript, Tables.byimage, Tables.wholeslide, Image.IDs,
-      Concentration, Antibody_Opal, Thresholds, Opal1, 
-      table.names.byimage, table.names.wholeslide, flowout, Protocols,
-      paths, titration.type.name, connected.pixels,
-      pb.step, pb.count, pb.Object)
-      )
-  time <- round(time[['elapsed']], digits = 0)
-  mIFTO::update_pgbar(90, pb.Object, paste0(
-    'Finished gathering image data - Elapsed Time: ', time, ' secs'))
-  #
-  gc(reset=T, verbose = F)
+  if (nchar(Antibody_Opal) > 19){
+    Antibody_Opal.snratio <- paste0('\n', Antibody_Opal)
+  } else {
+    Antibody_Opal.snratio <- Antibody_Opal
+  }
   #
   ###############################generate plots#########################
   #
-  mIFTO::update_pgbar(90, pb.Object, 'Write out the fractions tables')
+  mIFTO::doupdate.pgbar(90, pb.Object, 'Write out the fractions tables')
   #
-  write_fracs(wd, Antibody_Opal, Slide_Descript,
+  write.fracs(wd, Antibody_Opal, Slide_Descript,
               Concentration, Tables$Tables.byimage, IHC)
   #
-  mIFTO::update_pgbar(91, pb.Object, 'Generating Signal to Noise Ratio Graphs')
+  mIFTO::doupdate.pgbar(91, pb.Object,
+                      'Generating Signal-to-Noise Ratio Graphs')
   #
-  sn_plots <- map_snratio_plots(
+  sn.plots <- map.snratio.plots(
     wd, Antibody_Opal, Slide_Descript,
-    Concentration, Tables$Tables.byimage, theme1)
+    Concentration, Tables$Tables.byimage, Antibody_Opal.snratio, theme1)
   #
-  mIFTO::update_pgbar(92, pb.Object, 'Generating T Test Graphs')
+  mIFTO::doupdate.pgbar(92, pb.Object, 'Generating t-Test Graphs')
   #
-  tplots <- map_ttest_plots(
+  tplots <- map.ttest.plots(
     wd, Antibody_Opal, Slide_Descript,
-    Concentration, Tables$Tables.wholeslide, theme1, colors)
+    Concentration, Tables$Tables.byimage, Antibody_Opal.ttest, theme1, colors)
   #
   # print some graphs
   #
-  mIFTO::update_pgbar(93, pb.Object, 'Printing Graphs')
+  mIFTO::doupdate.pgbar(93, pb.Object, 'Printing Graphs')
   #
-  plots <- c(tplots, sn_plots)
-  glist <- lapply(plots, ggplot2::ggplotGrob)
+  # make sure ttests and sn ratios graphs types all appear on separate pages
+  #
+  p1 <- list(ggplot2::ggplot() + ggplot2::theme_void())
+  #
+  lbl <- "Welch's t Test Graphs"
+  lbl2 <- paste0(
+    "Measures the difference between signal and noise accounting for ",
+    "variation. Higher values indicate more separation.")
+  #
+  sn.plots.l <- (length(Slide_Descript) + 1)
+  if ((sn.plots.l/4)%%1 == .25){
+    sn.plots <- c(sn.plots[1:sn.plots.l], p1,p1,p1, 
+                  sn.plots[sn.plots.l+1:length(sn.plots)],
+                  p1, p1, p1)
+  } else if ((sn.plots.l/4)%%1 == .5){
+    sn.plots <- c(sn.plots[1:sn.plots.l], p1,p1, 
+                  sn.plots[sn.plots.l+1:length(sn.plots)],
+                  p1, p1)
+  } else if ((sn.plots.l/4)%%1 == .75){
+    sn.plots <- c(sn.plots[1:sn.plots.l], p1, 
+                  sn.plots[sn.plots.l+1:length(sn.plots)],
+                  p1)
+  }
+  #
+  lbl <- c(lbl, rep("Mean S/N Ratio Graphs",
+                    ceiling(sn.plots.l/ 4)))
+  lbl <- c(lbl, rep("Median S/N Ratio Graphs",
+                   ceiling(sn.plots.l/ 4)))
+  lbl2 <- c(lbl2, rep(paste0(
+    "Measures the difference between signal and noise using a simple ratio.",
+    " Higher values indicate more separation."), 
+    2*ceiling(sn.plots.l/ 4)))
+  #         
+  plots <- c(tplots, sn.plots)
+  glist <- m.grid.arrange(plots, lbl, lbl2, 1, 0, ceiling(length(plots))/4)
+  gout <- marrangeGrob(grobs=glist,nrow=1,ncol=1,top=NULL)
+  #
   str = paste0(wd,'/Results.pixels/stats/Graphs/',
                 'Graphs for ', Antibody_Opal)
   #
-  ggplot2::ggsave(
-    paste0(str,'.pdf'),
-    gridExtra::marrangeGrob(glist,nrow=2,ncol=2),
-    height = 6.56, width = 6.56, units = 'in', scale = 1, dpi = 300)
+  ggplot2::ggsave(paste0(str,'.pdf'),gout,
+    height = 9, width = 8.5, units = 'in', scale = 1, dpi = 300)
   #
-  tryCatch({
-    dev.off()},
-    error = function(cond) {
-      message('issue with 1 dev.off()')
-    },
-    finally = {})
-  gc(reset=T)
+  ###############################Histogram Graphs ######################
   #
-  ###############################Histogram Graphs ########################
-  #
-  ii = 94;mIFTO::update_pgbar(ii, pb.Object, 'Generating Histogram Graphs')
+  ii = 94;mIFTO::doupdate.pgbar(
+    ii, pb.Object, 'Generating Histogram Graphs')
   #    
-  map_and_write_histograms(wd, Antibody_Opal, Slide_Descript,
-                           Concentration, Tables, theme1, colors)
+  map.and.write.histograms(
+    wd, Antibody_Opal, Slide_Descript,
+    Concentration, Tables$Tables.wholeslide, theme1, colors)
   #
-  ############################### Finished ###############################
+  ############################### Finished #############################
   #
-  mIFTO::update_pgbar(100, pb.Object, 'Fin')
-  gc(reset=T)
+  mIFTO::doupdate.pgbar(100, pb.Object, 'Fin')
   #
 }

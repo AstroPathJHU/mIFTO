@@ -1,21 +1,25 @@
+#########################sn.ratio.calculations##################################
+#
 #'Used by analysis funtions to calculate the signal to noise ratios
 #'
 #'SN.Ratio.Calculations
 #'Created By: Benjamin Green, Charles Roberts
 #'Last Edited 11/12/2018
 #'
-#'Takes in the data and some constants from the PixelbyPixel script and returns a SN ratio for means and by medians
+#'Takes in the data and some constants from the PixelbyPixel script and 
+#'returns a SN ratio for means and by medians
 #'
 #' @param positivity.data a list of four images, positive, 
 #'   negative values then positive, negative binary image masks
-#' @param Concentration is a numeric vector of the denominator of all concentration ratios
-#'  which a boxplot will be created for (ie 25, 50, 100)
+#' @param Concentration is a numeric vector of the denominator of all 
+#' concentration ratios which a boxplot will be created for (ie 25, 50, 100)
 #' @param x is the Slide Indicator (ie Tonsil2)
 #' @param q is the imageid
-#' @return a list with three data.frames; a sn means, sn medians, and a fraction of pos
+#' @return a list with three data.frames; a sn means, sn medians, and a 
+#' fraction of pos
 #' @export
 #'
-SN.Ratio.Calculations<-function(
+sn.ratio.calculations<-function(
  positivity.data,Concentration,x,q){
   #
   Signal <- positivity.data[['pos']]

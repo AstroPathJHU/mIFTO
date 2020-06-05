@@ -15,7 +15,6 @@ Imports:
     digest,
     tcltk,
     gWidgets,
-    gWidgetstcltk,
     parallel,
     BiocManager,
     reshape2

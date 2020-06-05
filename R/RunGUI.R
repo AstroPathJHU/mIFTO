@@ -30,42 +30,62 @@ RunGUI<-function(){
     type = 'ggroup',
     horizontal = F,
     children = list(
-      list(type = 'fieldset',columns = 2,label = 'General Input',
-           #label.font
-           #label.pos='center',
+      list(type = 'fieldset',
+           columns = 2,
+           label = 'General Input',
            children = list(
-             list(name = 'Slide_Descript',type = 'gedit',
+             list(name = 'Slide_Descript',
+                  type = 'gedit',
                   label =
                     '               Slide Descriptor
     (separate with a comma but do not
     add `-` or spaces between names): ',
                   text = '',coerce.with = as.character),
-             list(name = 'Antibody',type = 'gedit',label = 'Primary Antibody: ',
-                  text = '',coerce.with = as.character),
-             list(name = 'Concentration',type = 'gedit',
+             list(name = 'Antibody',
+                  type = 'gedit',
+                  label = 'Primary Antibody: ',
+                  text = '',
+                  coerce.with = as.character),
+             list(name = 'Concentration',
+                  type = 'gedit',
                   label =
                     '           Concentrations used
-    (separate with a comma): ',text = '',coerce.with = as.character),
-             list(name = 'Opal1',type = 'gedit',
+       (separate with a comma): ',
+                  text = '',
+                  coerce.with = as.character),
+             list(name = 'Opal1',
+                  type = 'gedit',
                   label = 'Primary Opal:                   Opal',
-                  text = '',coerce.with = as.character),
+                  text = '',
+                  coerce.with = as.character),
              list(name = 'Naming.convention',
                   label =
-                    '          Has the new naming
-    convention been applied?',
+                    '           Has the new naming
+       convention been applied?',
                   type = 'gcheckbox'),
-             list(name = 'titration.type',type = 'gcombobox',
+             list(name = 'titration.type',
+                  type = 'gcombobox',
                   label = 'What is being titrated? ',
-                  items = c('Primary','TSA')),
-             list(name = 'protocol.type',type = 'gcombobox',
-                  label = 'Select Staining Protocol ',
-                  items = c('7color','9color')))),
+                  items = c('Primary','TSA')
+                  ),
+             list(name = 'protocol.type',
+                  type = 'gcombobox',
+                  label = '       Select Staining Protocol ',
+                  items = c('7color','9color')
+                  ),
+             list()
+             )
+           ),
 
-      list(type = 'fieldset',columns = 2,label = 'Information for Cell Segmented Based Data Analysis',
+      list(type = 'fieldset',
+           columns = 2,
+           label = 'Information for Cell Segmented Based Data Analysis',
            children = list(
              list(name = "Phenotype",
-                  label = "Was the data phenotyped?",type = "gcheckbox"),
-             list(name = 'Compartment',type = 'gcombobox',
+                  label = "Was the data phenotyped?",
+                  type = "gcheckbox"),
+             list(name = 'Compartment',
+                  type = 'gcombobox',
                   label = 'Cell Comparment for Anaylsis: ',
                   items = c('Membrane', 'Entire Cell', 'Nucleus')),
              list(name='Pheno.Antibody',
@@ -95,25 +115,26 @@ RunGUI<-function(){
   #
   # display and populate the gui as a tcltk gformlayout
   #
+  #
   options(guiToolkit="tcltk")
-  w <- gWidgets::gwindow(
+  w <- gWidgets2::gwindow(
     title = 'Multiplex Immunofluorescence Titration Optimization (mITFO)',visible = FALSE)
-  g <- gWidgets::ggroup(horizontal = FALSE, container = w)
-  fl <- gWidgets::gformlayout(Bonzai, container = g, expand = TRUE, align = 'center')
+  g <- gWidgets2::ggroup(horizontal = FALSE, container = w)
+  g2 <- gWidgets2::gformlayout(Bonzai, cont = g, expand =TRUE)
   #
   # Run button group
   #
-  button.group<-gWidgets::ggroup(horizontal = T, container = g)
-  gWidgets::addSpace(button.group, 100)
+  button.group<-gWidgets2::ggroup(horizontal = T, container = g)
+  gWidgets2::addSpace(button.group, 100)
   #
   # cell by cell button
   #
-  b <- gWidgets::gbutton('Run for Cell Segmented
+  b <- gWidgets2::gbutton('Run for Cell Segmented
         Based Analysis', container = button.group)
   #
   # this is what happens when button is pressed
   #
-  gWidgets::addHandlerChanged(b, function(h, ...) {
+  gWidgets2::addHandlerChanged(b, function(h, ...) {
     #
     # GUI no longer visible
     #
@@ -149,11 +170,11 @@ RunGUI<-function(){
   #
   # pixel by pixel button
   #
-  gWidgets::addSpace(button.group, 50)
-  b1 <- gWidgets::gbutton(
+  gWidgets2::addSpace(button.group, 50)
+  b1 <- gWidgets2::gbutton(
     'Run for Pixel-by-Pixel
     Based Analysis', container = button.group)
-  gWidgets::addHandlerChanged(b1, function(h, ...) {
+  gWidgets2::addHandlerChanged(b1, function(h, ...) {
     #
     # GUI no longer visible
     #
