@@ -20,7 +20,7 @@
 #' @param Opal1 the opal value of interest
 #' @param flowout logical for whether or not flow like results will be produced
 #' (1 for produce, 0 for don't)
-#' @param Protocols the protocol type (7color or 9color)
+#' @param Protocol the protocol type (7color or 9color)
 #' @param paths the data paths, one data path for each concentration
 #' @param titration.type.name the titration type for a given dilution set 
 #' (Primary or TSA)
@@ -33,7 +33,7 @@
 #'   
 populate.tables <- function(
   Slide_Descript, Concentration, Antibody_Opal, Thresholds, Opal1, 
-  flowout, Protocols, paths, titration.type.name, connected.pixels,
+  flowout, Protocol, paths, titration.type.name, connected.pixels,
   pb.count, pb.Object){
   #
   #############pre-allocating tables to store results###################

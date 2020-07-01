@@ -30,6 +30,11 @@ map.ttest.plots <- function(
   p_count <- 1
   plots<-vector('list',length(4))
   #
+  xcoords<-c(
+    min(Concentration)-((min(Concentration))/2),
+    max(Concentration)+((min(Concentration))/2)
+  )
+  #
   for(z in correction.val.name){
     #
     # write out tables of raw data
@@ -68,7 +73,7 @@ map.ttest.plots <- function(
         '\n Averaged on Slides: ', Antibody_Opal.2),
         x='Dilution (1: )',y='t Statistic') +
       ggplot2::scale_color_manual(values=colors) +
-      ggplot2::scale_x_discrete(limits=Concentration) +
+      ggplot2::scale_x_discrete(limits=factor(Concentration)) +
       ggplot2::coord_cartesian(
         xlim = xcoords,ylim = c(
           round(min(Tables[['T.Tests']][[z]]
@@ -104,7 +109,7 @@ map.ttest.plots <- function(
         x='Dilution (1: )',y='Statistic',color='Slide.ID') +
       ggplot2::scale_color_manual(breaks=Slide_Descript,
                                   labels=Slide_Descript,values=colors) +
-      ggplot2::scale_x_discrete(limits=Concentration) +
+      ggplot2::scale_x_discrete(limits=factor(Concentration)) +
       ggplot2::coord_cartesian(
         xlim = xcoords,ylim = c(
           round(min(Tables[['T.Tests']][[z]]

@@ -64,7 +64,7 @@ m.grid.arrange <- function(p, lbl, lbl2, opt, st.pg, total.pgs) {
         gp=grid::gpar(fontsize = 9, col = 8))
         ,
       grid::textGrob(
-        paste('pg.',st.pg + page.ind,' of', total.pgs),
+        paste('pg.',st.pg + page.ind,'of', total.pgs),
         x=1,vjust=1, hjust = 1,
         gp=grid::gpar(fontsize=9, col = 8)
         )

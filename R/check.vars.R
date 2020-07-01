@@ -31,8 +31,9 @@ if( grepl(' ',out$Slide_Descript,perl = TRUE ) ) {
 } else {
   Slide_Descript <- out$Slide_Descript
 }
-
+#
 Slide_Descript <- unlist(strsplit(Slide_Descript, split = ','))
+
 #
 # whether or not to output the flow results
 #
@@ -87,12 +88,17 @@ if(Naming.convention==T){
 #
 # get the folders tag for processing
 #
-Folders <- as.logical(out$Folders.pixels)
+Folders <- as.logical(out$Folders.Pixels)
 #
 # setting up paths based on if the data is
 # in one folder or multiple folders
 #
-if(Folders==TRUE){
+if (!is.null(out$Vars_pxp)){
+  Vars_pxp <- paste(out$Vars_pxp, collapse = ", ")
+}else {
+  Vars_pxp <- ','}
+
+if(grepl("Folders.Pixels",Vars_pxp)) {
   #
   pp <- list.dirs(wd)
   #
@@ -129,13 +135,24 @@ checknumofpaths <- sapply(1:length(paths), function(x){
 #
 # get the threshold tag
 #
-Thresholded <- as.logical(out$Thresholded)
+#Thresholded <- as.logical(out$Thresholded)
 #
-# create the threshold values
+# create the threshold values and connected pixel values
 #
-if (Thresholded == T) {
-  Thresholds = lapply(1:length(Slide_Descript), function(x)out$Thresholds)
+if (!grepl("nConsistent",Vars_pxp)) {
+  #
+  Thresholds = lapply(
+    1:length(Slide_Descript), function(x)out$Thresholds
+    )
+  #
+  connected.pixels <- lapply(
+    1:length(Slide_Descript), function(x)out$connected.pixels
+    )
+  #
+  names(connected.pixels) <- Slide_Descript
+  #
   for (x in 1:length(Slide_Descript)){
+    #
     if( grepl(' ',Thresholds[[x]],perl = TRUE ) ) {
       warning('Concentrations contain spaces ...
             removing spaces in names')
@@ -143,7 +160,6 @@ if (Thresholded == T) {
     } else {
       Thresholds[[x]] <- Thresholds[[x]]
     }
-    
     #
     # try to convert to a valid string
     #
@@ -151,9 +167,9 @@ if (Thresholded == T) {
       Thresholds1 <- as.numeric(
         unlist(strsplit(Thresholds[[x]], split =',')))
       }, warning = function(cond) {
-        stop(paste0('Error in Thresholds input: ', Thresholds[[x]]))
+        stop(paste0('Error in thresholds input: ', Thresholds[[x]]))
       }, error = function(cond) {
-        stop(paste0('Error in Thresholds input: ', Thresholds[[x]]))
+        stop(paste0('Error in thresholds input: ', Thresholds[[x]]))
       }
     )
     #
@@ -166,11 +182,46 @@ if (Thresholded == T) {
       stop('the length of concentrations does
          not equal the length of thresholds', call. = FALSE)
     }
+    #
+    # set up connected pixel values
+    #
+    if( grepl(' ',connected.pixels[[x]],perl = TRUE ) ) {
+      warning('Concentrations contain spaces ...
+            removing spaces in names')
+      connected.pixels[[x]] <- gsub(
+        " ", "",connected.pixels[[x]], fixed = TRUE
+      )
+    } else {
+      connected.pixels[[x]] <- connected.pixels[[x]]
+    }
+    #
+    # try to convert to a valid string
+    #
+    tryCatch({
+      connected.pixels1 <- as.numeric(
+        unlist(strsplit(connected.pixels[[x]], split =',')))
+    }, warning = function(cond) {
+      stop(paste0('Error in connected pixels input: ', connected.pixels[[x]]))
+    }, error = function(cond) {
+      stop(paste0('Error in connected pixels input: ', connected.pixels[[x]]))
+    }
+    )
+    #
+    connected.pixels[[x]] <- connected.pixels1
+    #
+    # check that the number of thresholds
+    # == the number of concentrations
+    #
+    if (length(Concentration) != length(connected.pixels[[x]])){
+      stop('the length of concentrations does
+         not equal the length of connected pixels', call. = FALSE)
+    }
+    #
   }
+  names(connected.pixels)<-Slide_Descript
   names(Thresholds)<-Slide_Descript
 } else {
-  stop('not thresholded pixel approach is not yet supported',
-       call. = FALSE)
+  stop('multiple thresholds not yet supported')
 }
 #
 # get the protocol type
@@ -182,11 +233,8 @@ Protocol <- out$protocol.type
 ##
 ## ***********************************************
 #
-if (out$AB_Sparse==T){num.of.tiles<-100}else{num.of.tiles<-10}
-#
-connected.pixels <- lapply(vector('list',length(Slide_Descript)), function(x) 
-  lapply(vector('list',length(Concentration)), function(x) 1))
-names(connected.pixels)<-Slide_Descript
+num.of.tiles<-10
+#if (out$AB_Sparse==T){num.of.tiles<-100}else{num.of.tiles<-10}
 #
 # check if the EBImage package is installed or not
 #
@@ -204,7 +252,7 @@ outnew <- list(wd = wd, Slide_Descript = Slide_Descript,
                flowout = flowout,Antibody = Antibody,
                Opal1 = Opal1, Antibody_Opal = Antibody_Opal,
                Concentration = Concentration,
-               Thresholded = Thresholded, Thresholds = Thresholds,
+               Thresholded = TRUE, Thresholds = Thresholds,
                Protocol = Protocol,paths = paths,
                titration.type.name = titration.type.name,num.of.tiles = num.of.tiles,
                connected.pixels = connected.pixels)

@@ -61,7 +61,7 @@ map.snratio.plots <- function(
     # generate plots with desired settings for average table
     #
     plots<-c(plots,list(
-      sn.ratio.theme(tbl, paste0(
+      sn.ratio.theme(tbl, Concentration, paste0(
           titl_o,'Averaged on Slides: ', Antibody_Opal.2),
           xtitl,ytitl, Max, theme1)))
     #
@@ -81,7 +81,7 @@ map.snratio.plots <- function(
       # plot the slide table
       #
       plots<-c(plots,list(
-        sn.ratio.theme(tbl, paste0(
+        sn.ratio.theme(tbl, Concentration, paste0(
           titl_o,' for Slide ', Slide_Descript[i.1],': ', Antibody_Opal.2),
           xtitl,ytitl,Max, theme1)))
     }

@@ -53,13 +53,14 @@ PixelbyPixel <- function(out,pb.Object) {
   pb.count = 1; mIFTO::doupdate.pgbar(
     pb.count, pb.Object, 'Generating Folders')
   mIFTO::create.dir(wd,'pixels', flowout)
+  #browser()
   #
   ###############################Reads in data##########################
   #
   time <- system.time(
     Tables <- mIFTO::populate.tables(
       Slide_Descript, Concentration, Antibody_Opal, Thresholds, Opal1, 
-      flowout, Protocols, paths, titration.type.name, connected.pixels,
+      flowout, Protocol, paths, titration.type.name, connected.pixels,
       pb.count, pb.Object)
       )
   time1 <- time[['elapsed']]/60
@@ -157,7 +158,7 @@ PixelbyPixel <- function(out,pb.Object) {
   glist <- m.grid.arrange(plots, lbl, lbl2, 1, 0, ceiling(length(plots))/4)
   gout <- marrangeGrob(grobs=glist,nrow=1,ncol=1,top=NULL)
   #
-  str = paste0(wd,'/Results.pixels/stats/Graphs/',
+  str = paste0(wd,'/Results.pixels/stats/graphs/',
                 'Graphs for ', Antibody_Opal)
   #
   ggplot2::ggsave(paste0(str,'.pdf'),gout,
@@ -170,7 +171,7 @@ PixelbyPixel <- function(out,pb.Object) {
   #    
   map.and.write.histograms(
     wd, Antibody_Opal, Slide_Descript,
-    Concentration, Tables$Tables.wholeslide, theme1, colors)
+    Concentration, Thresholds, Tables$Tables.wholeslide, theme1, colors)
   #
   ############################### Finished #############################
   #

@@ -26,7 +26,7 @@ write.hist.data <- function(
         table_in[['Histograms']][[i.1]],
         grepl(paste0('1to',y),Concentration),
         Slide.ID==x)
-      str = paste0(wd,'/Results.pixels/histograms/Data/',
+      str = paste0(wd,'/Results.pixels/histograms/data/',
                    i.1,'/',Antibody_Opal,'_',x,'_1to',y,'.csv')
       data.table::fwrite(tbl,file = str,sep=',')
     }

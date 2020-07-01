@@ -48,7 +48,8 @@ write.fracs <- function (wd, Antibody_Opal, Slide_Descript, Concentration,
   # write out average fracs
   #
   str = paste0(
-    wd,'/Results.pixels/stats/fractions/Average Fractions of + Pixels ',Antibody,'.csv')
+    wd,'/Results.pixels/stats/fractions/Average Fractions of + Pixels ',
+    Antibody_Opal,'.csv')
   tbl_avg <- dplyr::summarise_at(
     dplyr::group_by(tbl, Concentration),
     paste0('fracs.',Slide_Descript), mean, na.rm = T)

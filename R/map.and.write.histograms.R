@@ -14,6 +14,7 @@
 #' designated as "AB (Opal NNN)"
 #' @param Slide_Desctipt a unique identifier for each slide to be analyzed
 #' @param Concentration a numeric vector of concentrations used in the titration
+#' @param Thresholds
 #' @param table_in the table of statistics gathered by PxP
 #' @param theme1 the theme for the graphs
 #' @param colors the color vectors for the t test and histograms
@@ -21,7 +22,8 @@
 #' @export
 #'
 map.and.write.histograms <- function(
-  wd, Antibody_Opal, Slide_Descript, Concentration, table_in, theme1, colors){
+  wd, Antibody_Opal, Slide_Descript, Concentration,
+  Thresholds, table_in, theme1, colors){
   #
   # set up vars
   #

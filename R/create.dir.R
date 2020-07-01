@@ -15,27 +15,62 @@
 #'
 create.dir <- function(wd, type, flowout){
 #
-results_name <- paste0('Results.',type)
-#
-if (flowout) {
-  if (dir.exists(file.path(wd, results_name, 'flow_like_tables', 'csv')) == FALSE) {
-    dir.create(file.path(wd, results_name, 'flow_like_tables', 'csv'), recursive = TRUE)
+  results_name <- paste0('Results.',type)
+  #
+  if (flowout) {
+    #
+    ty <- list('flow_like_tables/csv', 'flow_like_tables/FCS',
+               'stats/boxplots','stats/graphs','stats/fractions')
+    #
+  } else {
+    #
+    ty <- list('stats/boxplots','stats/graphs','stats/fractions')
+    #
   }
-  if (dir.exists(file.path(wd, results_name, 'flow_like_tables', 'FCS')) == FALSE) {
-    dir.create(file.path(wd, results_name, 'flow_like_tables', 'FCS'), recursive = TRUE)
-  }
-}
-if (dir.exists(file.path(wd, results_name,'stats', 'BoxPlots')) == FALSE) {
-  dir.create(file.path(wd,results_name,'stats', 'BoxPlots'),recursive = T)
-}
-if (dir.exists(file.path(wd, results_name,'stats', 'Graphs')) == FALSE) {
-  dir.create(file.path(wd,results_name,'stats', 'Graphs'),recursive = T)
-}
-if (dir.exists(file.path(wd, results_name,'stats', 'fractions')) == FALSE) {
-  dir.create(file.path(wd,results_name,'stats', 'fractions'),recursive = T)
-}
-if (dir.exists(file.path(wd, results_name,'histograms','Data','Plus1')) == FALSE) {
-  dir.create(file.path(wd, results_name, 'histograms', 'Data','Plus1'),recursive = TRUE)}
-if (dir.exists(file.path(wd, results_name,'histograms','Data','Plus001')) == FALSE) {
-  dir.create(file.path(wd, results_name, 'histograms', 'Data','Plus001'),recursive = TRUE)}
+  #
+  lapply(ty, function(x) {
+    #
+    if (
+      dir.exists(
+        file.path(
+          wd, results_name,x
+        )
+      ) == F
+    ) {
+      #
+      dir.create(
+        file.path(
+          wd,results_name,x
+        ),recursive = T
+      )
+      #
+    }
+    #
+  })
+  #
+  # hists
+  #
+  ty <- list('histograms/data/Plus1','histograms/data/Plus001')
+  #
+  lapply(ty, function(x){
+    if (
+      dir.exists(
+        file.path(
+          wd, results_name,x
+        )
+      ) == TRUE
+    ) {
+      unlink(
+        file.path(
+          wd,results_name, x
+        ),recursive = T
+      )
+    }
+    dir.create(
+      file.path(
+        wd, results_name, x
+      ),recursive = TRUE
+    )
+  })
+  #
 }
