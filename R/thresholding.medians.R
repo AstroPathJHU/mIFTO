@@ -15,7 +15,7 @@
 #' @return a data.frame with Signal, Noise, S/N, Slide.ID, Concentration
 #' @export
 #'
-thresholding.medians<-function(data.in, threshold, Slide.ID,Concentration){
+thresholding.medians<-function(data.in, threshold, Slide.ID,Concentration,connected.pixels){
   Signal <- dplyr::summarize(dplyr::filter(data.table::setnames(data.in, 'AB'), AB >= threshold),Signal = median(AB))
   Noise <- dplyr::summarize(dplyr::filter(data.table::setnames(data.in, 'AB'), AB < threshold),Noise=median(AB))
   data.out<-dplyr::mutate(cbind(Signal,Noise), SN_Ratio=Signal/Noise, Slide.ID=Slide.ID,Concentration=Concentration)

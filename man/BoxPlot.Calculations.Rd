@@ -4,8 +4,16 @@
 \alias{BoxPlot.Calculations}
 \title{Used by analysis funtions to do the calulations for the boxplot graphs}
 \usage{
-BoxPlot.Calculations(f, Antibody, data.in, Opal1, Concentration,
-  Thresholds, x, y)
+BoxPlot.Calculations(
+  f,
+  Antibody,
+  data.in,
+  Opal1,
+  Concentration,
+  Thresholds,
+  x,
+  y
+)
 }
 \arguments{
 \item{f}{is the number of tiles to use when making boxplots}

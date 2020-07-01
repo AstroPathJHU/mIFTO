@@ -4,7 +4,13 @@
 \alias{thresholding.medians}
 \title{Used by analysis functions to calculate the median signal to noise ratios}
 \usage{
-thresholding.medians(data.in, threshold, Slide.ID, Concentration)
+thresholding.medians(
+  data.in,
+  threshold,
+  Slide.ID,
+  Concentration,
+  connected.pixels
+)
 }
 \arguments{
 \item{data.in}{a single column data table with the values of interest}
