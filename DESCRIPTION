@@ -11,7 +11,7 @@ Imports:
 	curl,
     dplyr,
     data.table,
-    gridExtra,
+	grid,
     tibble,
     tiff,
     digest,

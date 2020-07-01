@@ -42,9 +42,9 @@ m.grid.arrange <- function(p, lbl, lbl2, opt, st.pg, total.pgs) {
   myfun <- function (..., newpage = TRUE) 
   {
     if (newpage) 
-      grid.newpage()
+      grid::grid.newpage()
     g <- gridExtra::arrangeGrob(...)
-    grid.draw(g)
+    grid::grid.draw(g)
     invisible(g)
   }
   #
