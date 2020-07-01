@@ -66,11 +66,21 @@ create.dir <- function(wd, type, flowout){
         ),recursive = T
       )
     }
+    #
+    if (
+      dir.exists(
+        file.path(
+          wd, results_name,x
+        )
+      ) == F
+    ) {
     dir.create(
       file.path(
         wd, results_name, x
       ),recursive = TRUE
     )
+    }
+    #
   })
   #
 }
