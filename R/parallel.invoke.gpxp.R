@@ -51,14 +51,13 @@ parallel.invoke.gpxp <- function (
   parallel::clusterExport(
     cl=cl, varlist=c("Concentration", "x", "y", "Antibody_Opal",
                      "titration.type.name","Protocol","Thresholds","paths",
-                     "connected.pixels","flowout","Opal1",
-                     "generate.pxp.image.data"),
+                     "connected.pixels","flowout","Opal1"),
     envir=my_env)
   #
   ###### need to add a try catch, but also need to determine what happens 
   ###### when I throw an error instead of the envir
     small.tables.byimage<- parallel::parLapply(
-      cl,Image.IDs[[x]][[y]],function(z) generate.pxp.image.data(
+      cl,Image.IDs[[x]][[y]],function(z) mIFTO::generate.pxp.image.data(
         Concentration, x, y, z, Antibody_Opal, 
         titration.type.name, Protocol, Thresholds, paths, 
         connected.pixels, flowout, Opal1))
