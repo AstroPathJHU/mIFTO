@@ -156,7 +156,7 @@ PixelbyPixel <- function(out,pb.Object) {
   #         
   plots <- c(tplots, sn.plots)
   glist <- m.grid.arrange(plots, lbl, lbl2, 1, 0, ceiling(length(plots))/4)
-  gout <- marrangeGrob(grobs=glist,nrow=1,ncol=1,top=NULL)
+  gout <- gridExtra::marrangeGrob(grobs=glist,nrow=1,ncol=1,top=NULL)
   #
   str = paste0(wd,'/Results.pixels/stats/graphs/',
                 'Graphs for ', Antibody_Opal)
