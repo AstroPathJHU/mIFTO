@@ -207,7 +207,7 @@ map.and.write.histograms <- function(
     i.c = total.pages / 2
   }
   #
-  gout <- marrangeGrob(grobs=glist,nrow=1,ncol=1,top=NULL)
+  gout <- gridExtra::marrangeGrob(grobs=glist,nrow=1,ncol=1,top=NULL)
   #
   str = paste0(wd,'/Results.pixels/histograms/Histograms for ',
                Antibody_Opal,'.pdf')
