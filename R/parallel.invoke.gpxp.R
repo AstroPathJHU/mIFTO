@@ -41,6 +41,7 @@ parallel.invoke.gpxp <- function (
   #
   my_env <- environment()
   parent.env(my_env) <- .GlobalEnv
+  browser()
   #
   # for each image gather the stats and return the images
   # to reduce RAM usage the code does this one image at a time
