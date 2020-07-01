@@ -39,7 +39,14 @@ m.grid.arrange <- function(p, lbl, lbl2, opt, st.pg, total.pgs) {
   graph.h.size <- (9 - 2*margin.size - title.size - line.size) / 2
   graph.w.size <- (8.5 - 2*margin.size - line.size) / 2
   #
-  myfun <- get("grid.arrange", asNamespace("gridExtra"))
+  myfun <- function (..., newpage = TRUE) 
+  {
+    if (newpage) 
+      grid.newpage()
+    g <- gridExtra::arrangeGrob(...)
+    grid.draw(g)
+    invisible(g)
+  }
   #
   ml <- lapply(1:ceiling(length(p)/plots.per.page), function(page.ind){
     ind <- (1+((page.ind-1)*plots.per.page)):(page.ind*plots.per.page)
