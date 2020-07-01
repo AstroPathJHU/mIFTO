@@ -14,7 +14,7 @@
 #' designated as "AB (Opal NNN)"
 #' @param Slide_Desctipt a unique identifier for each slide to be analyzed
 #' @param Concentration a numeric vector of concentrations used in the titration
-#' @param Thresholds
+#' @param Thresholds The given threshold vector
 #' @param table_in the table of statistics gathered by PxP
 #' @param theme1 the theme for the graphs
 #' @param colors the color vectors for the t test and histograms

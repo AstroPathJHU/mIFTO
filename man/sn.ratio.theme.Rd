@@ -4,18 +4,22 @@
 \alias{sn.ratio.theme}
 \title{Used by PxP script to create the sn_ratio_theme}
 \usage{
-sn.ratio.theme(tbl, titl, xtitl, ytitl, Max, theme1)
+sn.ratio.theme(tbl, Concentration, titl, xtitl, ytitl, Max, theme1)
 }
 \arguments{
 \item{tbl}{the table to be graphed}
+
+\item{Concentration}{a numeric vector of concentrations used in the titration}
+
+\item{titl}{the title of the graph}
 
 \item{xtitl}{the x axis label}
 
 \item{ytitl}{the y axis label}
 
-\item{theme1}{the additional theme settings for the graphs defined by PxP}
+\item{Max}{max value}
 
-\item{the}{title of the graph}
+\item{theme1}{the additional theme settings for the graphs defined by PxP}
 }
 \value{
 exports the fraction spreadsheets

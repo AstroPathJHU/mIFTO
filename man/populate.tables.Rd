@@ -14,7 +14,7 @@ populate.tables(
   Thresholds,
   Opal1,
   flowout,
-  Protocols,
+  Protocol,
   paths,
   titration.type.name,
   connected.pixels,
@@ -35,7 +35,7 @@ as "AB (Opal NNN)"}
 \item{flowout}{logical for whether or not flow like results will be produced
 (1 for produce, 0 for don't)}
 
-\item{Protocols}{the protocol type (7color or 9color)}
+\item{Protocol}{the protocol type (7color or 9color)}
 
 \item{paths}{the data paths, one data path for each concentration}
 

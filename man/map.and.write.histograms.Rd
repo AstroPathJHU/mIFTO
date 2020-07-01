@@ -9,6 +9,7 @@ map.and.write.histograms(
   Antibody_Opal,
   Slide_Descript,
   Concentration,
+  Thresholds,
   table_in,
   theme1,
   colors
@@ -21,6 +22,8 @@ map.and.write.histograms(
 designated as "AB (Opal NNN)"}
 
 \item{Concentration}{a numeric vector of concentrations used in the titration}
+
+\item{Thresholds}{The given threshold vector}
 
 \item{table_in}{the table of statistics gathered by PxP}
 

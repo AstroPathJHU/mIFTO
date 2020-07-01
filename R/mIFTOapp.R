@@ -48,7 +48,7 @@ mIFTOapp <- function(){
   }, error = function(cond){
     message('cannot find local IP, using shiny default. Performance may suffer.')
     ip = "127.0.0.1"
-  }
+  })
   #
   tryCatch({
     options(browser = "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe")

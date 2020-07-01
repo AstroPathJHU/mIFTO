@@ -7,7 +7,7 @@ CheckVars
 Created By: Benjamin Green
 Last Edited 09/24/2019}
 \usage{
-check.vars(out, pb.Object)
+check.vars(out)
 }
 \arguments{
 \item{out}{is the list of variables given by the GUI function}
