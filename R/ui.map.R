@@ -29,7 +29,8 @@ ui.map <- function (){
     # add a title to the GUI with an image
     #
     shiny::titlePanel(
-      shinyWidgets::setBackgroundImage("https://raw.githubusercontent.com/beng1290/mIFTO/master/R/www/Splash.png"),
+      shinyWidgets::setBackgroundImage(
+        "https://raw.githubusercontent.com/beng1290/mIFTO/master/R/www/Splash.png"),
       title = shiny::div(
         shiny::strong(
           "Multiplex Immunofluorescence Titration Optimization (mIFTO)"
@@ -475,7 +476,8 @@ ui.map <- function (){
         "
         )
       )
-    )
+    ),
+    shinyalert::useShinyalert()
   )
   
 }

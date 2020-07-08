@@ -32,6 +32,10 @@ PixelbyPixel <- function(out,pb.Object) {
   # check input parameters and allocate some for eaiser indexing
   #
   outchecked <- mIFTO::check.vars(out)
+  err.val <- outchecked$err.val
+  if (err.val != 0) {
+    return(err.val)
+  }
   wd <- outchecked$wd
   Slide_Descript <- outchecked$Slide_Descript
   Antibody <- outchecked$Antibody
@@ -177,4 +181,5 @@ PixelbyPixel <- function(out,pb.Object) {
   #
   mIFTO::doupdate.pgbar(100, pb.Object, 'Fin')
   #
+  return(err.val)
 }

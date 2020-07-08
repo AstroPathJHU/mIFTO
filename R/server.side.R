@@ -103,13 +103,30 @@ server.side <- function(input, output, session) {
     #
     tryCatch({
       #
-      PixelbyPixel(input,pb)
+      err.val <- PixelbyPixel(input,pb)
       close(pb);
+      if (err.val == 0){
+        modal_out <- shinyalert::shinyalert(
+          title = "Finished",
+          text = paste(
+            ""
+          ),
+          type = 'success',
+          showConfirmButton = TRUE
+        )
+      }
       #
     }, warning = function(cond){
       close(pb);
-      message('error in pixel-by-pixel')
-      message(cond)
+      modal_out <- shinyalert::shinyalert(
+        title = "Undefined error.",
+        text = paste(
+          "Please contact Benjamin Green at bgreen42@jh.edu for additional",
+          "assistance."
+        ),
+        type = 'error',
+        showConfirmButton = TRUE
+      )
     })
   })
   #

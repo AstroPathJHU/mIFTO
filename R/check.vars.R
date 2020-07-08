@@ -16,24 +16,36 @@
 #'
 check.vars <- function(out) {
 #
-# get the working directory
-#
-wd <- choose.dir(caption = 'Select the folder the data is contained in')
-if(is.na(wd)) { stop('Directory is invalid', call. = FALSE)}
-#
 # check the slide names
 #
-if( grepl('[-|+|&]',out$Slide_Descript,perl = TRUE ) ) warning(
-'Slide Descriptors contain an illegal character this may cause issues')
+err.val <- 0
+if (out$Slide_Descript == ""){
+  modal_out <- shinyalert::shinyalert(
+    title = "Slide description input is empty.",
+    text = paste(
+      "Please enter valid slide desciptor input."),
+    type = 'error',
+    showConfirmButton = TRUE
+  )
+  err.val <- 1
+  return(list(err.val = err.val))
+}
+#
+if( grepl('[-|+|&]',out$Slide_Descript,perl = TRUE ) ) {
+  n <- shiny::showNotification(
+    'Slide Descriptors contain an illegal character this may cause issues',
+    type = 'warning')
+}
 if( grepl(' ',out$Slide_Descript,perl = TRUE ) ) {
-  warning('Slide Descriptors contain spaces ... removing spaces in names')
+  n <- shiny::showNotification(
+    'Slide Descriptors contain spaces ... removing spaces in names',
+    type = 'warning')
   Slide_Descript <- gsub(" ", "",out$Slide_Descript, fixed = TRUE)
 } else {
   Slide_Descript <- out$Slide_Descript
 }
 #
 Slide_Descript <- unlist(strsplit(Slide_Descript, split = ','))
-
 #
 # whether or not to output the flow results
 #
@@ -43,34 +55,101 @@ flowout <- FALSE
 #
 Antibody <- out$Antibody
 #
-# the opal name
-#
-Opal1 <- out$Opal1
-#
-# an antibody opal name pair
-#
-Antibody_Opal <- paste0(Antibody, ' (Opal ', Opal1, ')')
+if (Antibody == ""){
+  modal_out <- shinyalert::shinyalert(
+    title = "Antibody input is empty.",
+    text = paste(
+      "Please enter a value for the antibody input."),
+    type = 'error',
+    showConfirmButton = TRUE
+  )
+  err.val <- 2
+  return(list(err.val = err.val))
+}
 #
 # get the concentration values
 #
+err.val <- 0
+if (out$Concentration == ""){
+  modal_out <- shinyalert::shinyalert(
+    title = "Concentration input is empty.",
+    text = paste(
+      "Please enter valid concentration input."),
+    type = 'error',
+    showConfirmButton = TRUE
+  )
+  err.val <- 3
+  return(list(err.val = err.val))
+}
+#
 if( grepl(' ',out$Concentration,perl = TRUE ) ) {
-  warning('Concentrations contain spaces ... removing spaces in names')
+  n <- shiny::showNotification(
+    'Concentrations contain spaces ... removing spaces in concentrations',
+    type = 'warning')
   Concentration <- gsub(" ", "",out$Concentration, fixed = TRUE)
 } else {
   Concentration <- out$Concentration
 }
-tryCatch({
-  Concentration1 <- as.numeric(unlist(strsplit(Concentration, split =',')))
+#
+Concentration1 <- tryCatch({
+  Concentration1 <- as.numeric(
+    unlist(
+      strsplit(
+        Concentration, split =','
+        )
+      )
+    )
   }, warning = function(cond) {
-    stop(paste0('Error in Concentration input: ', Concentration))
-   
+    modal_out <- shinyalert::shinyalert(
+      title = "Error in concentration input.",
+      text = paste(
+        "Concentration input:", Concentration, "not valid. Please enter a list",
+        "of numeric values separated by commas."),
+      type = 'warning',
+      showConfirmButton = TRUE
+    )
+    return(-1)
   }, error = function(cond) {
-    stop(paste0('Error in Concentration input: ', Concentration))
-    
+    modal_out <- shinyalert::shinyalert(
+      title = "Error in concentration input.",
+      text = paste(
+        "Concentration input:", Concentration, "not valid. Please enter a list",
+        "of numeric values separated by commas."),
+      type = 'warning',
+      showConfirmButton = TRUE
+    )
+    return(-1)
   }
 )
 #
+if (length(Concentration1) == 1){
+  if (Concentration1 == -1){
+    err.val = 4
+    return(list(err.val = err.val))
+  }
+}
+#
 Concentration <- Concentration1
+#
+# the opal name
+#
+Opal1 <- out$Opal1
+#
+if (Opal1 == ""){
+  modal_out <- shinyalert::shinyalert(
+    title = "Primary Opal input is empty.",
+    text = paste(
+      "Please enter a value for the primary opal input."),
+    type = 'error',
+    showConfirmButton = TRUE
+  )
+  err.val <- 5
+  return(list(err.val = err.val))
+}
+#
+# an antibody opal name pair
+#
+Antibody_Opal <- paste0(Antibody, ' (Opal ', Opal1, ')')
 #
 # put the names together to find the proper dilutions
 #
@@ -97,7 +176,24 @@ if (!is.null(out$Vars_pxp)){
   Vars_pxp <- paste(out$Vars_pxp, collapse = ", ")
 }else {
   Vars_pxp <- ','}
-
+#
+#
+# get the working directory
+#
+wd <- choose.dir(caption = 'Select the folder the data is contained in')
+if(is.na(wd)) { 
+  modal_out <- shinyalert::shinyalert(
+    title = "Directory not valid.",
+    text = paste(
+      "User selected cancel. Please select a valid directory."
+      ),
+    type = 'error',
+    showConfirmButton = TRUE
+  )
+  err.val <- 6
+  return(list(err.val = err.val))
+  }
+#
 if(grepl("Folders.Pixels",Vars_pxp)) {
   #
   pp <- list.dirs(wd)
@@ -116,15 +212,22 @@ if(grepl("Folders.Pixels",Vars_pxp)) {
 # (if folders is false vector paths will be filled with one
 # path for each concentration)
 #
-checknumofpaths <- sapply(1:length(paths), function(x){
+for (x in 1:length(paths)){
   if (length(paths[[x]]) != 1){
-    message('Error: number of paths for
-            each Concentration does not equal 1')
-    stop('Check the status the naming
-         convention on folders and that all folders exist',
-         call. = FALSE)
+    modal_out <- shinyalert::shinyalert(
+      title = "Error could not find paths.",
+      text = paste(
+        "The number of paths for each concentration does not equal 1.",
+        "Please check the status of the naming convention on folders and that",
+        "all folders exist."
+      ),
+      type = 'error',
+      showConfirmButton = TRUE
+    )
+    err.val <- 7
+    return(list(err.val = err.val))
   }
-})
+}
 #
 ## ***********************************************
 ## need to check that the there are
@@ -132,10 +235,6 @@ checknumofpaths <- sapply(1:length(paths), function(x){
 ## and that if the naming convention
 ## is false the dilution only appears once in the name
 ## ************************************************
-#
-# get the threshold tag
-#
-#Thresholded <- as.logical(out$Thresholded)
 #
 # create the threshold values and connected pixel values
 #
@@ -154,8 +253,9 @@ if (!grepl("nConsistent",Vars_pxp)) {
   for (x in 1:length(Slide_Descript)){
     #
     if( grepl(' ',Thresholds[[x]],perl = TRUE ) ) {
-      warning('Concentrations contain spaces ...
-            removing spaces in names')
+      n <- shiny::showNotification(
+        'Thresholds contain spaces ... removing spaces in thresholds',
+        type = 'warning')
       Thresholds[[x]] <- gsub(" ", "",Thresholds[[x]], fixed = TRUE)
     } else {
       Thresholds[[x]] <- Thresholds[[x]]
@@ -163,15 +263,46 @@ if (!grepl("nConsistent",Vars_pxp)) {
     #
     # try to convert to a valid string
     #
-    tryCatch({
-      Thresholds1 <- as.numeric(
-        unlist(strsplit(Thresholds[[x]], split =',')))
+    Thresholds1 <- tryCatch({
+      as.numeric(
+        unlist(
+          strsplit(
+            Thresholds[[x]], split =','
+          )
+        )
+      )
       }, warning = function(cond) {
-        stop(paste0('Error in thresholds input: ', Thresholds[[x]]))
+        modal_out <- shinyalert::shinyalert(
+          title = "Error in threshold input.",
+          text = paste0(
+            "Could not parse threshold input:", Thresholds[[x]],
+            ". Please enter a valid list of numeric thresholds, separated by ",
+            "commas."
+          ),
+          type = 'error',
+          showConfirmButton = TRUE
+        )
+        return(-1)
       }, error = function(cond) {
-        stop(paste0('Error in thresholds input: ', Thresholds[[x]]))
+        modal_out <- shinyalert::shinyalert(
+          title = "Error in threshold input.",
+          text = paste0(
+            "Could not parse threshold input:", Thresholds[[x]],
+            ". Please enter a valid list of numeric thresholds, separated by ",
+            "commas."
+          ),
+          type = 'error',
+          showConfirmButton = TRUE
+        )
+        return(-1)
+      })
+    #
+    if (length(Thresholds1) == 1){
+      if (Thresholds1 == -1){
+        err.val = 8
+        return(list(err.val = err.val))
       }
-    )
+    }
     #
     Thresholds[[x]] <- Thresholds1
     #
@@ -179,15 +310,26 @@ if (!grepl("nConsistent",Vars_pxp)) {
     # == the number of concentrations
     #
     if (length(Concentration) != length(Thresholds[[x]])){
-      stop('the length of concentrations does
-         not equal the length of thresholds', call. = FALSE)
+      modal_out <- shinyalert::shinyalert(
+        title = "Error in threshold input.",
+        text = paste(
+          "The length of concentration vector does",
+          "not equal the length of threshold vector"
+        ),
+        type = 'error',
+        showConfirmButton = TRUE
+      )
+      err.val <- 9
+      return(list(err.val = err.val))
     }
     #
     # set up connected pixel values
     #
     if( grepl(' ',connected.pixels[[x]],perl = TRUE ) ) {
-      warning('Concentrations contain spaces ...
-            removing spaces in names')
+      n <- shiny::showNotification(
+        paste("Connected pixel vector contains spaces",
+              "... removing spaces in thresholds"),
+        type = 'warning')
       connected.pixels[[x]] <- gsub(
         " ", "",connected.pixels[[x]], fixed = TRUE
       )
@@ -197,15 +339,47 @@ if (!grepl("nConsistent",Vars_pxp)) {
     #
     # try to convert to a valid string
     #
-    tryCatch({
-      connected.pixels1 <- as.numeric(
-        unlist(strsplit(connected.pixels[[x]], split =',')))
+    connected.pixels1 <- tryCatch({
+      as.numeric(
+        unlist(
+          strsplit(
+            connected.pixels[[x]], split =','
+          )
+        )
+      )
     }, warning = function(cond) {
-      stop(paste0('Error in connected pixels input: ', connected.pixels[[x]]))
+      modal_out <- shinyalert::shinyalert(
+        title = "Error in connected pixel input.",
+        text = paste0(
+          "Could not parse connected pixel input:", Thresholds[[x]],
+          ". Please enter a valid list of numeric connected pixel values, ",
+          "separated by commas."
+        ),
+        type = 'error',
+        showConfirmButton = TRUE
+      )
+      return(-1)
     }, error = function(cond) {
-      stop(paste0('Error in connected pixels input: ', connected.pixels[[x]]))
+      modal_out <- shinyalert::shinyalert(
+        title = "Error in connected pixel input.",
+        text = paste0(
+          "Could not parse connected pixel input:", Thresholds[[x]],
+          ". Please enter a valid list of numeric connected pixel values, ",
+          "separated by commas."
+        ),
+        type = 'error',
+        showConfirmButton = TRUE
+      )
+      return(-1)
     }
     )
+    #
+    if (length(connected.pixels1) == 1){
+      if (connected.pixels1 == -1){
+        err.val = 10
+        return(list(err.val = err.val))
+      }
+    }
     #
     connected.pixels[[x]] <- connected.pixels1
     #
@@ -213,15 +387,33 @@ if (!grepl("nConsistent",Vars_pxp)) {
     # == the number of concentrations
     #
     if (length(Concentration) != length(connected.pixels[[x]])){
-      stop('the length of concentrations does
-         not equal the length of connected pixels', call. = FALSE)
+      modal_out <- shinyalert::shinyalert(
+        title = "Error in connected pixels input.",
+        text = paste(
+          "The length of concentration vector does",
+          "not equal the length of connected pixels vector"
+        ),
+        type = 'error',
+        showConfirmButton = TRUE
+      )
+      err.val <- 11
+      return(list(err.val = err.val))
     }
     #
   }
   names(connected.pixels)<-Slide_Descript
   names(Thresholds)<-Slide_Descript
 } else {
-  stop('multiple thresholds not yet supported')
+  modal_out <- shinyalert::shinyalert(
+    title = "Error in threshold input.",
+    text = paste(
+      "Multiple thresholds not yet supported"
+    ),
+    type = 'error',
+    showConfirmButton = TRUE
+  )
+  err.val <- 12
+  return(list(err.val = err.val))
 }
 #
 # get the protocol type
@@ -248,7 +440,7 @@ rm(a,packages)
 #
 # output list
 #
-outnew <- list(wd = wd, Slide_Descript = Slide_Descript,
+outnew <- list(err.val = err.val, wd = wd, Slide_Descript = Slide_Descript,
                flowout = flowout,Antibody = Antibody,
                Opal1 = Opal1, Antibody_Opal = Antibody_Opal,
                Concentration = Concentration,

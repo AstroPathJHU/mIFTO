@@ -20,7 +20,8 @@ Imports:
     reshape2,
     shinyWidgets,
     shinydashboard,
-    shiny
+    shiny,
+	shinyalert
 License: MIT License
 Encoding: UTF-8
 LazyData: true
