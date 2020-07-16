@@ -249,13 +249,19 @@ if (!grepl("nConsistent",Vars_pxp)) {
     )
   #
   names(connected.pixels) <- Slide_Descript
+  v1 = 1
+  v2 = 1
+  v3 = 1
   #
   for (x in 1:length(Slide_Descript)){
     #
-    if( grepl(' ',Thresholds[[x]],perl = TRUE ) ) {
-      n <- shiny::showNotification(
-        'Thresholds contain spaces ... removing spaces in thresholds',
-        type = 'warning')
+    if( grepl(' ',Thresholds[[x]],perl = TRUE )) {
+      if (v1 == 1){
+        n <- shiny::showNotification(
+          'Thresholds contain spaces ... removing spaces in threshold list',
+          type = 'warning')
+        v1 = 0
+      }
       Thresholds[[x]] <- gsub(" ", "",Thresholds[[x]], fixed = TRUE)
     } else {
       Thresholds[[x]] <- Thresholds[[x]]
@@ -313,8 +319,8 @@ if (!grepl("nConsistent",Vars_pxp)) {
       modal_out <- shinyalert::shinyalert(
         title = "Error in threshold input.",
         text = paste(
-          "The length of concentration vector does",
-          "not equal the length of threshold vector"
+          "The length of concentration list does",
+          "not equal the length of threshold list"
         ),
         type = 'error',
         showConfirmButton = TRUE
@@ -326,10 +332,13 @@ if (!grepl("nConsistent",Vars_pxp)) {
     # set up connected pixel values
     #
     if( grepl(' ',connected.pixels[[x]],perl = TRUE ) ) {
-      n <- shiny::showNotification(
-        paste("Connected pixel vector contains spaces",
-              "... removing spaces in thresholds"),
-        type = 'warning')
+      if (v2 == 1){
+        n <- shiny::showNotification(
+          paste("Connected pixel list contains spaces",
+                "... removing spaces in connected pixel list"),
+          type = 'warning')
+        v2 = 0
+      }
       connected.pixels[[x]] <- gsub(
         " ", "",connected.pixels[[x]], fixed = TRUE
       )
@@ -381,6 +390,16 @@ if (!grepl("nConsistent",Vars_pxp)) {
       }
     }
     #
+    if(!isTRUE(all(connected.pixels1 == floor(connected.pixels1)))){
+      if (v3 == 1){
+        n <- shiny::showNotification(
+          paste("Connected pixel list must contain",
+                "integers ... rounding down"),
+          type = 'warning')
+        v3 = 0
+      }
+      connected.pixels1 <- floor(connected.pixels1)
+    }
     connected.pixels[[x]] <- connected.pixels1
     #
     # check that the number of thresholds
@@ -390,8 +409,8 @@ if (!grepl("nConsistent",Vars_pxp)) {
       modal_out <- shinyalert::shinyalert(
         title = "Error in connected pixels input.",
         text = paste(
-          "The length of concentration vector does",
-          "not equal the length of connected pixels vector"
+          "The length of concentration list does",
+          "not equal the length of connected pixels list"
         ),
         type = 'error',
         showConfirmButton = TRUE

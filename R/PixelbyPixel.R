@@ -135,17 +135,18 @@ PixelbyPixel <- function(out,pb.Object) {
     "variation. Higher values indicate more separation.")
   #
   sn.plots.l <- (length(Slide_Descript) + 1)
+  v1 <-sn.plots.l+1
   if ((sn.plots.l/4)%%1 == .25){
     sn.plots <- c(sn.plots[1:sn.plots.l], p1,p1,p1, 
-                  sn.plots[sn.plots.l+1:length(sn.plots)],
+                  sn.plots[v1:length(sn.plots)],
                   p1, p1, p1)
   } else if ((sn.plots.l/4)%%1 == .5){
     sn.plots <- c(sn.plots[1:sn.plots.l], p1,p1, 
-                  sn.plots[sn.plots.l+1:length(sn.plots)],
+                  sn.plots[v1:length(sn.plots)],
                   p1, p1)
   } else if ((sn.plots.l/4)%%1 == .75){
     sn.plots <- c(sn.plots[1:sn.plots.l], p1, 
-                  sn.plots[sn.plots.l+1:length(sn.plots)],
+                  sn.plots[v1:length(sn.plots)],
                   p1)
   }
   #

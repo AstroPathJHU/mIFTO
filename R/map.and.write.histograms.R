@@ -81,7 +81,6 @@ map.and.write.histograms <- function(
     if(i.1=='Plus1'){if(.1>MIN_X){MIN_X<-.1}}else{if(-4>MIN_X){MIN_X<--4}}
     MAX_Y<-max(table_in[['Histograms']][[i.1]][
       table_in[['Histograms']][[i.1]][['mids']]>MIN_X,][['density']])
-    names(Thresholds)<-Concentration
     plots.sep.l <- length(Concentration)
     lbl2 <- rep(paste0(
       lbl.a," A value of ", inm,
@@ -96,6 +95,7 @@ map.and.write.histograms <- function(
       #
       plots.sep<-vector('list',length=(length(Slide_Descript)))
       plot.count<-1
+      names(Thresholds[[x]])<-Concentration
       #
       for (y in Concentration){
           #
@@ -119,8 +119,8 @@ map.and.write.histograms <- function(
               ylim = c(0, round(MAX_Y+.001, digits = 3))) +
             theme1 + ggplot2::theme(legend.position = c(.9,.8)) +
             ggplot2::geom_vline(
-              xintercept = log(Thresholds[[which(
-                Concentration==y)]][x]+correction.val[i.1])) +
+              xintercept = log(Thresholds[[x]][[which(
+                Concentration==y)]]+correction.val[i.1])) +
             ggplot2::theme(
               plot.margin = ggplot2::margin(
                 t = 20, r = 20, b = 20, l = 20, unit = "pt"))
@@ -138,7 +138,7 @@ map.and.write.histograms <- function(
       lbl <- rep(paste0(
         "Intensity Distributions Separated by Slides and Concentration for ",
         Slide_Descript[[x]], " ", Antibody_Opal), ceiling(plots.sep.l/ 4))
-      glist <- c(glist, m.grid.arrange(plots.sep, lbl, lbl2, 1, i.c + (x-1),
+      glist <- c(glist, m.grid.arrange(plots.sep, lbl, lbl2, 1, (i.c + (x-1)),
                                        total.pages))   
     }
     #
@@ -201,7 +201,7 @@ map.and.write.histograms <- function(
         ceiling(plots.l/ 2))
       #
       glist <- c(glist, m.grid.arrange(
-        plots, lbl, lbl2, 0, i.c + total.pages.a, total.pages))
+        plots, lbl, lbl2, 0, (i.c + total.pages.a), total.pages))
     }
     #
     i.c = total.pages / 2

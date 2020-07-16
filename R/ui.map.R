@@ -211,10 +211,15 @@ ui.map <- function (){
                   4, align = "center", offset = 1,
                   shiny::div(
                     shiny::br(),
-                    "Was more than one used dilution in the name?",
+                    "Was more than one dilution used in the name?",
                     shiny::br(),
                     shiny::span(
-                      "Ex: T1_PD1_1to150_PV50_Opal650_1to50",
+                      "(i.e., Was naming convention followed,",
+                    shiny::br(),
+                    shiny::span(
+                      "e.g., T1_PD1_1to150_PV50_Opal650_1to50)",
+                      style = fm.object$fineprintstyle
+                    ),
                       style = fm.object$fineprintstyle
                     ),
                     style = fm.object$commontextstyle 
@@ -432,7 +437,8 @@ ui.map <- function (){
                       "List the 'connected pixel' values in order 
                       of increasing dilution separated by a comma:",
                       shiny::br(),
-                      style = fm.object$commontextstyle)),
+                      style = fm.object$commontextstyle),
+                    placeholder = 'EX: 5,6,4'),
                   style = fm.object$commoninputstylelonglist2
                 )
                 ),

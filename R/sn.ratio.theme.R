@@ -59,7 +59,7 @@ sn.ratio.theme <- function(tbl, Concentration, titl, xtitl, ytitl,Max, theme1){
     ggplot2::coord_cartesian(xlim = xcoords,
                              ylim = c(-5,Max), expand = F) +
     ggplot2::scale_y_continuous(breaks=seq(0,100,5)) +
-    ggplot2::scale_x_discrete(limits=factor(Concentration)) +
+    ggplot2::scale_x_continuous(breaks=Concentration) +
     theme1 + ggplot2::theme(legend.position = c(.85,.85)) + 
     ggplot2::theme(
       plot.margin = ggplot2::margin(t = 20, r = 20, b = 20, l = 20, unit = "pt"))
