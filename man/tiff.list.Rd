@@ -2,7 +2,8 @@
 % Please edit documentation in R/tiff.list.R
 \name{tiff.list}
 \alias{tiff.list}
-\title{Used by analysis functions to read in 8-layer and 10-layer component_tiff images}
+\title{Used by analysis functions to read in 8-layer and 10-layer 
+component_tiff images}
 \usage{
 tiff.list(wd, pattern.in, Protocol)
 }
@@ -15,14 +16,15 @@ tiff.list(wd, pattern.in, Protocol)
 tiff.list is an 8 column data.frame where each column holds the pixel intensities for a single image layer
 }
 \description{
-tiff.list
-Created By: Benjamin Green, Charles Roberts
+tiff.list;
+Created By: Benjamin Green, Charles Roberts;
 Last Edited 11/12/2018
 }
 \details{
-This script is designed to read in the designated 8 layer component_tiff image or images exported
-from inForm (R) CellAnaylsis
-The function returns a data.frame of 8 columns, each column in the data.frame designates a different layer of the image
-designated here as DAPI 520-690; however the column/names order may change depending on the library used to
-export images from inForm(R)
+This script is designed to read in the designated 8 layer 
+component_tiff image or images exported from inForm (R) CellAnaylsis
+The function returns a data.frame of 8 columns, each column in the 
+data.frame designates a different layer of the image designated 
+here as DAPI 520-690; however the column/names order may change
+depending on the library used to export images from inForm(R)
 }

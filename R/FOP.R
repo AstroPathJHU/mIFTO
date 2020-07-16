@@ -1,7 +1,15 @@
-#'Main function to find the positivity for either tissue, cell segmentations and percent positive pixels
+#################################FOP#####################################
+#'Main function to find the positivity for either tissue, 
+#'cell segmentations and percent positive pixels
 #'
 #'FOP
-#'this code will find positivity for either tissue seg, cell seg, or PPC pixel data##
+#'Created By: Benjamin Green
+#'Last Edited 07/15/2020
+#'
+#'
+#'FOP
+#'this code will find positivity for either tissue seg, cell seg, or PPC pixel 
+#'data##
 #'Created By: Benjamin Green 07.12.2018
 #'to run:
 #'1. Organize data into seperate folders according to conditions
@@ -11,218 +19,344 @@
 #'Slide descriptor is the description of slide (ie Tonsil1, Tonsil3)
 #'Other condition delineation is something else that delinates conditions
 #'(ie monoplex/multplex, V1/ V2, 1to50/1to100)
-#'this does not need to be in the name of the slide just to differentiate conditions
+#'this does not need to be in the name of the slide just to differentiate 
+#'conditions
 #'5.Click Run then select directory with the data
 #'6.A new yes/no box will open
 #'this is for additional conditions/ AB with the same Slide Descriptors
 #'if there are more click yes if not click no
 #'7. for yes: follow on screen prompts till there are no more coniditions
-#'8. for no: a browsing window will open; select where you want output table to go
+#'8. for no: a browsing window will open; select where you want output table to
+#' go
 #'
 #'@return the output is a csv file that has the following columns:
 #'concentration, one for each slide descriptors, and Antibody
 #'
 #' @export
 FOP<-function(){
-  A <- list(
-    type = 'ggroup',
-    horizontal = F,
-    children = list(
-      list(type = 'fieldset',columns = 1,label = 'General Input',
-           children = list(
-             list(name = 'Slide_Descript', type = 'gedit',
-                  label =
-                    '               Slide Descriptor
-(separate with a comma but do not
-add `-` or spaces between names): ',
-                  text = '',coerce.with = as.character),
-             list(name = 'Antibody',type = 'gedit',
-                  label =
-                    '            Primary Antibody: ',
-                  text = '',coerce.with = as.character),
-             list(name = 'Concentration',type = 'gedit',
-                  label =
-                    'Other condition delineation: ',
-                  text = '',coerce.with = as.character),
-             list(name = 'Opal1',type = 'gedit',
-                  label =
-                    '             Primary Opal:                      Opal',
-                  text = '',coerce.with = as.character),
-             list(name = 'IHC',type = 'gcheckbox',
-                  label =
-                    '             Is this IHC? '),
-             list(name = 'fraction.type',type = 'gcombobox',
-                  label = 'What kind of positivity measure? ',
-                  items = c('PPC Pixels','Cells','Tissue'))))))
-  options(guiToolkit="tcltk")
-  A1<- gWidgets::gwindow(title = 'Tissue script', visible = F)
-  A2 <-  gWidgets::ggroup(horizontal = F, container = A1)
-  A3 <-  gWidgets::gformlayout(A, container = A2, expand = TRUE, align = 'center')
-  button.groupA<- gWidgets::ggroup(horizontal = F, container = A2)
-  gWidgets::addSpace(button.groupA, 90)
-  A4 <-  gWidgets::gbutton('Run', container = button.groupA)
-  gWidgets::addHandlerChanged(A4, function(h, ...) {
-    visible(A1)<-F
-    out <- svalue(A3);
-    Slide_Descript <- unlist(strsplit(out$Slide_Descript, split = ','))
+  fm.object <- mIFTO::ui.formats(1000, 1)
+  #
+  # create the UI tab  -------------------------------------
+  FOP.ui <- shiny::fixedPage(
+    #
+    # add a title to the GUI with an image
+    #
+    shiny::titlePanel(
+      shinyWidgets::setBackgroundImage(
+        "https://raw.githubusercontent.com/beng1290/mIFTO/master/R/www/Splash.png"),
+      title = shiny::div(
+        shiny::strong(
+          "Multiplex Immunofluorescence Titration Optimization (mIFTO)"
+        ),
+        style = paste0('color: #f0f6ee;')
+      )
+    ),
+    #
+    # main UI panel
+    #
+    shiny::column(
+      8, align = "left",
+      style = fm.object$childinputstyle,
+      #
+      # create the General Input tab  -------------------------------------
+      # 
+      shiny::br(),
+      shiny::fixedRow(
+        shiny::column(
+          8, align = "justify",
+          style = paste0(
+            "height:450px;width: 100%; background-color: #363a4a;
+              border: 2px solid lightgrey;"),
+          #
+          # header
+          #
+          shiny::fixedRow(
+            shiny::h2(
+              shiny::div(
+                "Fraction of Positivity (FOP)",
+                style = fm.object$subheadertextstyle), 
+              align = 'justify'
+            )
+          ),
+          #
+          # input fields in general input
+          #
+          shiny::fixedRow(
+            shiny::column(
+              8, align = 'center',
+              style = fm.object$child2inputstyle,
+              #
+              # first row in the general input -----------------------
+              #
+              shiny::fixedRow(
+                #
+                # Slide Descriptor field
+                #
+                shiny::column(
+                  6, align = "center", offset = 1,
+                  shiny::textInput(
+                    "Slide_Descript",
+                    shiny::div(
+                      class = "textB",shiny::br(),
+                      "Slide Descriptor:",shiny::br(), 
+                      shiny::span(
+                        "(separate with a comma do not 
+                        add `-` or spaces)",
+                        style = fm.object$fineprintstyle
+                      ),
+                      style = fm.object$commontextstyle 
+                    ), 
+                    placeholder = "EX: T1,T2,T3"
+                  ),
+                  style = fm.object$commoninputstyleline1
+                ),
+                #
+                # primary antibody field
+                #
+                shiny::column(
+                  4, align = "center", offset = 0,
+                  shiny::textInput(
+                    "Antibody",
+                    shiny::div(
+                      shiny::br(),shiny::br(), shiny::br(),
+                      "Primary Antibody:",shiny::br(),
+                      style = fm.object$commontextstyle
+                    ),
+                    placeholder = 'EX: CD8'
+                  ),
+                  style = fm.object$commoninputstyleline1
+                )
+              ),
+              #
+              # second row in the general input -------------------------
+              #
+              shiny::fixedRow(
+                #
+                # Concentration field
+                #
+                shiny::column(
+                  6, align = "center", offset = 1,
+                  shiny::textInput(
+                    "Concentration",
+                    shiny::div(shiny::br(),
+                               "Other condition delineation: ",
+                               shiny::br(),
+                               style = fm.object$commontextstyle 
+                    ),
+                    placeholder = "EX: 50 or Multiplex"
+                  ),
+                  style = fm.object$commoninputstyle
+                ),
+                #
+                # Opal field
+                #
+                shiny::column(
+                  4, align = "center", offset = 0,
+                  shiny::textInput(
+                    "Opal1",
+                    shiny::div(shiny::br(),
+                               "Primary Opal:",shiny::br(),
+                               style = fm.object$commontextstyle
+                    ),
+                    placeholder = 'EX: 540'
+                  ),
+                  style = fm.object$commoninputstyle
+                )
+              ),
+              #
+              # third row in the general input -----------------------------
+              #
+              shiny::fixedRow(
+                #
+                # protocol type field
+                #
+                shiny::column(
+                  6, align = "center", offset = 1,
+                  shiny::selectInput(
+                    "fraction.type",
+                    shiny::div(
+                      class = "textB",
+                      "What kind of positivity measure? ", 
+                      shiny::br(),style = fm.object$commontextstyle
+                    ), 
+                    choices = c('PPC Pixels','Cells','Tissue')),
+                  style = fm.object$commoninputstyle
+                ),
+                #
+                # IHC
+                #
+                shiny::column(
+                  4, align = "center", offset = 0,
+                  shiny::div(
+                    class = "textB","Is this IHC?",
+                    style = fm.object$commontextstyle
+                  ),
+                  shiny::checkboxInput(
+                    "IHC", "", value = FALSE),
+                  style = fm.object$commoninputstyle
+                ),
+                style = fm.object$commoninputstyle
+              )
+              #
+              # add the 'Go' button ---------------------
+              #
+            ),
+            shiny::fixedRow(
+              shiny::column(
+                8, align = 'center',offset = 2,
+                shiny::br(),
+                shiny::actionButton(
+                  'FOP',
+                  shiny::div(
+                    'Run FOP',
+                    style = fm.object$buttontextstyle
+                  )
+                )
+              )
+            )#,
+            #style = paste0(
+            #  fm.object$child3inputstyle, "border-bottom: 2px solid lightgrey;
+            #   border-left: 2px solid lightgrey;"
+            #)
+          )
+        )
+      )
+    ),
+    shinyalert::useShinyalert()
+  )
+  #
+  #
+  # Func 1 -------------------------------------
+  #
+  runforpos<-function(out, my.vals){
+    #
     fraction.type <-out$fraction.type
-    Positive.table<-runforpos(out, Slide_Descript,fraction.type)
-    GUIB(Positive.table,wd,Slide_Descript,fraction.type)
-    dispose(A1)})
-  visible(A1)<-T}
-
-
-GUIB<- function(Positive.table, wd,Slide_Descript,fraction.type) {
-  options(guiToolkit="tcltk")
-  B1 <- gWidgets::gwindow("Another AB?")
-  group <- gWidgets::ggroup(container = B1)
-  gWidgets::gimage("info", dirname="stock", container=group)
-  inner.group <- gWidgets::ggroup(horizontal=FALSE, container = group)
-  gWidgets::glabel('Is there another AB/condition combination?',
-         container=inner.group, expand=TRUE)
-  button.group <- gWidgets::ggroup(container = inner.group)
-  gWidgets::addSpace(button.group, 15)
-  tr<- gWidgets::gbutton("Yes", container=button.group)
-  gWidgets::addHandlerChanged(tr, function(h,...){
-    visible(B1)<-F
-    GUIC(Positive.table,Slide_Descript,fraction.type)
-    dispose(B1)})
-  fal<-gWidgets::gbutton("No", container=button.group)
-  gWidgets::addHandlerChanged(fal, function(h,...){
-    wd<-choose.dir('OutPut directory:')
-    write.table(Positive.table,file=paste0(wd,'/ + ',fraction.type,'.csv'),sep=',', row.names=F )
-    dispose(B1)})
-  visible(B1)<-T
-}
-
-
-GUIC<-function(Positive.table,Slide_Descript,fraction.type){
-options(guiToolkit="tcltk")
-  C <- list(
-    type = 'ggroup',
-    horizontal = F,
-    children = list(
-      list(type = 'fieldset',columns = 1,label = 'General Input',
-           children = list(
-             list(name = 'Antibody',type = 'gedit',
-                  label =
-                    '            Primary Antibody: ',
-                  text = '',coerce.with = as.character),
-             list(name = 'Concentration',type = 'gedit',
-                  label =
-                    'Other condition delienation: ',
-                  text = '',coerce.with = as.character),
-             list(name = 'Opal1',type = 'gedit',
-                  label =
-                    '             Primary Opal:                      Opal',
-                  text = '',coerce.with = as.character),
-             list(name = 'IHC',type = 'gcheckbox',
-                  label =
-                    '             Is this IHC? ')))))
-  C1<-gWidgets::gwindow(title = 'PPC script', visible = F)
-  C2 <- gWidgets::ggroup(horizontal = F, container = C1)
-  C3 <- gWidgets::gformlayout(C, container = C2, expand = TRUE, align = 'center')
-  button.groupC<-gWidgets::ggroup(horizontal = F, container = C2)
-  gWidgets::addSpace(button.groupC, 90)
-  C4 <- gWidgets::gbutton('Run', container = button.groupC)
-  gWidgets::addHandlerChanged(C4, function(h, ...) {
-    visible(C1)<-F
-    out <- svalue(C3)
-    Positive.table<-findposFOP(Positive.table, out, Slide_Descript,fraction.type)
-    GUIB(Positive.table,wd,Slide_Descript,fraction.type)
-    dispose(C1)})
-  visible(C1)<-T}
-
-
-runforpos<-function(out,Slide_Descript,fraction.type){
-  Positive.table<-data.frame()
-  Positive.table<-findposFOP(Positive.table, out, Slide_Descript,fraction.type)
-  Positive.table}
-
-
-findposFOP<-function(Positive.table,out,Slide_Descript,fraction.type){
-  AB <- out$Antibody
-  Opal1 <- out$Opal1
-  Concentration <- out$Concentration
-  IHC <- as.logical(out$IHC)
-  #find working directory
-  wd<-choose.dir()
-  print('running')
-  #makes variable name to look for in inForm output
-  Antibody_Opal<-paste0('Opal ',Opal1)
-  #this is seperated for whichever measure is used for determining positivity
-  if(fraction.type=='PPC Pixels'){
-    ##reads in and organizes data
-    CellSeg<-
-      dplyr::mutate(
-        dplyr::filter(
-          do.call(
-            rbind,lapply(
-              list.files(wd,
-                pattern = '.*]_coloc_data.txt$',full.names=TRUE),
-              function(x) data.table::fread(x, na.strings=c('NA', '#N/A'),
-                                select = if(IHC==T){c(
-                                  'Sample Name','DAB Area',
-                                  'Denominator')}else{
-                                    c(
-                                      'Sample Name',paste0(
-                                        Antibody_Opal, ' Area'),
-                                      'Denominator')},
-                                data.table= FALSE,
-                                col.names = c(
-                                  'Slide.ID','Antibody','Totals')))),
-          !is.na(Totals)),
-        Concentration=Concentration)
-    ##Antibody is the positive pixel count R does not read it in as a numerical variable so we change it here
-    CellSeg$Antibody<-as.numeric(CellSeg$Antibody)
-    ##these two loops help shorten variable descritions
-    for(count3 in Slide_Descript){
-      CellSeg$Slide.ID<-gsub(
-        paste0('.*', count3,'.*'),
-        count3, CellSeg$Slide.ID)
-    }
-    ##this is the part of the script that determines the % +-ivity and organizes the output
-    Pos<-dplyr::mutate(reshape2::dcast(
-      dplyr::summarize(
-        dplyr::group_by(
-          dplyr::mutate(
-            CellSeg, fractions=((as.numeric(Antibody)/as.numeric(Totals)))),
-          Slide.ID, Concentration),
-        means=mean(fractions)),
-      Concentration~Slide.ID, value.var = 'means'), Antibody = AB)
-    ##now we add it to a data data for export. This is the data table can be added to
-    ##for additional AB with the same SlideIDs.
-    Positive.table<-rbind(Positive.table,Pos)
-  Positive.table
-  }else if(fraction.type =='Cells'){
-    ##read data in and organize it
-    CellSeg<-
-      dplyr::group_by(
-        data.table::setnames(
-          do.call(
-            rbind,lapply(
-              list.files(wd,
-                         pattern = '.*]_cell_seg_data.txt$',full.names=TRUE),
-              function(x) data.table::fread(x, na.strings=c('NA', '#N/A'),
-                                select=c('Slide ID','Phenotype'),
-                                data.table = FALSE))),
-          c('Slide.ID','Phenotype')),
-        Slide.ID)
-    ##change AB to a single variable
-    CellSeg$Phenotype<-gsub(AB,'Antibody', CellSeg$Phenotype,perl=TRUE)
-    ##find positive cells and generate output file
-    ##Positive_cells data.table can be added to for additional AB with the same SlideIDs.
-    for(count3 in Slide_Descript){
-      CellSeg$Slide.ID<-gsub(
-        paste0('.*', count3,'.*'),
-        count3, CellSeg$Slide.ID)}
-    Positive.table<-rbind(
-      Positive.table,dplyr::mutate(reshape2::dcast(dplyr::mutate(reshape2::dcast(dplyr::summarize(
-        dplyr::group_by(CellSeg,Slide.ID,Phenotype),
-        n = n()), Slide.ID~Phenotype, value.var = 'n'),
-        fractions = Antibody/(Other+Antibody), AB= AB),
-        AB~Slide.ID, value.var = 'fractions'), Concentration = Concentration))
+    Positive.table<-data.frame()
+    Positive.table<-findposFOP(Positive.table, out,  my.vals)
     Positive.table
+    #
+  }
+  #
+  # Func2 -------------------------------------
+  #
+  findposFOP<-function(Positive.table, out, my.vals){
+    AB <- my.vals$AB
+    Opal1 <- my.vals$Opal1
+    Concentration <- my.vals$delin
+    IHC <- as.logical(my.vals$IHC)
+    Slide_Descript <- my.vals$Slide_Descript
+    fraction.type <- out$fraction.type
+    #find working directory
+    wd<-choose.dir(my.vals$wd, caption = 'Data directory:')
+    my.vals$wd <- wd
+    print('running')
+    #makes variable name to look for in inForm output
+    Antibody_Opal<-paste0('Opal ',Opal1)
+    #this is seperated for whichever measure is used for determining positivity
+    if(fraction.type=='PPC Pixels'){
+      ##reads in and organizes data
+      CellSeg<-
+        dplyr::mutate(
+          dplyr::filter(
+            do.call(
+              rbind,lapply(
+                list.files(wd,
+                           pattern = '.*]_coloc_data.txt$',full.names=TRUE),
+                function(x) data.table::fread(x, na.strings=c('NA', '#N/A'),
+                                              select = if(IHC==T){c(
+                                                'Sample Name','DAB Area',
+                                                'Denominator')}else{
+                                                  c(
+                                                    'Sample Name',paste0(
+                                                      Antibody_Opal, ' Area'),
+                                                    'Denominator')},
+                                              data.table= FALSE,
+                                              col.names = c(
+                                                'Slide.ID','Antibody','Totals')
+                )
+              )
+            ),
+            !is.na(Totals)
+          ),
+          Concentration=Concentration
+        )
+      ##Antibody is the positive pixel count R does not read it in as a 
+      # numerical variable so we change it here
+      CellSeg$Antibody<-as.numeric(CellSeg$Antibody)
+      ##these two loops help shorten variable descritions
+      for(count3 in Slide_Descript){
+        CellSeg$Slide.ID<-gsub(
+          paste0('.*', count3,'.*'),
+          count3, CellSeg$Slide.ID)
+      }
+      ##this is the part of the script that determines the % +-ivity and 
+      # organizes the output
+      Pos<-dplyr::mutate(
+        reshape2::dcast(
+          dplyr::summarize(
+            dplyr::group_by(
+              dplyr::mutate(
+                CellSeg, fractions = (
+                  (
+                    as.numeric(Antibody)/as.numeric(Totals)
+                  )
+                )
+              ),
+              Slide.ID, Concentration
+            ),
+            means=mean(fractions), .groups = 'drop'
+          ),
+          Concentration~Slide.ID, value.var = 'means'
+        ),
+        Antibody = AB
+      )
+      ##now we add it to a data data for export. This is the data table can be 
+      # added to for additional AB with the same SlideIDs.
+      Positive.table<-rbind(Positive.table,Pos)
+      Positive.table
+    }else if(fraction.type =='Cells'){
+      ##read data in and organize it
+      CellSeg<-
+        dplyr::group_by(
+          data.table::setnames(
+            do.call(
+              rbind,lapply(
+                list.files(wd,
+                           pattern = '.*]_cell_seg_data.txt$',full.names=TRUE),
+                function(x) fread(x, na.strings=c('NA', '#N/A'),
+                                  select=c('Slide ID','Phenotype'),
+                                  data.table = FALSE))),
+            c('Slide.ID','Phenotype')),
+          Slide.ID)
+      ##change AB to a single variable
+      CellSeg$Phenotype<-gsub(AB,'Antibody', CellSeg$Phenotype,perl=TRUE)
+      ##find positive cells and generate output file
+      ##Positive_cells data.table can be added to for additional AB with the 
+      # same SlideIDs.
+      for(count3 in Slide_Descript){
+        CellSeg$Slide.ID<-gsub(
+          paste0('.*', count3,'.*'),
+          count3, CellSeg$Slide.ID)}
+      Positive.table<-rbind(
+        Positive.table,dplyr::mutate(
+          reshape2::dcast(
+            dplyr::mutate(
+              reshape2::dcast(
+                dplyr::summarize(
+                  dplyr::group_by(
+                    CellSeg,Slide.ID,Phenotype
+                  ),
+                  n = n(), .groups = 'drop'
+                ),
+                Slide.ID~Phenotype, value.var = 'n'
+              ),
+              fractions = Antibody/(Other+Antibody), AB= AB
+            ),
+            AB~Slide.ID, value.var = 'fractions'
+          ), Concentration = Concentration
+        )
+      )
+      Positive.table
     }else if(fraction.type == 'Tissue'){
       ##read data in and organize it
       CellSeg<-dplyr::mutate(
@@ -230,31 +364,303 @@ findposFOP<-function(Positive.table,out,Slide_Descript,fraction.type){
           do.call(
             rbind,lapply(
               list.files(wd,
-                         pattern = '.*]_tissue_seg_data_summary.txt$',full.names=TRUE),
-              function(x) data.table::fread(x, na.strings=c('NA', '#N/A'),
-                                select = c('Sample Name','Tissue Category','Region Area (pixels)'),
-                                data.table= FALSE))),
-          `Sample Name`~`Tissue Category`, value.var = 'Region Area (pixels)'),
-        Concentration = Concentration)
+                         pattern = '.*]_tissue_seg_data_summary.txt$',
+                         full.names=TRUE
+              ),
+              function(x) fread(
+                x, na.strings=c('NA', '#N/A'),
+                select = c(
+                  'Sample Name','Tissue Category','Region Area (pixels)'),
+                data.table= FALSE)
+            )
+          ),
+          `Sample Name`~`Tissue Category`, value.var = 'Region Area (pixels)'
+        ),
+        Concentration = Concentration
+      )
       for(count3 in Slide_Descript){
         CellSeg$`Sample Name`<-gsub(
           paste0('.*', count3,'.*'),
           count3, CellSeg$`Sample Name`)}
       ##find positive cells and generate output file
-      ##Positive_cells data.table can be added to for additional AB with the same SlideIDs.
-      Positive.table<-rbind(Positive.table,reshape2::dcast(dplyr::mutate(dplyr::summarise(dplyr::group_by(
-        CellSeg, `Sample Name`,Concentration),
-        Total.Tumor.Area = sum(`Tumor`), Total.NonTumor.Area = sum(`Non Tumor`)),
-        Fraction=(Total.Tumor.Area/(Total.NonTumor.Area+Total.Tumor.Area))),
-        Concentration~ `Sample Name`, value.var = 'Fraction'))
+      ##Positive_cells data.table can be added to for additional 
+      # AB with the same SlideIDs.
+      Positive.table<-rbind(Positive.table,resahpe2::dcast(
+        dplyr::mutate(
+          dplyr::summarise(
+            dplyr::group_by(
+              CellSeg, `Sample Name`,Concentration
+            ),
+            Total.Tumor.Area = sum(`Tumor`),
+            Total.NonTumor.Area = sum(`Non Tumor`), .groups = 'drop'
+          ),
+          Fraction=(Total.Tumor.Area/(Total.NonTumor.Area+Total.Tumor.Area))),
+        Concentration~ `Sample Name`, value.var = 'Fraction'
+      )
+      )
       Positive.table}}
-
-
-
-
-
-
-
-
-
-
+  #
+  # server side -------------------------------------
+  #
+  FOP.server.side <- function(input, output, session) {
+    #
+    # intialize passable variables
+    #
+    my.vals <- reactiveValues(
+      Slide_Descript=NULL, wd=NULL, Positive.table=NULL, delin = NULL,
+      Opal1 = NULL, AB = NULL, IHC = NULL)
+    #
+    # another ab modal
+    #
+    another.ab.modal <- function(failed = FALSE) {
+      shiny::modalDialog(
+        title = "Is there another antibody or condition?",
+        shiny::tagList(
+          shiny::actionButton("confirm", "Yes"),
+          shiny::actionButton("decline", "No")
+        ),
+        footer = NULL,
+        size = "s"
+      )
+    }
+    #
+    # another ab modal input
+    #
+    another.ab.modal.input <- function(failed = FALSE) {
+      shiny::modalDialog(
+        title = "Additional antibody or condition information",
+        shiny::tagList(
+          shiny::textInput(
+            "Antibody2",
+            shiny::div(
+              shiny::br(),shiny::br(), shiny::br(),
+              "Primary Antibody:",shiny::br(),
+              style = fm.object$commontextstyle
+            ),
+            value = my.vals$AB
+          ),
+          shiny::textInput(
+            "Opal2",
+            shiny::div(shiny::br(),
+                       "Primary Opal:",shiny::br(),
+                       style = fm.object$commontextstyle
+            ),
+            value = my.vals$Opal1
+          ),
+          shiny::textInput(
+            "Concentration2",
+            shiny::div(shiny::br(),
+                       "Other condition delineation: ",
+                       shiny::br(),
+                       style = fm.object$commontextstyle 
+            ),
+            value = my.vals$delin
+          ),
+          shiny::checkboxInput(
+            "IHC2", label = "Is this IHC?", value = FALSE)
+        ),
+        footer = tagList(
+          shiny::actionButton("run.secondary", "Run"),
+          shiny::modalButton("Close")
+        ),
+        size = "s"
+      )
+    }
+    #
+    # main observe event
+    #
+    shiny::observeEvent(input$FOP, {
+      #
+      # run the code and catch any errors
+      #
+      tryCatch({
+        #
+        err.val = 0
+        my.vals$Slide_Descript <- unlist(strsplit(input$Slide_Descript,
+                                                  split = ','))
+        my.vals$delin = input$Concentration
+        my.vals$Opal1 <- input$Opal1
+        my.vals$AB <- input$Antibody
+        my.vals$IHC <- input$IHC
+        my.vals$wd <- ""
+        my.vals$Positive.table <- runforpos(input, my.vals)
+        shiny::showModal(another.ab.modal())
+        #
+      }, warning = function(cond){
+        modal_out <- shinyalert::shinyalert(
+          title = "Undefined error.",
+          text = paste(
+            "Please check if input and output are valid. Then",
+            "contact Benjamin Green at bgreen42@jh.edu if you need additional",
+            "assistance."
+          ),
+          type = 'error',
+          showConfirmButton = TRUE
+        )
+      }, error = function(cond){
+        modal_out <- shinyalert::shinyalert(
+          title = "Undefined error.",
+          text = paste(
+            "Please check if input and output are valid. Then",
+            "contact Benjamin Green at bgreen42@jh.edu if you need additional",
+            "assistance."
+          ),
+          type = 'error',
+          showConfirmButton = TRUE
+        )
+      })
+    })
+    #
+    # another dialog observe event launch
+    #
+    shiny::observeEvent(input$confirm, {
+      #
+      # show another ab modal input
+      #
+      shiny::removeModal()
+      shiny::showModal(another.ab.modal.input())
+      #
+    })
+    #
+    # another dialog observe event functioning
+    #
+    shiny::observeEvent(input$run.secondary, {
+      #
+      # remove modal
+      #
+      shiny::removeModal()
+      #
+      # run with new inputs
+      #
+      tryCatch({
+        #
+        err.val = 0
+        my.vals$delin <- input$Concentration2
+        my.vals$Opal1 <- input$Opal2
+        my.vals$AB <- input$Antibody2
+        my.vals$IHC <- input$IHC2
+        my.vals$Positive.table<-findposFOP(my.vals$Positive.table, input,
+                                           my.vals)
+        shiny::showModal(another.ab.modal())
+        #
+      }, warning = function(cond){
+        modal_out <- shinyalert::shinyalert(
+          title = "Undefined error.",
+          text = paste(
+            "Please check if input and output are valid. Then",
+            "contact Benjamin Green at bgreen42@jh.edu if you need additional",
+            "assistance."
+          ),
+          type = 'error',
+          showConfirmButton = TRUE
+        )
+      }, error = function(cond){
+        modal_out <- shinyalert::shinyalert(
+          title = "Undefined error.",
+          text = paste(
+            "Please check if input and output are valid. Then",
+            "contact Benjamin Green at bgreen42@jh.edu if you need additional",
+            "assistance."
+          ),
+          type = 'error',
+          showConfirmButton = TRUE
+        )
+      })
+      #
+    })
+    #
+    # closing dialog
+    #
+    shiny::observeEvent(input$decline, {
+      #
+      shiny::removeModal()
+      wd<-choose.dir(my.vals$wd, caption = 'Output directory:')
+      tryCatch({
+        write.table(my.vals$Positive.table,file=paste0(
+          wd,'/ + ',input$fraction.type,'.csv'),
+          sep=',', row.names=F )
+        #
+        modal_out <- shinyalert::shinyalert(
+          title = "Finished",
+          text = paste(
+            "" 
+          ),
+          type = 'success',
+          showConfirmButton = TRUE
+        )
+      }, warning = function(cond){
+        modal_out <- shinyalert::shinyalert(
+          title = "Failed to Save",
+          text = paste(
+            "" 
+          ),
+          type = 'error',
+          showConfirmButton = TRUE
+        )}, error = function(cond){
+          modal_out <- shinyalert::shinyalert(
+            title = "Failed to Save",
+            text = paste(
+              "" 
+            ),
+            type = 'error',
+            showConfirmButton = TRUE
+          )
+        })
+      #
+    })
+    #
+  }
+  #
+  # run -------------------------------------
+  #
+  e = 0
+  #
+  tryCatch({
+    #
+    ip <- system("ipconfig", intern=TRUE)
+    ip <- ip[grep("IPv4", ip)]
+    ip <- gsub(".*? ([[:digit:]])", "\\1", ip)
+    ip <- ip[[1]]
+    #
+  }, error = function(cond){
+    message(
+      'cannot find local IP, using shiny default. Performance may suffer.')
+    ip = "127.0.0.1"
+  }, warning = function(cond){
+    message(
+      'cannot find local IP, using shiny default. Performance may suffer.')
+    ip = "127.0.0.1"
+  })
+  #
+  tryCatch({
+    options(
+      browser = "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe")
+    shiny::shinyApp(ui = FOP.ui, FOP.server.side,
+                    options = list(width = 1000, launch.browser = TRUE,
+                                   host = ip, quiet = T))
+  }, warning = function(cond) {
+    tryCatch({
+      options(browser = "C:/Program Files (x86)/Internet Explorer/iexplore.exe")
+      shiny::shinyApp(ui = FOP.ui, FOP.server.side,
+                      options = list(width = 1000, launch.browser = TRUE,
+                                     host = ip, quiet = T))
+    },  warning = function(cond) {
+      stop('Error could not find supported web browser.')
+    },  error = function(cond) {
+      stop('Error could not find supported web browser.')
+    })
+    #
+  }, error = function(cond) {
+    tryCatch({
+      options(browser = "C:/Program Files (x86)/Internet Explorer/iexplore.exe")
+      shiny::shinyApp(ui = FOP.ui, FOP.server.side,
+                      options = list(width = 1000, launch.browser = TRUE,
+                                     host = ip, quiet = T))
+    },  warning = function(cond) {
+      stop('Error could not find supported web browser.')
+    },  error = function(cond) {
+      stop('Error could not find supported web browser.')
+    })
+    #
+  })
+}
