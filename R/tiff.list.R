@@ -52,5 +52,5 @@ tiff.list <- function(wd, pattern.in,Protocol) {
     names(v) <- types
     m2 <- c(m2, list(v))
   }
-  return(data.out = m2, err.val = err.val)
+  return(list(data.out = m2, err.val = err.val))
 }

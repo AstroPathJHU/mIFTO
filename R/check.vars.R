@@ -269,6 +269,7 @@ if (!grepl("nConsistent",Vars_pxp)) {
   #
 }
 #
+names(Thresholds) <- Slide_Descript
 names(connected.pixels) <- Slide_Descript
 v1 = 1
 v2 = 1
