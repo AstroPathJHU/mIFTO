@@ -20,6 +20,7 @@
 #'
 preallocate.tables <- function(
   Slide_Descript,Concentration, titration.type.name, table.names, paths){
+  err.val <- 0
   #
   # preallocate tables with 4 sub tables for each type of graph/
   # analysis
@@ -108,12 +109,38 @@ preallocate.tables <- function(
       #
       cImage.IDs <-  list.files(paths[[y]],pattern = str)
       #
+      # search for M files
+      #
+      a <- grep(']_M', cImage.IDs, ignore.case = F)
+      if (!length(a) == 0){
+        #_M file found
+        n <- shiny::showNotification(
+          paste0('M# duplicate file found: ', cImage.IDs[a]),
+          type = 'warning')
+        n <- shiny::showNotification(
+          paste(
+            'removing the M# duplicate from',
+            'computations. Please check image data\ clean up folders',
+            'as this may not always the correct approach.'),
+          type = 'warning')
+        #
+        cImage.IDs <- cImage.IDs[-a]
+      }
+      #
       # check that files exist for each AB-dilution pair
       #
       if(length(cImage.IDs) == 0 ){
-        message(paste0(' Search failed for ', str, ';'))
-        stop(paste0('Please check slide names and check that files for ',
-                    x, ' 1to',Concentration[[y]],' exist'), call. = F)
+        modal_out <- shinyalert::shinyalert(
+          title =  paste0('Search failed for ', x, ' ', titration.type.name, 
+                          '_1to', Concentration[y]),
+          text = paste0(
+            'Please check slide names and that files for ',
+            x, ' 1to',Concentration[[y]],' exist'),
+          type = 'error',
+          showConfirmButton = TRUE
+        )
+        err.val <- 13
+        return(list(err.val = err.val))
       }
       Image.IDs[[x]][[y]]<-gsub('.*\\[|\\].*','',cImage.IDs)
       #
@@ -137,7 +164,8 @@ preallocate.tables <- function(
                          function(x)vector('list',length(Concentration)))
   names(Violin.Plots) <- Slide_Descript
   
-  out <- list(Tables.byimage = Tables, Tables.wholeslide = Tables.wholeslide,
+  out <- list(err.val = err.val, Tables.byimage = Tables, 
+              Tables.wholeslide = Tables.wholeslide,
               Image.IDs = Image.IDs,
               Violin.Plots = Violin.Plots, 
               Image.ID.fullstrings = Image.ID.fullstrings)

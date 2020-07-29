@@ -63,21 +63,83 @@ server.side <- function(input, output, session) {
         Slide_Descript <- strsplit(input$Slide_Descript,',')
         Slide_Descript <- Slide_Descript[[1]]
         #
-        lapply(1:length(Slide_Descript), function(x){
-          list(
-            shiny::textInput(
-              "Thresholds",
-              div(
-                Slide_Descript[x]
-              ),
-              placeholder = 'EX: 3.2,4.5,2.9'
-            )
+        lay <- lapply(1:length(Slide_Descript), function(x){
+          shiny::textInput(
+            paste0("Thresholds", x),
+            div(
+              Slide_Descript[x]
+            ),
+            placeholder = 'EX: 3.2,4.5,2.9'
           )
         })
+        s_count <- 0
+        lay3 <- list()
+        #
+        if (length(Slide_Descript) > 3){
+          for (i.1 in seq(1, length(Slide_Descript), 2)){
+            if (i.1 == length(Slide_Descript)){
+              lay2 <- lay[[i.1]]
+            } else {
+              lay2 <- do.call(splitLayout, lay[i.1:(i.1+1)])
+            }
+            s_count <- s_count + 1
+            lay3[[s_count]] <- lay2
+          }
+          splitLayout(lay3)
+        } else {
+          #
+          lay
+        }
       }
     } else {
       shiny::textInput(
-        "Thresholds", label = '', placeholder = 'EX: 3.2,4.5,2.9'
+        "Thresholds",
+        label = '', placeholder = 'EX: 3.2,4.5,2.9'
+      )
+    }
+  })
+  #
+  # if nConsistent is checked then thresholds are not 
+  # Consistent and add thresholds for each specimen
+  # otherwise use a single threshold for each 
+  #
+  output$ConnpxControls <- shiny::renderUI({
+    #
+    # push input Vars_pxp to a list Vars_pxp so
+    # that we can test strings on it
+    #
+    if (!is.null(input$Vars_pxp)){
+      Vars_pxp <- paste(input$Vars_pxp, collapse = ", ")
+    }else {
+      Vars_pxp <- ','}
+    if (grepl("nConsistent", Vars_pxp)) {
+      #
+      if (!grepl(input$Slide_Descript,'NA')){
+        Slide_Descript <- strsplit(input$Slide_Descript,',')
+        Slide_Descript <- Slide_Descript[[1]]
+        #
+        lay <- lapply(1:length(Slide_Descript), function(x){
+          shiny::textInput(
+            paste0("connected.pixels", x),
+            div(
+              Slide_Descript[x]
+            ),
+            placeholder = 'EX: 3,4,2'
+          )
+        })
+        s_count <- 0
+        #
+        if (length(Slide_Descript) > 1){
+            do.call(splitLayout, lay)
+        } else {
+          #
+          lay
+        }
+      }
+    } else {
+      shiny::textInput(
+        "connected.pixels",
+        label = '', placeholder = 'EX: 3,4,2'
       )
     }
   })
@@ -101,9 +163,12 @@ server.side <- function(input, output, session) {
     #
     # run the code and catch any errors
     #
+    err.val <- PixelbyPixel(input,pb)
+    #
     tryCatch({
       #
-      err.val <- PixelbyPixel(input,pb)
+      #err.val <- PixelbyPixel(input,pb)
+      #
       close(pb);
       if (err.val == 0){
         modal_out <- shinyalert::shinyalert(
@@ -117,6 +182,17 @@ server.side <- function(input, output, session) {
       }
       #
     }, warning = function(cond){
+      close(pb);
+      modal_out <- shinyalert::shinyalert(
+        title = "Undefined error.",
+        text = paste(
+          "Please contact Benjamin Green at bgreen42@jh.edu for additional",
+          "assistance."
+        ),
+        type = 'error',
+        showConfirmButton = TRUE
+      )
+    }, error = function(cond){
       close(pb);
       modal_out <- shinyalert::shinyalert(
         title = "Undefined error.",

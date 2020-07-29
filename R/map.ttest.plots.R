@@ -35,6 +35,8 @@ map.ttest.plots <- function(
     max(Concentration)+((min(Concentration))/2)
   )
   #
+  conc_width <- .025 * (Concentration[[length(Concentration)]] - Concentration[[1]])
+  #
   for(z in correction.val.name){
     #
     # write out tables of raw data
@@ -42,7 +44,9 @@ map.ttest.plots <- function(
     str = paste0(
       wd,'/Results.pixels/stats/Graphs/t test of ',
       Antibody_Opal,' ',z,'.csv')
-    data.table::fwrite(Tables[['T.Tests']][[z]],file = str,sep = ',')
+    tbl <- Tables[['T.Tests']][[z]]
+    tbl$Image.ID <- paste0('[', tbl$Image.ID,']')
+    data.table::fwrite(tbl, file = str,sep = ',')
     #
     if (z == 'Plus1'){
       zn <- 'ln(NFI + 1)'
@@ -52,10 +56,13 @@ map.ttest.plots <- function(
     #
     # aggregate average t test
     #
-    tbl = dplyr::summarize(dplyr::group_by(
-      Tables[['T.Tests']][[z]],Concentration),
+    tbl = dplyr::summarize(
+      dplyr::group_by(
+        tbl,Concentration),
       sd.statistic = sd(statistic),
-      statistic = mean(statistic))
+      statistic = mean(statistic),
+      .groups = 'drop'
+    )
     #
     # plot average t test 
     #
@@ -66,7 +73,7 @@ map.ttest.plots <- function(
         ggplot2::aes(
           ymin = statistic - `sd.statistic`, 
           ymax = `statistic`+`sd.statistic`),
-        width=length(Concentration)^(length(Concentration)/1.5),
+        width=conc_width,
         size=.40, alpha=.65,color = 'blue') +
       ggplot2::labs(title=paste0(
         "t Test statistics of ",zn,
@@ -101,7 +108,7 @@ map.ttest.plots <- function(
       ggplot2::geom_errorbar(ggplot2::aes(
         ymin = statistic - `sd.statistic`,ymax = `statistic`+`sd.statistic`,
         color=factor(Slide.ID)),
-        width=length(Concentration)^(length(Concentration)/1.5),
+        width=conc_width,
         size=.40, alpha=.65) +
       ggplot2::labs(title=paste0(
         "t Test statistics of ",zn,

@@ -46,9 +46,9 @@ FOP<-function(){
         "https://raw.githubusercontent.com/beng1290/mIFTO/master/R/www/Splash.png"),
       title = shiny::div(
         shiny::strong(
-          "Multiplex Immunofluorescence Titration Optimization (mIFTO)"
+          "(mIFTO) Multiplex Immunofluorescence Titration Optimization"
         ),
-        style = paste0('color: #f0f6ee;')
+        style = paste0("color: rgba(240, 246, 238, 1);text-shadow: ", fm.object$opt1)
       )
     ),
     #
@@ -65,18 +65,33 @@ FOP<-function(){
         shiny::column(
           8, align = "justify",
           style = paste0(
-            "height:450px;width: 100%; background-color: #363a4a;
-              border: 2px solid lightgrey;"),
+            "height:450px;width: 100%; background-color: rgba(54, 58, 74, .9);
+            box-shadow: ", fm.object$opt3),
           #
           # header
           #
           shiny::fixedRow(
-            shiny::h2(
-              shiny::div(
-                "Fraction of Positivity (FOP)",
-                style = fm.object$subheadertextstyle), 
-              align = 'justify'
-            )
+            column(
+              9,align = 'left',
+              shiny::h2(
+                shiny::div(
+                  "(FOP) Fraction of Positivity",
+                  style = fm.object$subheadertextstyle), 
+                align = 'left'
+              )
+            ),
+            column(
+              3, offset = 0, align = 'right',
+              br(),
+              shiny::actionLink(
+                "pdf", "Help", onclick = 
+                  paste0("window.open('https://github.com",
+                         "/beng1290/mIFTO/blob/master/README.pdf')"
+                  )
+                ,style="color: #f0f6ee;",
+              )
+            ),
+            style = 'padding: 1%'
           ),
           #
           # input fields in general input

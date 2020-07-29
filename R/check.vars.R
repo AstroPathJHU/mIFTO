@@ -47,9 +47,28 @@ if( grepl(' ',out$Slide_Descript,perl = TRUE ) ) {
 #
 Slide_Descript <- unlist(strsplit(Slide_Descript, split = ','))
 #
+# set up Vars_pxp
+#
+if (!is.null(out$Vars_pxp)){
+  Vars_pxp <- paste(out$Vars_pxp, collapse = ", ")
+}else {
+  Vars_pxp <- ','}
+#
 # whether or not to output the flow results
 #
-flowout <- FALSE
+if(grepl("flowout.Pixels",Vars_pxp)) {
+  flowout <- TRUE
+} else {
+  flowout <- FALSE
+}
+#
+# whether or not an ihc was done
+#
+if(grepl("ihc.Pixels",Vars_pxp)) {
+  ihc.logical <- TRUE
+} else {
+  ihc.logical <- FALSE
+}
 #
 # get the antibody name
 #
@@ -130,6 +149,10 @@ if (length(Concentration1) == 1){
 }
 #
 Concentration <- Concentration1
+if (is.unsorted(Concentration) || !min(Concentration) > 0){
+  err.val = 4
+  return(list(err.val = err.val))
+}
 #
 # the opal name
 #
@@ -164,19 +187,6 @@ if(Naming.convention==T){
 }else{
   titration.type.name<-''
   }
-#
-# get the folders tag for processing
-#
-Folders <- as.logical(out$Folders.Pixels)
-#
-# setting up paths based on if the data is
-# in one folder or multiple folders
-#
-if (!is.null(out$Vars_pxp)){
-  Vars_pxp <- paste(out$Vars_pxp, collapse = ", ")
-}else {
-  Vars_pxp <- ','}
-#
 #
 # get the working directory
 #
@@ -242,198 +252,198 @@ if (!grepl("nConsistent",Vars_pxp)) {
   #
   Thresholds = lapply(
     1:length(Slide_Descript), function(x)out$Thresholds
-    )
+  )
   #
   connected.pixels <- lapply(
     1:length(Slide_Descript), function(x)out$connected.pixels
-    )
-  #
-  names(connected.pixels) <- Slide_Descript
-  v1 = 1
-  v2 = 1
-  v3 = 1
-  #
-  for (x in 1:length(Slide_Descript)){
-    #
-    if( grepl(' ',Thresholds[[x]],perl = TRUE )) {
-      if (v1 == 1){
-        n <- shiny::showNotification(
-          'Thresholds contain spaces ... removing spaces in threshold list',
-          type = 'warning')
-        v1 = 0
-      }
-      Thresholds[[x]] <- gsub(" ", "",Thresholds[[x]], fixed = TRUE)
-    } else {
-      Thresholds[[x]] <- Thresholds[[x]]
-    }
-    #
-    # try to convert to a valid string
-    #
-    Thresholds1 <- tryCatch({
-      as.numeric(
-        unlist(
-          strsplit(
-            Thresholds[[x]], split =','
-          )
-        )
-      )
-      }, warning = function(cond) {
-        modal_out <- shinyalert::shinyalert(
-          title = "Error in threshold input.",
-          text = paste0(
-            "Could not parse threshold input:", Thresholds[[x]],
-            ". Please enter a valid list of numeric thresholds, separated by ",
-            "commas."
-          ),
-          type = 'error',
-          showConfirmButton = TRUE
-        )
-        return(-1)
-      }, error = function(cond) {
-        modal_out <- shinyalert::shinyalert(
-          title = "Error in threshold input.",
-          text = paste0(
-            "Could not parse threshold input:", Thresholds[[x]],
-            ". Please enter a valid list of numeric thresholds, separated by ",
-            "commas."
-          ),
-          type = 'error',
-          showConfirmButton = TRUE
-        )
-        return(-1)
-      })
-    #
-    if (length(Thresholds1) == 1){
-      if (Thresholds1 == -1){
-        err.val = 8
-        return(list(err.val = err.val))
-      }
-    }
-    #
-    Thresholds[[x]] <- Thresholds1
-    #
-    # check that the number of thresholds
-    # == the number of concentrations
-    #
-    if (length(Concentration) != length(Thresholds[[x]])){
-      modal_out <- shinyalert::shinyalert(
-        title = "Error in threshold input.",
-        text = paste(
-          "The length of concentration list does",
-          "not equal the length of threshold list"
-        ),
-        type = 'error',
-        showConfirmButton = TRUE
-      )
-      err.val <- 9
-      return(list(err.val = err.val))
-    }
-    #
-    # set up connected pixel values
-    #
-    if( grepl(' ',connected.pixels[[x]],perl = TRUE ) ) {
-      if (v2 == 1){
-        n <- shiny::showNotification(
-          paste("Connected pixel list contains spaces",
-                "... removing spaces in connected pixel list"),
-          type = 'warning')
-        v2 = 0
-      }
-      connected.pixels[[x]] <- gsub(
-        " ", "",connected.pixels[[x]], fixed = TRUE
-      )
-    } else {
-      connected.pixels[[x]] <- connected.pixels[[x]]
-    }
-    #
-    # try to convert to a valid string
-    #
-    connected.pixels1 <- tryCatch({
-      as.numeric(
-        unlist(
-          strsplit(
-            connected.pixels[[x]], split =','
-          )
-        )
-      )
-    }, warning = function(cond) {
-      modal_out <- shinyalert::shinyalert(
-        title = "Error in connected pixel input.",
-        text = paste0(
-          "Could not parse connected pixel input:", Thresholds[[x]],
-          ". Please enter a valid list of numeric connected pixel values, ",
-          "separated by commas."
-        ),
-        type = 'error',
-        showConfirmButton = TRUE
-      )
-      return(-1)
-    }, error = function(cond) {
-      modal_out <- shinyalert::shinyalert(
-        title = "Error in connected pixel input.",
-        text = paste0(
-          "Could not parse connected pixel input:", Thresholds[[x]],
-          ". Please enter a valid list of numeric connected pixel values, ",
-          "separated by commas."
-        ),
-        type = 'error',
-        showConfirmButton = TRUE
-      )
-      return(-1)
-    }
-    )
-    #
-    if (length(connected.pixels1) == 1){
-      if (connected.pixels1 == -1){
-        err.val = 10
-        return(list(err.val = err.val))
-      }
-    }
-    #
-    if(!isTRUE(all(connected.pixels1 == floor(connected.pixels1)))){
-      if (v3 == 1){
-        n <- shiny::showNotification(
-          paste("Connected pixel list must contain",
-                "integers ... rounding down"),
-          type = 'warning')
-        v3 = 0
-      }
-      connected.pixels1 <- floor(connected.pixels1)
-    }
-    connected.pixels[[x]] <- connected.pixels1
-    #
-    # check that the number of thresholds
-    # == the number of concentrations
-    #
-    if (length(Concentration) != length(connected.pixels[[x]])){
-      modal_out <- shinyalert::shinyalert(
-        title = "Error in connected pixels input.",
-        text = paste(
-          "The length of concentration list does",
-          "not equal the length of connected pixels list"
-        ),
-        type = 'error',
-        showConfirmButton = TRUE
-      )
-      err.val <- 11
-      return(list(err.val = err.val))
-    }
-    #
-  }
-  names(connected.pixels)<-Slide_Descript
-  names(Thresholds)<-Slide_Descript
-} else {
-  modal_out <- shinyalert::shinyalert(
-    title = "Error in threshold input.",
-    text = paste(
-      "Multiple thresholds not yet supported"
-    ),
-    type = 'error',
-    showConfirmButton = TRUE
   )
-  err.val <- 12
-  return(list(err.val = err.val))
+} else {
+  #
+  Thresholds = lapply(
+    1:length(Slide_Descript), function(x)out[[paste0("Thresholds",x)]]
+  )
+  #
+  connected.pixels <- lapply(
+    1:length(Slide_Descript), function(x)out[[paste0("connected.pixels",x)]]
+  )
+  #
 }
+#
+names(connected.pixels) <- Slide_Descript
+v1 = 1
+v2 = 1
+v3 = 1
+#
+for (x in 1:length(Slide_Descript)){
+  #
+  if( grepl(' ',Thresholds[[x]],perl = TRUE )) {
+    if (v1 == 1){
+      n <- shiny::showNotification(
+        'Thresholds contain spaces ... removing spaces in threshold list',
+        type = 'warning')
+      v1 = 0
+    }
+    Thresholds[[x]] <- gsub(" ", "",Thresholds[[x]], fixed = TRUE)
+  } else {
+    Thresholds[[x]] <- Thresholds[[x]]
+  }
+  #
+  # try to convert to a valid string
+  #
+  Thresholds1 <- tryCatch({
+    as.numeric(
+      unlist(
+        strsplit(
+          Thresholds[[x]], split =','
+        )
+      )
+    )
+  }, warning = function(cond) {
+    modal_out <- shinyalert::shinyalert(
+      title = "Error in threshold input.",
+      text = paste0(
+        "Could not parse threshold input:", Thresholds[[x]],
+        ". Please enter a valid list of numeric thresholds, separated by ",
+        "commas."
+      ),
+      type = 'error',
+      showConfirmButton = TRUE
+    )
+    return(-1)
+  }, error = function(cond) {
+    modal_out <- shinyalert::shinyalert(
+      title = "Error in threshold input.",
+      text = paste0(
+        "Could not parse threshold input:", Thresholds[[x]],
+        ". Please enter a valid list of numeric thresholds, separated by ",
+        "commas."
+      ),
+      type = 'error',
+      showConfirmButton = TRUE
+    )
+    return(-1)
+  })
+  #
+  if (length(Thresholds1) == 1){
+    if (Thresholds1 == -1){
+      err.val = 8
+      return(list(err.val = err.val))
+    }
+  }
+  #
+  Thresholds[[x]] <- Thresholds1
+  #
+  # check that the number of thresholds
+  # == the number of concentrations
+  #
+  if (length(Concentration) != length(Thresholds[[x]])){
+    modal_out <- shinyalert::shinyalert(
+      title = "Error in threshold input.",
+      text = paste(
+        "The length of concentration list does",
+        "not equal the length of threshold list"
+      ),
+      type = 'error',
+      showConfirmButton = TRUE
+    )
+    err.val <- 9
+    return(list(err.val = err.val))
+  }
+  #
+  # set up connected pixel values
+  #
+  if( grepl(' ',connected.pixels[[x]],perl = TRUE ) ) {
+    if (v2 == 1){
+      n <- shiny::showNotification(
+        paste("Connected pixel list contains spaces",
+              "... removing spaces in connected pixel list"),
+        type = 'warning')
+      v2 = 0
+    }
+    connected.pixels[[x]] <- gsub(
+      " ", "",connected.pixels[[x]], fixed = TRUE
+    )
+  } else {
+    connected.pixels[[x]] <- connected.pixels[[x]]
+  }
+  #
+  # try to convert to a valid string
+  #
+  connected.pixels1 <- tryCatch({
+    as.numeric(
+      unlist(
+        strsplit(
+          connected.pixels[[x]], split =','
+        )
+      )
+    )
+  }, warning = function(cond) {
+    modal_out <- shinyalert::shinyalert(
+      title = "Error in connected pixel input.",
+      text = paste0(
+        "Could not parse connected pixel input:", Thresholds[[x]],
+        ". Please enter a valid list of numeric connected pixel values, ",
+        "separated by commas."
+      ),
+      type = 'error',
+      showConfirmButton = TRUE
+    )
+    return(-1)
+  }, error = function(cond) {
+    modal_out <- shinyalert::shinyalert(
+      title = "Error in connected pixel input.",
+      text = paste0(
+        "Could not parse connected pixel input:", Thresholds[[x]],
+        ". Please enter a valid list of numeric connected pixel values, ",
+        "separated by commas."
+      ),
+      type = 'error',
+      showConfirmButton = TRUE
+    )
+    return(-1)
+  }
+  )
+  #
+  if (length(connected.pixels1) == 1){
+    if (connected.pixels1 == -1){
+      err.val = 10
+      return(list(err.val = err.val))
+    }
+  }
+  #
+  if(!isTRUE(all(connected.pixels1 == floor(connected.pixels1)))){
+    if (v3 == 1){
+      n <- shiny::showNotification(
+        paste("Connected pixel list must contain",
+              "integers ... rounding down"),
+        type = 'warning')
+      v3 = 0
+    }
+    connected.pixels1 <- floor(connected.pixels1)
+  }
+  connected.pixels[[x]] <- connected.pixels1
+  #
+  # check that the number of thresholds
+  # == the number of concentrations
+  #
+  if (length(Concentration) != length(connected.pixels[[x]])){
+    modal_out <- shinyalert::shinyalert(
+      title = "Error in connected pixels input.",
+      text = paste(
+        "The length of concentration list does",
+        "not equal the length of connected pixels list"
+      ),
+      type = 'error',
+      showConfirmButton = TRUE
+    )
+    err.val <- 11
+    return(list(err.val = err.val))
+  }
+  #
+}
+#
+names(connected.pixels)<-Slide_Descript
+names(Thresholds)<-Slide_Descript
 #
 # get the protocol type
 #
@@ -452,7 +462,74 @@ num.of.tiles<-10
 a<-installed.packages()
 packages<-a[,1] 
 if (!is.element("EBImage", packages)){
-  BiocManager::install("EBImage", ask=FALSE)
+  tryCatch({
+    BiocManager::install("EBImage", ask=FALSE)
+  }, warning = function(cond) {
+    tryCatch({
+      install.packages(
+        'BiocManager', ask = FALSE, quiet = TRUE, verbose = FALSE)
+      BiocManager::install("EBImage", ask=FALSE)
+    }, warning = function(cond) {
+      modal_out <- shinyalert::shinyalert(
+        title = "Error installing EBImage from BiocManager.",
+        text = paste0(
+          "Please attempt to update\ install BiocManager separately using: ",
+          "install.packages('BiocManager'); then attempt to update\ install ",
+          "EBImage from the Bioc repo using: BiocManager::install('EBImage')."
+        ),
+        type = 'error',
+        showConfirmButton = TRUE
+      )
+      connected.pixels <- 'NA'
+    }, error = function(cond) {
+      modal_out <- shinyalert::shinyalert(
+        title = "Error installing EBImage from BiocManager.",
+        text = paste0(
+          "Please attempt to update\ install BiocManager separately using: ",
+          "install.packages('BiocManager'); then attempt to update\ install ",
+          "EBImage from the Bioc repo using: BiocManager::install('EBImage')."
+        ),
+        type = 'error',
+        showConfirmButton = TRUE
+      )
+      connected.pixels <- 'NA'
+    })
+  }, error = function(cond) {
+    tryCatch({
+      install.packages(
+        'BiocManager', ask = FALSE, quiet = TRUE, verbose = FALSE)
+      BiocManager::install("EBImage", ask=FALSE)
+    }, warning = function(cond) {
+      modal_out <- shinyalert::shinyalert(
+        title = "Error installing EBImage from BiocManager.",
+        text = paste0(
+          "Please attempt to update\ install BiocManager separately using: ",
+          "install.packages('BiocManager'); then attempt to update\ install ",
+          "EBImage from the Bioc repo using: BiocManager::install('EBImage')."
+        ),
+        type = 'error',
+        showConfirmButton = TRUE
+      )
+      connected.pixels <- 'NA'
+    }, error = function(cond) {
+      modal_out <- shinyalert::shinyalert(
+        title = "Error installing EBImage from BiocManager.",
+        text = paste0(
+          "Please attempt to update\ install BiocManager separately using: ",
+          "install.packages('BiocManager'); then attempt to update\ install ",
+          "EBImage from the Bioc repo using: BiocManager::install('EBImage')."
+        ),
+        type = 'error',
+        showConfirmButton = TRUE
+      )
+      connected.pixels <- 'NA'
+    })
+  })
+}
+#
+if (length(connected.pixels) == 1){
+  err.val <- 12
+  return(list(err.val = err.val))
 }
 #
 rm(a,packages)
@@ -460,7 +537,7 @@ rm(a,packages)
 # output list
 #
 outnew <- list(err.val = err.val, wd = wd, Slide_Descript = Slide_Descript,
-               flowout = flowout,Antibody = Antibody,
+               flowout = flowout, ihc.logical = ihc.logical, Antibody = Antibody,
                Opal1 = Opal1, Antibody_Opal = Antibody_Opal,
                Concentration = Concentration,
                Thresholded = TRUE, Thresholds = Thresholds,

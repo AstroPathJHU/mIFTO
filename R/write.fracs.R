@@ -34,6 +34,7 @@ write.fracs <- function (wd, Antibody_Opal, Slide_Descript, Concentration,
       dplyr::mutate(tbl, n = 1),
       Slide.ID, Concentration),
     r = cumsum(n))
+  tbl$Image.ID <- paste0('[', tbl$Image.ID, ']')
   tbl1 <- reshape2::dcast(
     tbl, Concentration + r ~ Slide.ID, value.var = c("fraction"))
   tbl2 <- reshape2::dcast(

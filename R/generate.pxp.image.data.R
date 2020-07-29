@@ -47,16 +47,15 @@ generate.pxp.image.data <- function(
   #
   tryCatch({
     data.in <- mIFTO::tiff.list(paths[[y]], pattern.in = str, Protocol)
+    if (!err.val == 0){
+      stop('error in slide ', str)
+    }
   }, error = function(cond){
-    stop(paste0(' Search failed for ', str,
-                '; Please check slide names and check that files for ',
-    x, ' 1to',Concentration[[y]],' exist'), call. = F)
+    stop('error in slide ', str)
   }, finally = {})
   #
   if(length(data.in) != 1){
-    stop(paste0('Error in Slide names or input: ',
-                'Search for', str,' turned up more than one image'),
-         call. = FALSE)
+    stop('error in slide ', str)
   }
   data.in <- data.in[[1]]
   #
@@ -86,8 +85,13 @@ generate.pxp.image.data <- function(
   #
   # get the positvity data
   #
-  positivity.data <- mIFTO::define.image.positivity(
-    data.in,Thresholds[[x]][y],connected.pixels[[x]][y])
+  if (length(connected.pixels) == 1){
+    positivity.data <- mIFTO::define.image.positivity(
+      data.in,Thresholds[[x]][y],connected.pixels)
+  } else {
+    positivity.data <- mIFTO::define.image.positivity(
+      data.in,Thresholds[[x]][y],connected.pixels[[x]][y])
+  }
   positivity.data.out <- lapply(
     1:length(positivity.data),
     function(x) c(positivity.data[[x]]))
