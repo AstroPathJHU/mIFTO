@@ -55,7 +55,7 @@ ui.map <- function (){
           # header
           #
           shiny::fluidRow(
-            column(
+            shiny::column(
               3, align = 'center',
               shiny::h2(
                 shiny::div(
@@ -64,7 +64,7 @@ ui.map <- function (){
                 align = 'center'
               )
             ),
-            column(
+            shiny::column(
               3, offset = 6, align = 'right',
               br(),
               shiny::actionLink(
