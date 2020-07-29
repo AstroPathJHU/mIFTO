@@ -49,18 +49,16 @@ generate.pxp.image.data <- function(
     data.in <- mIFTO::tiff.list(paths[[y]], pattern.in = str, Protocol)
     err.val <- data.in$err.val
     if (!err.val == 0){
-      stop('error in slide ', str)
+      return(-1)
     }
     data.in$data.out
   }, error = function(cond){
-    stop('error in slide ', str)
-    return(1)
+    return(-1)
   }, warning = function(cond){
-    stop('error in slide ', str)
-    return(1)
+    return(-1)
   }, finally = {})
   #
-  if(length(data.in) == 1){
+  if(length(data.in[[1]]) == 1){
     stop('error in slide ', str)
   }
   data.in <- data.in[[1]]
