@@ -33,9 +33,9 @@ ui.map <- function (){
         "https://raw.githubusercontent.com/beng1290/mIFTO/master/R/www/Splash.png"),
       title = shiny::div(
         shiny::strong(
-          "Multiplex Immunofluorescence Titration Optimization (mIFTO)"
+          "(mIFTO) Multiplex Immunofluorescence Titration Optimization"
         ),
-        style = paste0('color: #f0f6ee;')
+        style = paste0("color: rgba(240, 246, 238, 1);text-shadow: ", fm.object$opt1)
       )
     ),
     #
@@ -55,12 +55,27 @@ ui.map <- function (){
           # header
           #
           shiny::fluidRow(
-            shiny::h2(
-              shiny::div(
-                "   General Input",
-                style = fm.object$subheadertextstyle), 
-              align = 'left'
-            )
+            column(
+              3, align = 'center',
+              shiny::h2(
+                shiny::div(
+                  "General Input",
+                  style = fm.object$subheadertextstyle), 
+                align = 'center'
+              )
+            ),
+            column(
+              3, offset = 6, align = 'right',
+              br(),
+              shiny::actionLink(
+                "pdf", "Help", onclick = 
+                  paste0("window.open('https://github.com",
+                         "/beng1290/mIFTO/blob/master/README.pdf')"
+                         )
+                ,style="color: #f0f6ee;",
+              )
+            ),
+            style ="padding-left: 2%;padding-right:2%;padding-top:0px;padding-bottom:0px"
           ),
           #
           # input fields in general input
@@ -81,7 +96,7 @@ ui.map <- function (){
                     "Slide_Descript",
                     shiny::div(
                       class = "textB",shiny::br(),
-                      "Slide Descriptor:",shiny::br(), 
+                      "Slide Descriptor(s):",shiny::br(), 
                       shiny::span(
                         "(separate with a comma do not 
                         add `-` or spaces)",
@@ -233,9 +248,9 @@ ui.map <- function (){
                     "Naming.convention", "", value = TRUE),
                   style = fm.object$commoninputstyle
                 )
-              ),
-              style = fm.object$child2inputstyle
-            )
+              )
+            ),
+            style = fm.object$child2inputstyle
           ),
           shiny::br(),
           style = fm.object$child1inputstyle
@@ -245,18 +260,19 @@ ui.map <- function (){
       # create the bottom panels -----------------------------------------------
       # 
       shiny::fluidRow(
+        style = 'padding-top:20px',
         # 
         # for cell seg data ----------------------------------------------------
         #
-        shiny::column(
-          6, align = 'left',
+        shiny::column(6, 
+          align = 'center',
           #
           # header
           #
           shiny::fluidRow(
             shiny::h2(
               shiny::div(
-                " Information for Cell-by-Cell Analysis", 
+                " Info for Cell-by-Cell Analysis", 
                 style = fm.object$subheadertextstyle
               ), align = 'center'
             )
@@ -266,7 +282,7 @@ ui.map <- function (){
           #
           shiny::fluidRow(
             shiny::column(
-              6, align = 'left', 
+              12, align = 'center', 
               shiny::fluidRow(
                 shiny::column(
                   6, align = "left", offset = 0,
@@ -290,7 +306,7 @@ ui.map <- function (){
                     ),
                     selected = 'Folders',
                     inline = TRUE),
-                  style = fm.object$commoninputstylelonglist
+                  style = fm.object$commoninputstylelonglist3
                 ),
                 #
                 # Antibody name from inForm
@@ -307,7 +323,7 @@ ui.map <- function (){
                       ),
                       placeholder = 'EX: CD8'
                     ),
-                    style = fm.object$commoninputstyleline1
+                    style = fm.object$commoninputstyleline2
                   ),
                   #
                   # Compartment for analysis
@@ -334,9 +350,9 @@ ui.map <- function (){
                   shiny::uiOutput("NamedControls"),
                   style = fm.object$commoninputstyleline1
                 )
-              ),
-              style = fm.object$child4inputstyle
-            )
+              )
+            ),
+            style = fm.object$child4inputstyle
           ),
           #
           # add the 'Go' button
@@ -352,25 +368,28 @@ ui.map <- function (){
                   style = fm.object$buttontextstyle
                 )
               )
-            )
+            ),
+            style = 'margin: 4%'
           ),
           style = paste0(
-            fm.object$child3inputstyle, "border-bottom: 2px solid lightgrey;
-               border-left: 2px solid lightgrey;"
+            fm.object$child3inputstyle, "margin-right: 1%;margin-left: 0px"
           )
         ),
         # 
         # for pxp data  --------------------------------------------------------
         #
         shiny::column(
-          6, align = 'left',
+          6, align = 'center',
+          style = paste0(
+            fm.object$child3inputstyle, "margin-left: 1%;margin-right: 0px;"
+          ),
           #
           # header
           #
           shiny::fluidRow(
             shiny::h2(
               shiny::div(
-                "Information for Pixel-by-Pixel Analysis",
+                "Info for Pixel-by-Pixel Analysis",
                 style = fm.object$subheadertextstyle
               ), align = 'center'
             )
@@ -383,7 +402,7 @@ ui.map <- function (){
             # check box group
             #
             shiny::column(
-              6, align = 'left', 
+              12, align = 'left', 
               shiny::fluidRow(
                 shiny::column(
                   6, align = "left", offset = 0,
@@ -403,7 +422,7 @@ ui.map <- function (){
                     ),
                     choiceValues = list(
                       'Folders.Pixels',
-                      'IHC',
+                      'ihc.Pixels',
                       'nConsistent'
                     ),
                     selected = 'Folders.Pixels',
@@ -430,21 +449,20 @@ ui.map <- function (){
                 #
                 shiny::column(
                   6, align = 'center', 
-                  shiny::textInput(
-                    "connected.pixels",
-                    shiny::div(
-                      shiny::br(),
-                      "List the 'connected pixel' values in order 
+                  shiny::div(
+                    shiny::br(),
+                    "List the 'connected pixel' values in order 
                       of increasing dilution separated by a comma:",
-                      shiny::br(),
-                      style = fm.object$commontextstyle),
-                    placeholder = 'EX: 5,6,4'),
+                    shiny::br(),
+                    style = fm.object$commontextstyle
+                  ),
+                  shiny::uiOutput("ConnpxControls"),
                   style = fm.object$commoninputstylelonglist2
                 )
-                ),
-              style = fm.object$child4inputstyle
               )
             ),
+            style = fm.object$child4inputstyle
+          ),
           #
           # add the 'Go' button ------------------------------------------------
           #
@@ -459,11 +477,8 @@ ui.map <- function (){
                   style = fm.object$buttontextstyle
                 )
               )
-            )
-          ),
-          style = paste0(
-            fm.object$child3inputstyle, "border-bottom: 2px solid lightgrey;
-               border-left: 2px solid lightgrey;border-right: 2px solid lightgrey;"
+            ),
+            style = 'margin: 4%'
           )
         )
       )

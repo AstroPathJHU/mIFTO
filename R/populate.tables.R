@@ -47,6 +47,10 @@ populate.tables <- function(
   tables.out <- mIFTO::preallocate.tables(
     Slide_Descript, Concentration, titration.type.name, 
     table.names.wholeslide, paths)
+  err.val <- tables.out$err.val
+  if (err.val != 0) {
+    return(list(err.val = err.val))
+  }
   #
   Tables.byimage <- tables.out$Tables.byimage
   Tables.wholeslide <- tables.out$Tables.wholeslide
@@ -77,6 +81,8 @@ populate.tables <- function(
   #############reading images in and computing stats for all pairs##############
   #
   mIFTO::doupdate.pgbar(pb.count, pb.Object, 'Reading in Images')
+  Sys.sleep(0.5)
+  #
   for(x in Slide_Descript){
     for(y in 1:length(Concentration)){
       #
@@ -94,26 +100,55 @@ populate.tables <- function(
       # overhead, the startup time for the cluster is minimal ~2-3secs
       #
       time <- system.time({
-      cl <- parallel::makeCluster(
-        getOption("cl.cores", numcores), useXDR = FALSE, methods = FALSE)
-      parallel::clusterEvalQ(cl, library(mIFTO));
-      #
-      tryCatch({
-      small.tables.byimage <- mIFTO::parallel.invoke.gpxp(
-        Concentration, x, y, Image.IDs, Antibody_Opal, 
-        titration.type.name, Protocol, Thresholds, paths, 
-        connected.pixels, flowout, Opal1, cl
-        )
-      }, error = function(cond) {
-        stop(paste0('Error in parallel read at ', 
-                    x, ' 1to', Concentration[y]))
-      },
-      finally={
-        parallel::stopCluster(cl)
-      }
-      )
-      #
-      })
+        cl <- parallel::makeCluster(
+          getOption("cl.cores", numcores), useXDR = FALSE, methods = FALSE)
+        parallel::clusterEvalQ(cl, library(mIFTO));
+        #
+        small.tables.byimage <- tryCatch({
+          mIFTO::parallel.invoke.gpxp(
+            Concentration, x, y, Image.IDs, Antibody_Opal, 
+            titration.type.name, Protocol, Thresholds, paths, 
+            connected.pixels, flowout, Opal1, cl
+          )
+        }, warning = function(cond) {
+          modal_out <- shinyalert::shinyalert(
+            title = paste0('Error Reading Component Images for ', 
+                           x, ' 1to', Concentration[y]),
+            text = paste0('Please check the computer reasources, slide names, ',
+                          'image layers correspond to protocol type, ',
+                          'and that files for ', x, 
+                          ' 1to',Concentration[[y]],' exist. Then contact ',
+                          'Benjamin Green at bgreen42jh.edu for assistance.'),
+            type = 'error',
+            showConfirmButton = TRUE
+          )
+          err.val <- 14
+          return(err.val)
+        }, error = function(cond) {
+          modal_out <- shinyalert::shinyalert(
+            title = paste0('Error Reading Component Images for ', 
+                           x, ' 1to', Concentration[y]),
+            text = paste0('Please check the computer reasources, slide names, ',
+                          'image layers correspond to protocol type, ',
+                          'and that files for ', x, 
+                          ' 1to',Concentration[[y]],' exist. Then contact ',
+                          'Benjamin Green at bgreen42jh.edu for assistance.'),
+            type = 'error',
+            showConfirmButton = TRUE
+          )
+          err.val <- 14
+          return(err.val)
+        },
+        finally={
+          parallel::stopCluster(cl)
+        })
+        #
+        if (length(small.tables.byimage) == 1) {
+          err.val <- 14
+          return(list(err.val = err.val))
+        }
+      }) 
+      
       #
       # progress bar
       #
@@ -219,6 +254,7 @@ populate.tables <- function(
   }
   # 
   out <- list(Tables.byimage = Tables.byimage,
-              Tables.wholeslide = Tables.wholeslide)
+              Tables.wholeslide = Tables.wholeslide, 
+              err.val = err.val)
   #
 }

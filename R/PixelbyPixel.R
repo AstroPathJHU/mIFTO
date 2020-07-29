@@ -45,6 +45,7 @@ PixelbyPixel <- function(out,pb.Object) {
   Thresholds <- outchecked$Thresholds
   num.of.tiles <- outchecked$num.of.tiles
   flowout <- outchecked$flowout
+  ihc.logical <- outchecked$ihc.logical
   Protocol <- outchecked$Protocol
   paths <- outchecked$paths
   titration.type.name <- outchecked$titration.type.name
@@ -56,8 +57,8 @@ PixelbyPixel <- function(out,pb.Object) {
   #
   pb.count = 1; mIFTO::doupdate.pgbar(
     pb.count, pb.Object, 'Generating Folders')
-  mIFTO::create.dir(wd,'pixels', flowout)
-  #browser()
+  v <- mIFTO::create.dir(wd,'pixels', flowout)
+  rm(v)
   #
   ###############################Reads in data##########################
   #
@@ -67,6 +68,12 @@ PixelbyPixel <- function(out,pb.Object) {
       flowout, Protocol, paths, titration.type.name, connected.pixels,
       pb.count, pb.Object)
       )
+  #
+  err.val <- Tables$err.val
+  if (err.val != 0) {
+    return(err.val)
+  }
+  #
   time1 <- time[['elapsed']]/60
   mins <- round(time1, digits = 0)
   secs <- round(60 * (time1 - mins), digits = 0)
@@ -105,8 +112,8 @@ PixelbyPixel <- function(out,pb.Object) {
   #
   mIFTO::doupdate.pgbar(90, pb.Object, 'Write out the fractions tables')
   #
-  write.fracs(wd, Antibody_Opal, Slide_Descript,
-              Concentration, Tables$Tables.byimage, IHC)
+  mIFTO::write.fracs(wd, Antibody_Opal, Slide_Descript,
+              Concentration, Tables$Tables.byimage, ihc.logical)
   #
   mIFTO::doupdate.pgbar(91, pb.Object,
                       'Generating Signal-to-Noise Ratio Graphs')

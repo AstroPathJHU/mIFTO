@@ -23,6 +23,7 @@ tiff.list <- function(wd, pattern.in,Protocol) {
   #
   # get all images with similar image names
   #
+  err.val <- 0
   image_names <- list.files(
     wd,
     pattern = paste0(pattern.in, '.*_component_data.tif'),
@@ -44,9 +45,12 @@ tiff.list <- function(wd, pattern.in,Protocol) {
   #
   for (count2 in 1:length(image_names)) {
     v <- tiff::readTIFF(image_names[count2],native = F,all = T,as.is = F)
+    if (!(length(v)-1) == length(types)){
+      return(err.val = 15)
+    }
     v <- v[1:length(types)]
     names(v) <- types
     m2 <- c(m2, list(v))
   }
-  m2
+  return(data.out = m2, err.val = err.val)
 }

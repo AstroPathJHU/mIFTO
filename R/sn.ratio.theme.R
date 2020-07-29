@@ -28,7 +28,7 @@ sn.ratio.theme <- function(tbl, Concentration, titl, xtitl, ytitl,Max, theme1){
     min(Concentration)-((min(Concentration))/2),
     max(Concentration)+((min(Concentration))/2)
     )
-  
+  conc_width <- .025 * (Concentration[[length(Concentration)]] - Concentration[[1]])
   #
   ggplot2::ggplot(
     data=tbl,ggplot2::aes(x=as.numeric(Concentration), y=SN_Ratio)) +
@@ -37,20 +37,20 @@ sn.ratio.theme <- function(tbl, Concentration, titl, xtitl, ytitl,Max, theme1){
     ggplot2::geom_errorbar(
       ggplot2::aes(ymin =SN_Ratio - sd.SN_Ratio,
                    ymax = SN_Ratio + sd.SN_Ratio),color = 'red',
-      width=length(Concentration)^(length(Concentration)/1.5),
+      width = conc_width,
       size=.40, alpha=.65) +
     ggplot2::geom_line(ggplot2::aes(
       x=Concentration, y=Noise, color='blue')) +
     ggplot2::geom_errorbar(ggplot2::aes(
       ymin = Noise - sd.Noise,ymax = Noise+sd.Noise),color = 'blue',
-      width=length(Concentration)^(length(Concentration)/1.5),
+      width = conc_width,
       size=.40, alpha=.65) +
     ggplot2::geom_line(ggplot2::aes(
       x=Concentration, y= Signal, color='black')) +
     ggplot2::geom_errorbar(ggplot2::aes(
       ymin = Signal - sd.Signal,
       ymax = Signal+sd.Signal),color = 'black',
-      width=length(Concentration)^(length(Concentration)/2),
+      width =  conc_width,
       size=.40, alpha=.65) +
     ggplot2::labs(title = titl,
                   x =  xtitl,y = ytitl) +
