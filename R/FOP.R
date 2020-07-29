@@ -82,7 +82,7 @@ FOP<-function(){
             ),
             shiny::column(
               3, offset = 0, align = 'right',
-              br(),
+              shiny::br(),
               shiny::actionLink(
                 "pdf", "Help", onclick = 
                   paste0("window.open('https://github.com",

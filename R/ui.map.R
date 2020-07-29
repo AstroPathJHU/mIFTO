@@ -66,7 +66,7 @@ ui.map <- function (){
             ),
             shiny::column(
               3, offset = 6, align = 'right',
-              br(),
+              shiny::br(),
               shiny::actionLink(
                 "pdf", "Help", onclick = 
                   paste0("window.open('https://github.com",
