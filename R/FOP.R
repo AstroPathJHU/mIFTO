@@ -71,7 +71,7 @@ FOP<-function(){
           # header
           #
           shiny::fixedRow(
-            column(
+            shiny::column(
               9,align = 'left',
               shiny::h2(
                 shiny::div(
@@ -80,7 +80,7 @@ FOP<-function(){
                 align = 'left'
               )
             ),
-            column(
+            shiny::column(
               3, offset = 0, align = 'right',
               br(),
               shiny::actionLink(
