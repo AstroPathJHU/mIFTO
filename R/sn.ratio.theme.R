@@ -17,50 +17,101 @@
 #' @param ytitl the y axis label
 #' @param Max max value
 #' @param theme1 the additional theme settings for the graphs defined by PxP
+#' @param con_type the type of concentration vector to use factor or numeric
 #' @return exports the fraction spreadsheets
 #' @export
 #'
-sn.ratio.theme <- function(tbl, Concentration, titl, xtitl, ytitl,Max, theme1){
+sn.ratio.theme <- function(tbl, Concentration, titl, xtitl, ytitl,Max, theme1,
+                           con_type){
   #
   colvals <- c('red'='red','blue'='blue','black'='black')
   collbls <- c('red'='S/N Ratio','blue'='Median Noise','black'='Median Signal')
   xcoords<-c(
     min(Concentration)-((min(Concentration))/2),
     max(Concentration)+((min(Concentration))/2)
-    )
-  conc_width <- .025 * (Concentration[[length(Concentration)]] - Concentration[[1]])
+  )
+
   #
-  ggplot2::ggplot(
-    data=tbl,ggplot2::aes(x=as.numeric(Concentration), y=SN_Ratio)) +
-    ggplot2::geom_line(ggplot2::aes(
-      x=as.numeric(Concentration), y=SN_Ratio, color='red')) +
+  if (con_type == 'factor'){
+    con_data <- as.factor(Concentration)
+    graph_dat <- ggplot2::ggplot(
+      data=tbl,
+      ggplot2::aes(
+        x=con_data, y=SN_Ratio, group = 1
+      )
+    )
+    x_scal <- ggplot2::scale_x_discrete(breaks=con_data)
+    conc_width <- .025 * (length(Concentration) - 1)
+    xcoords <- c(.5, length(Concentration) + .5)
+  }else if (con_type == 'numeric'){
+    con_data <- as.numeric(Concentration)
+    graph_dat <- ggplot2::ggplot(
+      data=tbl,
+      ggplot2::aes(
+        x=con_data, y=SN_Ratio
+      )
+    )
+    x_scal <- ggplot2::scale_x_continuous(breaks=con_data)
+    conc_width <- .025 * (
+      Concentration[[length(Concentration)]] - Concentration[[1]])
+    xcoords<-c(
+      min(Concentration) - ((min(Concentration))/2),
+      max(Concentration) + ((min(Concentration))/2)
+    )
+  }
+  #
+  graph_dat +
+    ggplot2::geom_line(
+      ggplot2::aes(
+        x=con_data, y=SN_Ratio, color='red'
+      )
+    ) +
     ggplot2::geom_errorbar(
-      ggplot2::aes(ymin =SN_Ratio - sd.SN_Ratio,
-                   ymax = SN_Ratio + sd.SN_Ratio),color = 'red',
-      width = conc_width,
-      size=.40, alpha=.65) +
-    ggplot2::geom_line(ggplot2::aes(
-      x=Concentration, y=Noise, color='blue')) +
-    ggplot2::geom_errorbar(ggplot2::aes(
-      ymin = Noise - sd.Noise,ymax = Noise+sd.Noise),color = 'blue',
-      width = conc_width,
-      size=.40, alpha=.65) +
-    ggplot2::geom_line(ggplot2::aes(
-      x=Concentration, y= Signal, color='black')) +
-    ggplot2::geom_errorbar(ggplot2::aes(
-      ymin = Signal - sd.Signal,
-      ymax = Signal+sd.Signal),color = 'black',
-      width =  conc_width,
-      size=.40, alpha=.65) +
-    ggplot2::labs(title = titl,
-                  x =  xtitl,y = ytitl) +
-    ggplot2::scale_color_manual(name = '',values = colvals,
-                                labels = collbls) +
-    ggplot2::coord_cartesian(xlim = xcoords,
-                             ylim = c(-5,Max), expand = F) +
-    ggplot2::scale_y_continuous(breaks=seq(0,100,5)) +
-    ggplot2::scale_x_continuous(breaks=Concentration) +
-    theme1 + ggplot2::theme(legend.position = c(.85,.85)) + 
+      ggplot2::aes(
+        ymin = SN_Ratio - sd.SN_Ratio, ymax = SN_Ratio + sd.SN_Ratio
+      ),
+      color = 'red', width = conc_width, size=.40, alpha=.65
+    ) +
+    ggplot2::geom_line(
+      ggplot2::aes(
+        x=con_data, y=Noise, color='blue'
+      )
+    ) +
+    ggplot2::geom_errorbar(
+      ggplot2::aes(
+        ymin = Noise - sd.Noise, ymax = Noise + sd.Noise
+      ),
+      color = 'blue', width = conc_width, size=.40, alpha=.65
+    ) +
+    ggplot2::geom_line(
+      ggplot2::aes(
+        x=con_data, y= Signal, color='black'
+      )
+    ) +
+    ggplot2::geom_errorbar(
+      ggplot2::aes(
+        ymin = Signal - sd.Signal, ymax = Signal + sd.Signal
+      ),
+      color = 'black', width =  conc_width, size=.40, alpha=.65) +
+    ggplot2::labs(
+      title = titl, x =  xtitl, y = ytitl
+    ) +
+    ggplot2::scale_color_manual(
+      name = '',values = colvals, labels = collbls
+    ) +
+    ggplot2::coord_cartesian(
+      xlim = xcoords, ylim = c(-5,Max), expand = F
+    ) +
+    ggplot2::scale_y_continuous(
+      breaks=seq(0,100,5)
+    ) +
+    x_scal +
+    theme1 + ggplot2::theme(
+      legend.position = c(.85,.85)
+    ) + 
     ggplot2::theme(
-      plot.margin = ggplot2::margin(t = 20, r = 20, b = 20, l = 20, unit = "pt"))
+      plot.margin = ggplot2::margin(
+        t = 20, r = 20, b = 20, l = 20, unit = "pt"
+      )
+    )
 }

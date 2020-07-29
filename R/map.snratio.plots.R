@@ -16,12 +16,13 @@
 #' @param Concentration a numeric vector of concentrations used in the titration
 #' @param Tables the table of statistics gathered by PxP
 #' @param theme1 the theme for the graphs 
+#' @param con_type the type of concentration vector to use factor or numeric
 #' @return exports a ggplot object to be printed for viewing
 #' @export
 #'
 map.snratio.plots <- function(
   wd, Antibody_Opal, Slide_Descript, Concentration, tables_in, Antibody_Opal.2,
-  theme1){
+  theme1, con_type){
   #
   SN.Ratio.names<-c('Mean','Median')
   plots<-list()
@@ -79,9 +80,13 @@ map.snratio.plots <- function(
     # generate plots with desired settings for average table
     #
     plots<-c(plots,list(
-      sn.ratio.theme(tbl2, Concentration, paste0(
+      sn.ratio.theme(
+        tbl2, Concentration, paste0(
           titl_o,'Averaged on Slides: ', Antibody_Opal.2),
-          xtitl,ytitl, Max, theme1)))
+        xtitl,ytitl, Max, theme1, con_type
+      )
+    )
+    )
     #
     # plot out for the individual sn ration graphs
     #
@@ -89,18 +94,25 @@ map.snratio.plots <- function(
       #
       # aggregate the data for the slide table
       #
-      tbl2 = dplyr::summarize(dplyr::group_by(
-        tbl[which(tables_in[['SN.Ratio']][[x]]
-                    $'Slide.ID'== Slide_Descript[i.1]),], Concentration),
+      tbl2 = dplyr::summarize(
+        dplyr::group_by(
+          tbl[which(tables_in[['SN.Ratio']][[x]]
+                    $'Slide.ID'== Slide_Descript[i.1]),], Concentration
+        ),
         sd.Signal = sd(Signal),sd.Noise = sd(Noise),sd.SN_Ratio = sd(SN_Ratio),
-        Signal = mean(Signal),Noise = mean(Noise),SN_Ratio = mean(SN_Ratio))
+        Signal = mean(Signal),Noise = mean(Noise),SN_Ratio = mean(SN_Ratio)
+      )
       #
       # plot the slide table
       #
       plots<-c(plots,list(
-        sn.ratio.theme(tbl2, Concentration, paste0(
-          titl_o,' for Slide ', Slide_Descript[i.1],': ', Antibody_Opal.2),
-          xtitl,ytitl,Max, theme1)))
+        sn.ratio.theme(
+          tbl2, Concentration, paste0(
+            titl_o,' for Slide ', Slide_Descript[i.1],': ', Antibody_Opal.2),
+          xtitl,ytitl,Max, theme1, con_type
+        )
+      )
+      )
     }
   }
   return(plots)

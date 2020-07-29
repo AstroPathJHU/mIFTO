@@ -4,7 +4,7 @@
 \alias{sn.ratio.theme}
 \title{Used by PxP script to create the sn_ratio_theme}
 \usage{
-sn.ratio.theme(tbl, Concentration, titl, xtitl, ytitl, Max, theme1)
+sn.ratio.theme(tbl, Concentration, titl, xtitl, ytitl, Max, theme1, con_type)
 }
 \arguments{
 \item{tbl}{the table to be graphed}
@@ -20,6 +20,8 @@ sn.ratio.theme(tbl, Concentration, titl, xtitl, ytitl, Max, theme1)
 \item{Max}{max value}
 
 \item{theme1}{the additional theme settings for the graphs defined by PxP}
+
+\item{con_type}{the type of concentration vector to use factor or numeric}
 }
 \value{
 exports the fraction spreadsheets

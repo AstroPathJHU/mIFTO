@@ -11,7 +11,8 @@ map.snratio.plots(
   Concentration,
   tables_in,
   Antibody_Opal.2,
-  theme1
+  theme1,
+  con_type
 )
 }
 \arguments{
@@ -23,6 +24,8 @@ map.snratio.plots(
 \item{Concentration}{a numeric vector of concentrations used in the titration}
 
 \item{theme1}{the theme for the graphs}
+
+\item{con_type}{the type of concentration vector to use factor or numeric}
 
 \item{Slide_Desctipt}{a unique identifier for each slide to be analyzed}
 
