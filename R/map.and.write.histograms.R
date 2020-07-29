@@ -93,7 +93,7 @@ map.and.write.histograms <- function(
     for (x in 1:length(Slide_Descript)){
       #
       #
-      plots.sep<-vector('list',length=(length(Slide_Descript)))
+      plots.sep<-vector('list',length=(length(Concentration)))
       plot.count<-1
       names(Thresholds[[x]])<-Concentration
       #

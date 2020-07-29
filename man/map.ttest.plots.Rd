@@ -9,10 +9,11 @@ map.ttest.plots(
   Antibody_Opal,
   Slide_Descript,
   Concentration,
-  Tables,
+  tables_in,
   Antibody_Opal.2,
   theme1,
-  colors
+  colors,
+  con_type
 )
 }
 \arguments{
@@ -23,11 +24,13 @@ map.ttest.plots(
 
 \item{Concentration}{a numeric vector of concentrations used in the titration}
 
-\item{Tables}{the table of statistics gathered by PxP}
+\item{tables_in}{the table of statistics gathered by PxP}
 
 \item{theme1}{the theme for the graphs}
 
 \item{colors}{the color vectors for the t test and histograms}
+
+\item{con_type}{the type of concentration vector to use factor or numeric}
 
 \item{Slide_Desctipt}{a unique identifier for each slide to be analyzed}
 }

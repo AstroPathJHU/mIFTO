@@ -93,9 +93,8 @@ PixelbyPixel <- function(out,pb.Object) {
   graph.out <- mIFTO::create.my.theme()
   theme1 <- graph.out$theme1
   colors <- graph.out$colors
+  con_type <- 'factor'
   #
-  xcoords<-c(min(Concentration)-((min(Concentration))/2),
-             max(Concentration)+((min(Concentration))/2))
   if (nchar(Antibody_Opal) > 14){
     Antibody_Opal.ttest <- paste0('\n', Antibody_Opal)
   } else {
@@ -120,13 +119,17 @@ PixelbyPixel <- function(out,pb.Object) {
   #
   sn.plots <- map.snratio.plots(
     wd, Antibody_Opal, Slide_Descript,
-    Concentration, Tables$Tables.byimage, Antibody_Opal.snratio, theme1)
+    Concentration, Tables$Tables.byimage,
+    Antibody_Opal.snratio, theme1, con_type
+  )
   #
   mIFTO::doupdate.pgbar(92, pb.Object, 'Generating t-Test Graphs')
   #
   tplots <- map.ttest.plots(
     wd, Antibody_Opal, Slide_Descript,
-    Concentration, Tables$Tables.byimage, Antibody_Opal.ttest, theme1, colors)
+    Concentration, Tables$Tables.byimage,
+    Antibody_Opal.ttest, theme1, colors, con_type
+  )
   #
   # print some graphs
   #
