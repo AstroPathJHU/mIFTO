@@ -1,12 +1,12 @@
 #########################Pixel-by-Pixel################################
 
-#'Used by RUN to do Pixel by Pixel Analysis on individual images for 
+#'Used by RUN to do Pixel by Pixel Analysis on individual images for
 #'IF titrations;
 #'Created By: Benjamin Green, Charles Roberts;
 #'Last Edited 09/25/2019
 #'
-#'This function is desgined to do analysis for IF titration series 
-#'in Pixel by Pixel data provding output for each IMAGE individually 
+#'This function is desgined to do analysis for IF titration series
+#'in Pixel by Pixel data provding output for each IMAGE individually
 #'grouped by Concentration
 #'
 #'It is meant to be run through the RUN.ByImage function
@@ -37,7 +37,7 @@ PixelbyPixel <- function(out,pb.Object) {
     return(err.val)
   }
   wd <- outchecked$wd
-  Slide_Descript <- outchecked$Slide_Descript
+  Slide_Descript <- outchecked$Slide_ID
   Antibody <- outchecked$Antibody
   Opal1 <- outchecked$Opal1
   Antibody_Opal <- outchecked$Antibody_Opal
@@ -64,7 +64,7 @@ PixelbyPixel <- function(out,pb.Object) {
   #
   time <- system.time(
     Tables <- mIFTO::populate.tables(
-      Slide_Descript, Concentration, Antibody_Opal, Thresholds, Opal1, 
+      Slide_Descript, Concentration, Antibody_Opal, Thresholds, Opal1,
       flowout, Protocol, paths, titration.type.name, connected.pixels,
       pb.count, pb.Object)
       )
@@ -89,7 +89,7 @@ PixelbyPixel <- function(out,pb.Object) {
   Sys.sleep(0.5)
   #
   ##################prepares some parameters for the graphs#############
-  # 
+  #
   graph.out <- mIFTO::create.my.theme()
   theme1 <- graph.out$theme1
   colors <- graph.out$colors
@@ -147,15 +147,15 @@ PixelbyPixel <- function(out,pb.Object) {
   sn.plots.l <- (length(Slide_Descript) + 1)
   v1 <-sn.plots.l+1
   if ((sn.plots.l/4)%%1 == .25){
-    sn.plots <- c(sn.plots[1:sn.plots.l], p1,p1,p1, 
+    sn.plots <- c(sn.plots[1:sn.plots.l], p1,p1,p1,
                   sn.plots[v1:length(sn.plots)],
                   p1, p1, p1)
   } else if ((sn.plots.l/4)%%1 == .5){
-    sn.plots <- c(sn.plots[1:sn.plots.l], p1,p1, 
+    sn.plots <- c(sn.plots[1:sn.plots.l], p1,p1,
                   sn.plots[v1:length(sn.plots)],
                   p1, p1)
   } else if ((sn.plots.l/4)%%1 == .75){
-    sn.plots <- c(sn.plots[1:sn.plots.l], p1, 
+    sn.plots <- c(sn.plots[1:sn.plots.l], p1,
                   sn.plots[v1:length(sn.plots)],
                   p1)
   }
@@ -166,9 +166,9 @@ PixelbyPixel <- function(out,pb.Object) {
                    ceiling(sn.plots.l/ 4)))
   lbl2 <- c(lbl2, rep(paste0(
     "Measures the difference between signal and noise using a simple ratio.",
-    " Higher values indicate more separation."), 
+    " Higher values indicate more separation."),
     2*ceiling(sn.plots.l/ 4)))
-  #         
+  #
   plots <- c(tplots, sn.plots)
   glist <- m.grid.arrange(plots, lbl, lbl2, 1, 0, ceiling(length(plots))/4)
   gout <- gridExtra::marrangeGrob(grobs=glist,nrow=1,ncol=1,top=NULL)
@@ -183,7 +183,7 @@ PixelbyPixel <- function(out,pb.Object) {
   #
   ii = 94;mIFTO::doupdate.pgbar(
     ii, pb.Object, 'Generating Histogram Graphs')
-  #    
+  #
   map.and.write.histograms(
     wd, Antibody_Opal, Slide_Descript,
     Concentration, Thresholds, Tables$Tables.wholeslide, theme1, colors)

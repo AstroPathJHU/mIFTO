@@ -16,10 +16,10 @@
 #'
 check.vars <- function(out) {
 #
-# check the slide names
+# check the slide IDs
 #
 err.val <- 0
-if (out$Slide_Descript == ""){
+if (out$Slide_ID == ""){
   modal_out <- shinyalert::shinyalert(
     title = "Slide description input is empty.",
     text = paste(
@@ -31,21 +31,21 @@ if (out$Slide_Descript == ""){
   return(list(err.val = err.val))
 }
 #
-if( grepl('[-|+|&]',out$Slide_Descript,perl = TRUE ) ) {
+if( grepl('[-|+|&]',out$Slide_ID,perl = TRUE ) ) {
   n <- shiny::showNotification(
     'Slide Descriptors contain an illegal character this may cause issues',
     type = 'warning')
 }
-if( grepl(' ',out$Slide_Descript,perl = TRUE ) ) {
+if( grepl(' ',out$Slide_ID,perl = TRUE ) ) {
   n <- shiny::showNotification(
     'Slide Descriptors contain spaces ... removing spaces in names',
     type = 'warning')
-  Slide_Descript <- gsub(" ", "",out$Slide_Descript, fixed = TRUE)
+  Slide_ID <- gsub(" ", "",out$Slide_ID, fixed = TRUE)
 } else {
-  Slide_Descript <- out$Slide_Descript
+  Slide_ID <- out$Slide_ID
 }
 #
-Slide_Descript <- unlist(strsplit(Slide_Descript, split = ','))
+Slide_ID <- unlist(strsplit(Slide_ID, split = ','))
 #
 # set up Vars_pxp
 #
@@ -60,14 +60,6 @@ if(grepl("flowout.Pixels",Vars_pxp)) {
   flowout <- TRUE
 } else {
   flowout <- FALSE
-}
-#
-# whether or not an ihc was done
-#
-if(grepl("ihc.Pixels",Vars_pxp)) {
-  ihc.logical <- TRUE
-} else {
-  ihc.logical <- FALSE
 }
 #
 # get the antibody name
@@ -218,6 +210,50 @@ if(grepl("Folders.Pixels",Vars_pxp)) {
   paths<-sapply(1:length(Concentration),function(x) wd)
 }
 #
+# whether or not an ihc was done and images are present
+#
+if(grepl("ihc.Pixels",Vars_pxp)) {
+  #
+  # if the ihc value was marked as true check for that at least one imageID
+  # exists for each slide id
+  #
+  for(x in Slide_Descript){
+    #
+    # regular expression to grab this concentration and slide descript pair
+    #
+    str =  paste0('.*', x, '.*IHC.*_component_data.tif')
+    #
+    if(grepl("Folders.Pixels",Vars_pxp)) {
+        cImage.IDs <-  list.files(
+          paste0(wd, '/IHC'), pattern = str, ignore.case = T)
+    } else {
+        cImage.IDs <-  list.files(
+          wd, pattern = str, ignore.case = T)
+    }
+    #
+    # check that files exist for each AB-dilution pair
+    #
+    if(length(cImage.IDs) == 0 ){
+      modal_out <- shinyalert::shinyalert(
+        title =  paste0('Search failed for ', x, ' ', titration.type.name,
+                        'IHC images'),
+        text = paste0(
+          'Please check slide names and that component data tiffs for ',
+          x, ' IHC exist'),
+        type = 'error',
+        showConfirmButton = TRUE
+      )
+      err.val <- 13
+      return(list(err.val = err.val))
+    }
+  }
+  #
+  ihc.logical <- TRUE
+} else {
+  ihc.logical <- FALSE
+}
+
+#
 # check that there is one path for each concentration
 # (if folders is false vector paths will be filled with one
 # path for each concentration)
@@ -239,51 +275,42 @@ for (x in 1:length(paths)){
   }
 }
 #
-## ***********************************************
-## need to check that the there are
-## files for each dilution of for each specimen
-## and that if the naming convention
-## is false the dilution only appears once in the name
-## ************************************************
-#
 # create the threshold values and connected pixel values
 #
 if (!grepl("nConsistent",Vars_pxp)) {
   #
   Thresholds = lapply(
-    1:length(Slide_Descript), function(x)out$Thresholds
+    1:length(Slide_ID), function(x)out$Thresholds
   )
   #
   connected.pixels <- lapply(
-    1:length(Slide_Descript), function(x)out$connected.pixels
+    1:length(Slide_ID), function(x)out$connected.pixels
   )
 } else {
   #
   Thresholds = lapply(
-    1:length(Slide_Descript), function(x)out[[paste0("Thresholds",x)]]
+    1:length(Slide_ID), function(x)out[[paste0("Thresholds",x)]]
   )
   #
   connected.pixels <- lapply(
-    1:length(Slide_Descript), function(x)out[[paste0("connected.pixels",x)]]
+    1:length(Slide_ID), function(x)out[[paste0("connected.pixels",x)]]
   )
   #
 }
 #
-names(Thresholds) <- Slide_Descript
-names(connected.pixels) <- Slide_Descript
+names(Thresholds) <- Slide_ID
+names(connected.pixels) <- Slide_ID
 #
-if (ihc.logical){
-  ihc.Thresholds <- vector(mode = 'list', length= length(Slide_Descript))
-  names(ihc.Thresholds) <- Slide_Descript
-  ihc.connected.pixels <- vector(mode = 'list', length= length(Slide_Descript))
-  names(ihc.connected.pixels) <- Slide_Descript
-}
+ihc.Thresholds <- vector(mode = 'list', length= length(Slide_ID))
+names(ihc.Thresholds) <- Slide_ID
+ihc.connected.pixels <- vector(mode = 'list', length= length(Slide_ID))
+names(ihc.connected.pixels) <- Slide_ID
 #
 v1 = 1
 v2 = 1
 v3 = 1
 #
-for (x in 1:length(Slide_Descript)){
+for (x in 1:length(Slide_ID)){
   #
   if( grepl(' ',Thresholds[[x]],perl = TRUE )) {
     if (v1 == 1){
@@ -465,8 +492,8 @@ for (x in 1:length(Slide_Descript)){
   #
 }
 #
-names(connected.pixels)<-Slide_Descript
-names(Thresholds)<-Slide_Descript
+names(connected.pixels)<-Slide_ID
+names(Thresholds)<-Slide_ID
 #
 # get the protocol type
 #
@@ -560,7 +587,7 @@ rm(a,packages)
 # output list
 #
 outnew <- list(
-  err.val = err.val, wd = wd, Slide_Descript = Slide_Descript, Opal1 = Opal1,
+  err.val = err.val, wd = wd, Slide_ID = Slide_ID, Opal1 = Opal1,
   flowout = flowout, ihc.logical = ihc.logical, num.of.tiles = num.of.tiles,
   paths = paths, Antibody = Antibody, Thresholded = TRUE, Protocol = Protocol,
   Antibody_Opal = Antibody_Opal, Concentration = Concentration,
