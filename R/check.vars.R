@@ -191,7 +191,7 @@ if(Naming.convention==T){
 # get the working directory
 #
 wd <- choose.dir(caption = 'Select the folder the data is contained in')
-if(is.na(wd)) { 
+if(is.na(wd)) {
   modal_out <- shinyalert::shinyalert(
     title = "Directory not valid.",
     text = paste(
@@ -271,6 +271,14 @@ if (!grepl("nConsistent",Vars_pxp)) {
 #
 names(Thresholds) <- Slide_Descript
 names(connected.pixels) <- Slide_Descript
+#
+if (ihc.logical){
+  ihc.Thresholds <- vector(mode = 'list', length= length(Slide_Descript))
+  names(ihc.Thresholds) <- Slide_Descript
+  ihc.connected.pixels <- vector(mode = 'list', length= length(Slide_Descript))
+  names(ihc.connected.pixels) <- Slide_Descript
+}
+#
 v1 = 1
 v2 = 1
 v3 = 1
@@ -333,6 +341,13 @@ for (x in 1:length(Slide_Descript)){
   }
   #
   Thresholds[[x]] <- Thresholds1
+  #
+  # remove the ihc threshold and place into a new vector if applicable
+  #
+  if (ihc.logical){
+    ihc.Thresholds[[x]] <- Thresholds[[x]][[length(Thresholds[[x]])]]
+    Thresholds[[x]] <- Thresholds[[x]][-length(Thresholds[[x]])]
+  }
   #
   # check that the number of thresholds
   # == the number of concentrations
@@ -424,7 +439,14 @@ for (x in 1:length(Slide_Descript)){
   }
   connected.pixels[[x]] <- connected.pixels1
   #
-  # check that the number of thresholds
+  # remove the ihc con pixels and place into a new vector if applicable
+  #
+  if (ihc.logical){
+    ihc.connected.pixels[[x]] <- connected.pixels[[x]][[length(connected.pixels[[x]])]]
+    connected.pixels[[x]] <- connected.pixels[[x]][-length(connected.pixels[[x]])]
+  }
+  #
+  # check that the number of conn pixels
   # == the number of concentrations
   #
   if (length(Concentration) != length(connected.pixels[[x]])){
@@ -461,7 +483,7 @@ num.of.tiles<-10
 # check if the EBImage package is installed or not
 #
 a<-installed.packages()
-packages<-a[,1] 
+packages<-a[,1]
 if (!is.element("EBImage", packages)){
   tryCatch({
     BiocManager::install("EBImage", ask=FALSE)
@@ -537,12 +559,12 @@ rm(a,packages)
 #
 # output list
 #
-outnew <- list(err.val = err.val, wd = wd, Slide_Descript = Slide_Descript,
-               flowout = flowout, ihc.logical = ihc.logical, Antibody = Antibody,
-               Opal1 = Opal1, Antibody_Opal = Antibody_Opal,
-               Concentration = Concentration,
-               Thresholded = TRUE, Thresholds = Thresholds,
-               Protocol = Protocol,paths = paths,
-               titration.type.name = titration.type.name,num.of.tiles = num.of.tiles,
-               connected.pixels = connected.pixels)
+outnew <- list(
+  err.val = err.val, wd = wd, Slide_Descript = Slide_Descript, Opal1 = Opal1,
+  flowout = flowout, ihc.logical = ihc.logical, num.of.tiles = num.of.tiles,
+  paths = paths, Antibody = Antibody, Thresholded = TRUE, Protocol = Protocol,
+  Antibody_Opal = Antibody_Opal, Concentration = Concentration,
+  Thresholds = Thresholds, titration.type.name = titration.type.name,
+  connected.pixels = connected.pixels, ihc.Thresholds = ihc.Thresholds,
+  ihc.connected.pixels = ihc.connected.pixels)
 }
