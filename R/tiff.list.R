@@ -1,16 +1,16 @@
 ###############################Pixel functions###########################
 
-#'Used by analysis functions to read in 8-layer and 10-layer 
+#'Used by analysis functions to read in 8-layer and 10-layer
 #'component_tiff images
 #'
 #'tiff.list;
 #'Created By: Benjamin Green, Charles Roberts;
 #'Last Edited 11/12/2018
 #'
-#'This script is designed to read in the designated 8 layer 
+#'This script is designed to read in the designated 8 layer
 #'component_tiff image or images exported from inForm (R) CellAnaylsis
-#'The function returns a data.frame of 8 columns, each column in the 
-#'data.frame designates a different layer of the image designated 
+#'The function returns a data.frame of 8 columns, each column in the
+#'data.frame designates a different layer of the image designated
 #'here as DAPI 520-690; however the column/names order may change
 #'depending on the library used to export images from inForm(R)
 #'
@@ -34,9 +34,11 @@ tiff.list <- function(wd, pattern.in,Protocol) {
   #
   if (Protocol  == '7color'){
     types <- c('DAPI', '520', '540', '570', '620', '650', '690', 'AF')
-    }else if (Protocol == '9color'){
-    types <- c('DAPI','480', '520', '540', '570', '620', 
+  } else if (Protocol == '9color'){
+    types <- c('DAPI','480', '520', '540', '570', '620',
                '650', '690','780', 'AF')
+  } else if (Protocol == 'IHC') {
+    types <- c('DAPI', '520', '540', '570', '620', '650', '690', 'AF')
   }
   #
   m2 <- list()

@@ -219,7 +219,7 @@ if(grepl("ihc.Pixels",Vars_pxp)) {
   #
   for(x in Slide_Descript){
     #
-    # regular expression to grab this concentration and slide descript pair
+    # regular expression to grab this slide descript IHC
     #
     str =  paste0('.*', x, '.*IHC.*_component_data.tif')
     #
@@ -231,7 +231,7 @@ if(grepl("ihc.Pixels",Vars_pxp)) {
           wd, pattern = str, ignore.case = T)
     }
     #
-    # check that files exist for each AB-dilution pair
+    # check that files exist for each AB
     #
     if(length(cImage.IDs) == 0 ){
       modal_out <- shinyalert::shinyalert(

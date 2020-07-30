@@ -93,8 +93,7 @@ preallocate.tables <- function(
 
   names(Image.IDs)<-Slide_Descript
   #
-  #reads the data in and sends it through each of the processes one
-  #image at a time
+  #get the image id for each slide and concentration
   #
   Image.ID.fullstrings <- list()
   #

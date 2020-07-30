@@ -10,30 +10,39 @@
 #'It is meant to be run through the PixelbyPixel function
 #'
 #' @param wd the main data root directory
-#' @param Antibody_Opal the paired string for an antibody opal pair, designated 
+#' @param Antibody_Opal the paired string for an antibody opal pair, designated
 #' as "AB (Opal NNN)"
 #' @param Slide_Desctipt a unique identifier for each slide to be analyzed
 #' @param Concentration a numeric vector of concentrations used in the titration
-#' @param Tables the table of statistics gathered by PxP
-#' @param IHC whether or not an IHC was done on this slide
+#' @param tables_in the table of statistics gathered by PxP
+#' @param Thresholds a list of thresholds used for each concentration and slide
+#' @param connected.pixels the number of pixels that a pixel must be connected
+#' to for positivity measures
+#' @param ihc.logical whether or not an IHC was done on these slides
+#' @param ihc.Thresholds a list of thresholds used for each slide for the IHC,
+#' should be in the same order as the slide list
+#' @param ihc.connected.pixels a list of conn pixels used for each slide for the
+#' IHC, should be in the same order as the slide list
 #' @return exports the fraction spreadsheets
 #' @export
 #'
-write.fracs <- function (wd, Antibody_Opal, Slide_Descript, Concentration,
-                         tables_in, IHC){
+write.fracs <- function (
+  wd, Antibody_Opal, Slide_Descript, Concentration, tables_in,
+  Thresholds, connected.pixels, ihc.logical, ihc.Thresholds,
+  ihc.connected.pixels
+  ){
   #
-  # write out fractions for positivity
+  # pull fractions of positivity for IF
   #
-  str = paste0(
-    wd,'/Results.pixels/stats/fractions/Raw Fractions of + Pixels ',
-    Antibody_Opal,'.csv')
   tbl <- tables_in[['SN.Ratio']][['Positivity']]
   #
   tbl <- dplyr::mutate(
     dplyr::group_by(
       dplyr::mutate(tbl, n = 1),
-      Slide.ID, Concentration),
-    r = cumsum(n))
+      Slide.ID, Concentration
+    ),
+    r = cumsum(n)
+  )
   tbl$Image.ID <- paste0('[', tbl$Image.ID, ']')
   tbl1 <- reshape2::dcast(
     tbl, Concentration + r ~ Slide.ID, value.var = c("fraction"))
@@ -44,22 +53,185 @@ write.fracs <- function (wd, Antibody_Opal, Slide_Descript, Concentration,
     'Image.IDs.', Slide_Descript))
   colnames(tbl) <- nn
   #
+  # compute average fracs for IF
+  #
+  tbl_avg <- dplyr::summarise_at(
+    dplyr::group_by(tbl, Concentration),
+    paste0('fracs.',Slide_Descript), mean, na.rm = T)
+  #
+  # thresholds as a table
+  #
+  t.vals <- as.data.frame(Thresholds)
+  #
+  # connected pixels as table
+  #
+  con.vals <- as.data.frame(connected.pixels)
+  #
+  # for IHC compute postive fractions by image add to corresponding tables
+  # then create additional graph
+  #
+  if (ihc.logical){
+    #
+    row.vals.names <- c(as.character(Concentration), 'IHC')
+    #
+    # find the image IDs for IHC
+    #
+    ihc.Image.IDs<-vector('list',length(Slide_Descript))
+    names(ihc.Image.IDs)<-Slide_Descript
+    #
+    #get the image IDs for each slide
+    #
+    ihc.Image.ID.fullstrings <- list()
+    #
+    for(x in Slide_Descript){
+      #
+      # regular expression to grab this slide id ihc
+      #
+      str =  paste0('.*', x, '.*IHC.*_component_data.tif')
+      #
+      if(grepl("Folders.Pixels",Vars_pxp)) {
+        ihc.path <- paste0(wd, '/IHC')
+      } else {
+        ihc.path <- wd
+      }
+      cImage.IDs <-  list.files(
+        ihc.path, pattern = str, ignore.case = T)
+      #
+      # search for M files
+      #
+      a <- grep(']_M', cImage.IDs, ignore.case = F)
+      if (!length(a) == 0){
+        #_M file found
+        n <- shiny::showNotification(
+          paste0('M# duplicate file found: ', cImage.IDs[a]),
+          type = 'warning')
+        n <- shiny::showNotification(
+          paste(
+            'removing the M# duplicate from',
+            'computations. Please check image data\ clean up folders',
+            'as this may not always the correct approach.'),
+          type = 'warning')
+        #
+        cImage.IDs <- cImage.IDs[-a]
+      }
+      #
+      # check that files exist for each AB
+      #
+      if(length(cImage.IDs) == 0 ){
+        modal_out <- shinyalert::shinyalert(
+          title =  paste0('Search failed for ', x, ' ', titration.type.name,
+                          'IHC images'),
+          text = paste0(
+            'Please check slide names and that component data tiffs for ',
+            x, ' IHC exist'),
+          type = 'error',
+          showConfirmButton = TRUE
+        )
+        err.val <- 13
+        return(list(err.val = err.val))
+      }
+      ihc.Image.IDs[[x]]<-gsub('.*\\[|\\].*','',cImage.IDs)
+      #
+      ihc.Image.ID.fullstrings <- c(ihc.Image.ID.fullstrings,cImage.IDs)
+    }
+    #
+    # read in the images and return the fraction of positivity for each
+    #
+    numcores <- parallel::detectCores()
+    if (numcores > 10){
+      numcores <- 10
+    }
+    #
+    for (x in Slide_Descript){
+      time <- system.time({
+        cl <- parallel::makeCluster(
+          getOption("cl.cores", numcores), useXDR = FALSE, methods = FALSE);
+        parallel::clusterEvalQ(cl, library(mIFTO));
+        #
+        ihc.small.tables.byimage <- tryCatch({
+          ihc.parallel.invoke.gpxp(
+            ihc.paths, x, ihc.Image.IDs, ihc.Thresholds,
+            ihc.connected.pixels, cl
+          )
+        }, warning = function(cond) {
+          modal_out <- shinyalert::shinyalert(
+            title = paste0('Error Reading Component Images for ',
+                           x, ' IHC'),
+            text = paste0('Please check the computer reasources, slide names, ',
+                          'image layers correspond to protocol type, ',
+                          'and that component data tiffs for ', x,
+                          ' IHC exist. Then contact ',
+                          'Benjamin Green at bgreen42jh.edu for assistance.'),
+            type = 'error',
+            showConfirmButton = TRUE
+          )
+          err.val <- 15
+          return(err.val)
+        }, error = function(cond) {
+          modal_out <- shinyalert::shinyalert(
+            title = paste0('Error Reading Component Images for ',
+                           x, ' IHC'),
+            text = paste0('Please check the computer reasources, slide names, ',
+                          'image layers correspond to protocol type, ',
+                          'and that component data tiffs for ', x,
+                          ' IHC exist. Then contact ',
+                          'Benjamin Green at bgreen42jh.edu for assistance.'),
+            type = 'error',
+            showConfirmButton = TRUE
+          )
+          err.val <- 15
+          return(err.val)
+        },
+        finally={
+          parallel::stopCluster(cl)
+        })
+        #
+        if (length(ihc.small.tables.byimage) == 1) {
+          err.val <- 15
+          return(list(err.val = err.val))
+        }
+      })
+
+    }
+
+    #
+  } else {
+    row.vals.names <- c(as.character(Concentration))
+  }
+  #
+  # write out raw fracs
+  #
+  str = paste0(
+    wd,'/Results.pixels/stats/fractions/Raw Fractions of + Pixels ',
+    Antibody_Opal,'.csv'
+  )
   data.table::fwrite(tbl,file = str,sep = ',')
   #
   # write out average fracs
   #
   str = paste0(
     wd,'/Results.pixels/stats/fractions/Average Fractions of + Pixels ',
-    Antibody_Opal,'.csv')
-  tbl_avg <- dplyr::summarise_at(
-    dplyr::group_by(tbl, Concentration),
-    paste0('fracs.',Slide_Descript), mean, na.rm = T)
-  #
+    Antibody_Opal,'.csv'
+  )
   data.table::fwrite(tbl_avg,file = str,sep = ',')
   #
-  # for IHC compute postive fractions by image add to corresponding tables
-  # then create additional graph
+  # write out threshold values
   #
-  
+  str = paste0(
+    wd,'/Results.pixels/stats/fractions/Threshold values ',
+    Antibody_Opal,'.csv'
+  )
+  names(t.vals) <- row.vals.names
+  data.table::fwrite(t.vals, file = str,sep = ',', row.names = T)
   #
+  # write out connected pixel values
+  #
+  str = paste0(
+    wd,'/Results.pixels/stats/fractions/ connected pixel values ',
+    Antibody_Opal,'.csv'
+  )
+  names(con.vals) <- row.vals.names
+  data.table::fwrite(con.vals, file = str,sep = ',', row.names = T)
+  #
+  return(list(err.val = 1))
 }

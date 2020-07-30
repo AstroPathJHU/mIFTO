@@ -115,8 +115,11 @@ pixelbypixel <- function(out,pb.Object) {
   #
   mIFTO::doupdate.pgbar(90, pb.Object, 'Write out the fractions tables')
   #
-  mIFTO::write.fracs(wd, Antibody_Opal, Slide_Descript,
-              Concentration, Tables$Tables.byimage, ihc.logical)
+  mIFTO::write.fracs(
+    wd, Antibody_Opal, Slide_Descript, Concentration, Tables$Tables.byimage,
+    ihc.logical, Thresholds, connected.pixels, ihc.connected.pixels,
+    ihc.Thresholds
+  )
   #
   mIFTO::doupdate.pgbar(91, pb.Object,
                       'Generating Signal-to-Noise Ratio Graphs')
