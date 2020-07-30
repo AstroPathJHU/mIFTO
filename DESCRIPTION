@@ -1,6 +1,6 @@
 Package: mIFTO
 Title: mIFTO: Multiplex Immunoflourescence Titration Optimization 
-Version: 2.00.017
+Version: 2.00.018
 Authors@R: person("Benjamin", "Green", email = "bgreen42@jhu.edu",
                   role = c("aut", "cre"))
 Description: CHANGE DESCRIPTION
@@ -8,10 +8,10 @@ Depends: R (>= 3.5.1),
 	ggplot2,
 	gridExtra
 Imports:
-	curl,
+    curl,
     dplyr,
     data.table,
-	grid,
+    grid,
     tibble,
     tiff,
     digest,
@@ -21,7 +21,8 @@ Imports:
     shinyWidgets,
     shinydashboard,
     shiny,
-	shinyalert
+    shinyalert,
+    ijtiff
 License: MIT License
 Encoding: UTF-8
 LazyData: true

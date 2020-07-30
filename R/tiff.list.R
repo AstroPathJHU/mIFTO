@@ -26,8 +26,9 @@ tiff.list <- function(wd, pattern.in,Protocol) {
   err.val <- 0
   image_names <- list.files(
     wd,
-    pattern = paste0(pattern.in, '.*_component_data.tif'),
-    full.names = TRUE
+    pattern = paste0(pattern.in, '_component_data.tif'),
+    full.names = T,
+    ignore.case = T
   )
   #
   # get the names of the layers for the protocol type
@@ -38,7 +39,25 @@ tiff.list <- function(wd, pattern.in,Protocol) {
     types <- c('DAPI','480', '520', '540', '570', '620',
                '650', '690','780', 'AF')
   } else if (Protocol == 'IHC') {
-    types <- c('DAPI', '520', '540', '570', '620', '650', '690', 'AF')
+    a <- ijtiff::read_tags(image_names,'all' )
+    # extract the initial value
+    pattern.match="\\<Name\\>(.*?)\\<Name\\>"
+    result.match.1 <- regmatches(
+      a$frame1$description, regexec(pattern.match,a$frame1$description)
+    )
+    result.match.1 <- result.match.1[[1]][2]
+    result.match.1 <- substring(
+      result.match.1, 2, (nchar(result.match.1[[1]])-2)
+    )
+    # extract the second value
+    result.match.2 <- regmatches(
+      a$frame2$description, regexec(pattern.match,a$frame2$description)
+    )
+    result.match.2 <- result.match.2[[1]][2]
+    result.match.2 <- substring(
+      result.match.2, 2, (nchar(result.match.2[[1]])-2)
+    )
+    types <- c(result.match.1, result.match.2)
   }
   #
   m2 <- list()

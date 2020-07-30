@@ -149,8 +149,8 @@ write.fracs <- function (
         parallel::clusterEvalQ(cl, library(mIFTO));
         #
         ihc.small.tables.byimage <- tryCatch({
-          ihc.parallel.invoke.gpxp(
-            ihc.paths, x, ihc.Image.IDs, ihc.Thresholds,
+          mIFTO::ihc.parallel.invoke.gpxp(
+            ihc.path, x, ihc.Image.IDs, ihc.Thresholds,
             ihc.connected.pixels, cl
           )
         }, warning = function(cond) {
