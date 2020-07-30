@@ -1,12 +1,12 @@
 #########################populate.tables#################################
 
-#'Used to loop through each image, call the generate func and map back to 
+#'Used to loop through each image, call the generate func and map back to
 #'Tables;
 #'Created By: Benjamin Green;
 #'Last Edited 05/29/2020
 #'
-#'This function is desgined to do analysis for IF titration series 
-#'in Pixel by Pixel data provding output for each IMAGE individually 
+#'This function is desgined to do analysis for IF titration series
+#'in Pixel by Pixel data provding output for each IMAGE individually
 #'grouped by Concentration
 #'
 #'It is meant to be run through the RUN function
@@ -22,17 +22,17 @@
 #' (1 for produce, 0 for don't)
 #' @param Protocol the protocol type (7color or 9color)
 #' @param paths the data paths, one data path for each concentration
-#' @param titration.type.name the titration type for a given dilution set 
+#' @param titration.type.name the titration type for a given dilution set
 #' (Primary or TSA)
-#' @param connected.pixels the number of pixels that a pixel must be connected 
+#' @param connected.pixels the number of pixels that a pixel must be connected
 #' to for positivity measures
 #' @param pb.count current count for progress bar
 #' @param pb.Object progress bar object
-#' @return 
+#' @return
 #' @export
-#'   
+#'
 populate.tables <- function(
-  Slide_Descript, Concentration, Antibody_Opal, Thresholds, Opal1, 
+  Slide_Descript, Concentration, Antibody_Opal, Thresholds, Opal1,
   flowout, Protocol, paths, titration.type.name, connected.pixels,
   pb.count, pb.Object){
   #
@@ -45,7 +45,7 @@ populate.tables <- function(
   table.names.wholeslide<-c('SN.Ratio','T.Tests','Histograms','BoxPlots')
   #
   tables.out <- mIFTO::preallocate.tables(
-    Slide_Descript, Concentration, titration.type.name, 
+    Slide_Descript, Concentration, titration.type.name,
     table.names.wholeslide, paths)
   err.val <- tables.out$err.val
   if (err.val != 0) {
@@ -55,10 +55,10 @@ populate.tables <- function(
   Tables.byimage <- tables.out$Tables.byimage
   Tables.wholeslide <- tables.out$Tables.wholeslide
   Image.IDs <- tables.out$Image.IDs
-  # Violin.Plots <- tables.out$Violin.Plots # runtime and RAM usage for Violin 
+  # Violin.Plots <- tables.out$Violin.Plots # runtime and RAM usage for Violin
   # plots was not managable. May want to work on this in the future.
   #
-  # clean out unused tables, we could code these out in the preallocate 
+  # clean out unused tables, we could code these out in the preallocate
   # step but we may still need to implement them later
   #
   Tables.wholeslide$SN.Ratio <- NULL
@@ -70,7 +70,7 @@ populate.tables <- function(
   #
   rm(tables.out)
   #
-  # set the number of cores for the parallel cluster, we primarily select 10 
+  # set the number of cores for the parallel cluster, we primarily select 10
   # images for titrations so we set this value as the max
   #
   numcores <- parallel::detectCores()
@@ -96,27 +96,27 @@ populate.tables <- function(
       #
       #############read each image and do by image stats###################
       #
-      # start the parallel cluster separately for each loop to limit RAM 
+      # start the parallel cluster separately for each loop to limit RAM
       # overhead, the startup time for the cluster is minimal ~2-3secs
       #
       time <- system.time({
         cl <- parallel::makeCluster(
-          getOption("cl.cores", numcores), useXDR = FALSE, methods = FALSE)
+          getOption("cl.cores", numcores), useXDR = FALSE, methods = FALSE);
         parallel::clusterEvalQ(cl, library(mIFTO));
         #
         small.tables.byimage <- tryCatch({
           mIFTO::parallel.invoke.gpxp(
-            Concentration, x, y, Image.IDs, Antibody_Opal, 
-            titration.type.name, Protocol, Thresholds, paths, 
+            Concentration, x, y, Image.IDs, Antibody_Opal,
+            titration.type.name, Protocol, Thresholds, paths,
             connected.pixels, flowout, Opal1, cl
           )
         }, warning = function(cond) {
           modal_out <- shinyalert::shinyalert(
-            title = paste0('Error Reading Component Images for ', 
+            title = paste0('Error Reading Component Images for ',
                            x, ' 1to', Concentration[y]),
             text = paste0('Please check the computer reasources, slide names, ',
                           'image layers correspond to protocol type, ',
-                          'and that files for ', x, 
+                          'and that files for ', x,
                           ' 1to',Concentration[[y]],' exist. Then contact ',
                           'Benjamin Green at bgreen42jh.edu for assistance.'),
             type = 'error',
@@ -126,11 +126,11 @@ populate.tables <- function(
           return(err.val)
         }, error = function(cond) {
           modal_out <- shinyalert::shinyalert(
-            title = paste0('Error Reading Component Images for ', 
+            title = paste0('Error Reading Component Images for ',
                            x, ' 1to', Concentration[y]),
             text = paste0('Please check the computer reasources, slide names, ',
                           'image layers correspond to protocol type, ',
-                          'and that files for ', x, 
+                          'and that files for ', x,
                           ' 1to',Concentration[[y]],' exist. Then contact ',
                           'Benjamin Green at bgreen42jh.edu for assistance.'),
             type = 'error',
@@ -147,8 +147,8 @@ populate.tables <- function(
           err.val <- 14
           return(list(err.val = err.val))
         }
-      }) 
-      
+      })
+
       #
       # progress bar
       #
@@ -210,7 +210,7 @@ populate.tables <- function(
         str1,' - Elapsed Time: ', time,' secs'))
       Sys.sleep(0.5)
       #
-      # reorganize the data into a workable format for building graphs later 
+      # reorganize the data into a workable format for building graphs later
       # essentially turning the list into a data table
       #
       for(i.1 in table.names.byimage){
@@ -252,9 +252,9 @@ populate.tables <- function(
         rbind.data.frame,Tables.wholeslide[[i.1]][[w]])
     }
   }
-  # 
+  #
   out <- list(Tables.byimage = Tables.byimage,
-              Tables.wholeslide = Tables.wholeslide, 
+              Tables.wholeslide = Tables.wholeslide,
               err.val = err.val)
   #
 }

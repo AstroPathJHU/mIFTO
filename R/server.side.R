@@ -163,11 +163,11 @@ server.side <- function(input, output, session) {
     #
     # run the code and catch any errors
     #
-    err.val <- PixelbyPixel(input,pb)
+    #err.val <- pixelbypixel(input,pb)
     #
     tryCatch({
       #
-      #err.val <- PixelbyPixel(input,pb)
+      err.val <- pixelbypixel(input,pb)
       #
       close(pb);
       if (err.val == 0){

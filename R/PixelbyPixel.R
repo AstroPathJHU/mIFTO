@@ -23,7 +23,7 @@
 #'  for images, positivity measures given thresholds
 #' @export
 #'
-PixelbyPixel <- function(out,pb.Object) {
+pixelbypixel <- function(out,pb.Object) {
   ##############################input parameters########################
   #
   pb.count = 0; mIFTO::doupdate.pgbar(
@@ -46,6 +46,10 @@ PixelbyPixel <- function(out,pb.Object) {
   num.of.tiles <- outchecked$num.of.tiles
   flowout <- outchecked$flowout
   ihc.logical <- outchecked$ihc.logical
+  if (ihc.logical){
+    ihc.connected.pixels <- outchecked$ihc.connected.pixels
+    ihc.Thresholds <- outchecked$ihc.Thresholds
+  }
   Protocol <- outchecked$Protocol
   paths <- outchecked$paths
   titration.type.name <- outchecked$titration.type.name
