@@ -46,6 +46,7 @@ pixelbypixel <- function(out,pb.Object) {
   num.of.tiles <- outchecked$num.of.tiles
   flowout <- outchecked$flowout
   ihc.logical <- outchecked$ihc.logical
+  folders.px <- outchecked$folders.px
   if (ihc.logical){
     ihc.connected.pixels <- outchecked$ihc.connected.pixels
     ihc.Thresholds <- outchecked$ihc.Thresholds
@@ -113,12 +114,40 @@ pixelbypixel <- function(out,pb.Object) {
   #
   ###############################generate plots#########################
   #
-  mIFTO::doupdate.pgbar(90, pb.Object, 'Write out the fractions tables')
+  if (ihc.logical){
+    mIFTO::doupdate.pgbar(
+      90, pb.Object, 'Write out the fractions tables and make IHC vs IF graph')
+
+  } else {
+    mIFTO::doupdate.pgbar(90, pb.Object, 'Write out the fractions tables')
+  }
   #
-  mIFTO::write.fracs(
+  ihc.plots <- mIFTO::write.fracs(
     wd, Antibody_Opal, Slide_Descript, Concentration, Tables$Tables.byimage,
-    ihc.logical, Thresholds, connected.pixels, ihc.connected.pixels,
-    ihc.Thresholds
+    Thresholds, connected.pixels, ihc.logical, ihc.Thresholds,
+    ihc.connected.pixels, folders.px, theme1
+  )
+  if (!ihc.plots$err.val == 0){
+    return(list(err.val = ihc.plots$err.val))
+  }
+  ihc.plots <- ihc.plots$ihc.graphs
+  p1 <- list(ggplot2::ggplot() + ggplot2::theme_void())
+  ihc.plots <- list(ihc.plots)
+  #
+  glist <- list()
+  lbl <-  'IHC to IF Comparison Graph'
+  lbl2 <- paste0(
+    'Compare the fraction of positivity of each IF dilution to the ',
+    'fraction of positivity from the IHC in order to determine when loss of ',
+    'signal occurs.'
+  )
+  p = ihc.plots = ihc.plots
+  glist <- c(
+    glist,
+    mIFTO::m.grid.arrange(
+      p,lbl,
+      lbl2, 3, 0, (ceiling(length(plots))/4 + 1)
+    )
   )
   #
   mIFTO::doupdate.pgbar(91, pb.Object,
@@ -143,8 +172,6 @@ pixelbypixel <- function(out,pb.Object) {
   mIFTO::doupdate.pgbar(93, pb.Object, 'Printing Graphs')
   #
   # make sure ttests and sn ratios graphs types all appear on separate pages
-  #
-  p1 <- list(ggplot2::ggplot() + ggplot2::theme_void())
   #
   lbl <- "Welch's t Test Graphs"
   lbl2 <- paste0(
@@ -177,7 +204,9 @@ pixelbypixel <- function(out,pb.Object) {
     2*ceiling(sn.plots.l/ 4)))
   #
   plots <- c(tplots, sn.plots)
-  glist <- m.grid.arrange(plots, lbl, lbl2, 1, 0, ceiling(length(plots))/4)
+  glist <- c(glist, mIFTO::m.grid.arrange(
+    plots, lbl, lbl2, 1, 1, (ceiling(length(plots))/4 + 1))
+  )
   gout <- gridExtra::marrangeGrob(grobs=glist,nrow=1,ncol=1,top=NULL)
   #
   str = paste0(wd,'/Results.pixels/stats/graphs/',

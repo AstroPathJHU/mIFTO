@@ -21,7 +21,7 @@
 #' @return exports the fraction spreadsheets
 #' @export
 #'
-sn.ratio.theme <- function(tbl, Concentration, titl, xtitl, ytitl,Max, theme1,
+sn.ratio.theme <- function(tbl, Concentration, titl, xtitl, ytitl, Max, theme1,
                            con_type){
   #
   colvals <- c('red'='red','blue'='blue','black'='black')
@@ -108,7 +108,7 @@ sn.ratio.theme <- function(tbl, Concentration, titl, xtitl, ytitl,Max, theme1,
     x_scal +
     theme1 + ggplot2::theme(
       legend.position = c(.85,.85)
-    ) + 
+    ) +
     ggplot2::theme(
       plot.margin = ggplot2::margin(
         t = 20, r = 20, b = 20, l = 20, unit = "pt"

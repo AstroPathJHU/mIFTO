@@ -2,8 +2,8 @@
 
 #'Used by PxP script to write out the fraction of positivity data
 #'
-#'Created By: Benjamin Green, Charles Roberts
-#'Last Edited 05/21/2020
+#'Created By: Benjamin Green
+#'Last Edited 07/30/2020
 #'
 #'Designed to write out the fraction of positivity data for the PxP script
 #'
@@ -23,22 +23,25 @@
 #' should be in the same order as the slide list
 #' @param ihc.connected.pixels a list of conn pixels used for each slide for the
 #' IHC, should be in the same order as the slide list
+#' @param folders.px whether or not tiffs are divided into a number of folders
+#' or not
+#' @param theme1 graphing theme
 #' @return exports the fraction spreadsheets
 #' @export
 #'
 write.fracs <- function (
   wd, Antibody_Opal, Slide_Descript, Concentration, tables_in,
   Thresholds, connected.pixels, ihc.logical, ihc.Thresholds,
-  ihc.connected.pixels
+  ihc.connected.pixels, folders.px, theme1
   ){
   #
   # pull fractions of positivity for IF
   #
-  tbl <- tables_in[['SN.Ratio']][['Positivity']]
+  tbl.long <- tables_in[['SN.Ratio']][['Positivity']]
   #
   tbl <- dplyr::mutate(
     dplyr::group_by(
-      dplyr::mutate(tbl, n = 1),
+      dplyr::mutate(tbl.long, n = 1),
       Slide.ID, Concentration
     ),
     r = cumsum(n)
@@ -73,6 +76,8 @@ write.fracs <- function (
   if (ihc.logical){
     #
     row.vals.names <- c(as.character(Concentration), 'IHC')
+    t.vals <- rbind(t.vals, as.data.frame(ihc.Thresholds))
+    con.vals <- rbind(con.vals, as.data.frame(ihc.connected.pixels))
     #
     # find the image IDs for IHC
     #
@@ -89,7 +94,7 @@ write.fracs <- function (
       #
       str =  paste0('.*', x, '.*IHC.*_component_data.tif')
       #
-      if(grepl("Folders.Pixels",Vars_pxp)) {
+      if(folders.px) {
         ihc.path <- paste0(wd, '/IHC')
       } else {
         ihc.path <- wd
@@ -142,6 +147,8 @@ write.fracs <- function (
       numcores <- 10
     }
     #
+    b = vector('list',length(Slide_Descript))
+    #
     for (x in Slide_Descript){
       time <- system.time({
         cl <- parallel::makeCluster(
@@ -191,12 +198,53 @@ write.fracs <- function (
           return(list(err.val = err.val))
         }
       })
-
+      #
+      b[[x]] <- do.call(rbind, ihc.small.tables.byimage)
+      #
     }
-
+    #
+    b2 <- do.call(rbind, b)
+    #
+    tbl3 <- dplyr::mutate(
+      dplyr::group_by(
+        dplyr::mutate(b2, n = 1),
+        Slide.ID
+      ),
+      r = cumsum(n)
+    )
+    tbl3$Image.ID <- paste0('[', tbl3$Image.ID, ']')
+    tbl1 <- reshape2::dcast(
+      tbl3, r ~ Slide.ID, value.var = c("fraction"))
+    tbl2 <- reshape2::dcast(
+      tbl3, r ~ Slide.ID, value.var = c("Image.ID"))
+    tbl3 <- dplyr::full_join(tbl1, tbl2, c('r'), name = c('l', 'r'))
+    nn = c('r',paste0('fracs.', Slide_Descript), paste0(
+      'Image.IDs.', Slide_Descript))
+    colnames(tbl3) <- nn
+    b <- lapply(1:max(tbl3$r), function(x) 'IHC')
+    tbl3 <- dplyr::mutate(tbl3, Concentration = b)
+    tbl <- rbind(tbl,tbl3)
+    b2 <- dplyr::mutate(b2, Concentration =
+      lapply(1:length(ihc.Image.ID.fullstrings), function(x) 'IHC')
+    )
+    tbl.long <- rbind(tbl.long, b2)
+    #
+    tbl_avg <- rbind(
+      tbl_avg,
+      dplyr::summarise_at(
+        dplyr::group_by(tbl3, Concentration),
+        paste0('fracs.',Slide_Descript),
+        mean, na.rm = T
+      )
+    )
+    #
+    ihc.graphs <- mIFTO::map.ihc.comp.plots(
+      wd, Antibody_Opal, Slide_Descript,
+      Concentration, tbl.long, theme1)
     #
   } else {
     row.vals.names <- c(as.character(Concentration))
+    ihc.graphs <- list()
   }
   #
   # write out raw fracs
@@ -221,7 +269,7 @@ write.fracs <- function (
     wd,'/Results.pixels/stats/fractions/Threshold values ',
     Antibody_Opal,'.csv'
   )
-  names(t.vals) <- row.vals.names
+  rownames(t.vals) <- row.vals.names
   data.table::fwrite(t.vals, file = str,sep = ',', row.names = T)
   #
   # write out connected pixel values
@@ -230,8 +278,8 @@ write.fracs <- function (
     wd,'/Results.pixels/stats/fractions/ connected pixel values ',
     Antibody_Opal,'.csv'
   )
-  names(con.vals) <- row.vals.names
+  rownames(con.vals) <- row.vals.names
   data.table::fwrite(con.vals, file = str,sep = ',', row.names = T)
   #
-  return(list(err.val = 1))
+  return(list(err.val = 0, ihc.graphs = ihc.graphs))
 }

@@ -217,16 +217,18 @@ if(grepl("ihc.Pixels",Vars_pxp)) {
   # if the ihc value was marked as true check for that at least one imageID
   # exists for each slide id
   #
-  for(x in Slide_Descript){
+  for(x in Slide_ID){
     #
     # regular expression to grab this slide descript IHC
     #
     str =  paste0('.*', x, '.*IHC.*_component_data.tif')
     #
     if(grepl("Folders.Pixels",Vars_pxp)) {
+        folders.px <- TRUE
         cImage.IDs <-  list.files(
           paste0(wd, '/IHC'), pattern = str, ignore.case = T)
     } else {
+        folders.px <- FALSE
         cImage.IDs <-  list.files(
           wd, pattern = str, ignore.case = T)
     }
@@ -593,5 +595,5 @@ outnew <- list(
   Antibody_Opal = Antibody_Opal, Concentration = Concentration,
   Thresholds = Thresholds, titration.type.name = titration.type.name,
   connected.pixels = connected.pixels, ihc.Thresholds = ihc.Thresholds,
-  ihc.connected.pixels = ihc.connected.pixels)
+  ihc.connected.pixels = ihc.connected.pixels, folders.px = folders.px)
 }

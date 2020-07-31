@@ -10,7 +10,7 @@
 #'It is meant to be run through the PixelbyPixel function
 #'
 #' @param wd the main data root directory
-#' @param Antibody_Opal the paired string for an antibody opal pair, designated as 
+#' @param Antibody_Opal the paired string for an antibody opal pair, designated as
 #' "AB (Opal NNN)"
 #' @param Slide_Desctipt a unique identifier for each slide to be analyzed
 #' @param Concentration a numeric vector of concentrations used in the titration
@@ -26,7 +26,7 @@ map.ttest.plots <- function(
   tables_in, Antibody_Opal.2, theme1, colors, con_type) {
   #
   # names for the epsilon values
-  #   
+  #
   correction.val.name<-c('Plus1','Plus001')
   p_count <- 1
   plots<-vector('list',length(4))
@@ -94,17 +94,17 @@ map.ttest.plots <- function(
       )
     }
     #
-    # plot average t test 
+    # plot average t test
     #
     plots[[p_count]]<-graph_dat +
       ggplot2::geom_line(
-        size=.40, alpha=.65, color = 'blue'
+        size=.40, alpha=.65, color = colors[[3]]
       ) +
       ggplot2::geom_errorbar(
         ggplot2::aes(
           ymin = statistic - `sd.statistic`, ymax = `statistic` + `sd.statistic`
         ),
-        width=conc_width, size=.40, alpha=.65, color = 'blue'
+        width=conc_width, size=.40, alpha=.65, color = colors[[3]]
       ) +
       ggplot2::labs(
         title=paste0(
@@ -125,7 +125,7 @@ map.ttest.plots <- function(
       ) +
       theme1 + ggplot2::theme(
         legend.position = c(.85, .77)
-      ) + 
+      ) +
       ggplot2::theme(
         plot.margin = ggplot2::margin(
           t =10, r = 20, b = 10, l = 20, unit = "pt"
@@ -175,7 +175,7 @@ map.ttest.plots <- function(
       ggplot2::labs(title=paste0(
         "t Test statistics of ",zn,
         '\n by Slide: ', Antibody_Opal.2),
-        x='Dilution (1: )',y='Statistic',color='Slide.ID') +
+        x='Dilution (1: )',y='Statistic',color='Slide ID') +
       ggplot2::scale_color_manual(breaks=Slide_Descript,
                                   labels=Slide_Descript,values=colors) +
       x_scal +
@@ -185,7 +185,7 @@ map.ttest.plots <- function(
                     ['statistic'])-75,digits = -2),
           round(max(tables_in[['T.Tests']][[z]]
                     ['statistic'])+75,digits = -2)),expand = F) +
-      theme1 + ggplot2::theme(legend.position = c(.85,.77)) + 
+      theme1 + ggplot2::theme(legend.position = c(.85,.77)) +
       ggplot2::theme(
         plot.margin = ggplot2::margin(t =10, r = 20, b = 10, l = 20, unit = "pt"))
     p_count <- p_count + 1
