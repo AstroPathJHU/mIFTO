@@ -19,6 +19,6 @@ m.grid.arrange(p, lbl, lbl2, opt, st.pg, total.pgs)
 returns the layout object
 }
 \description{
-This function is desgined to build the arrangement of plots for the mIFTO. 
+This function is desgined to build the arrangement of plots for the mIFTO.
 Four plots will be displayed on each page returned.
 }

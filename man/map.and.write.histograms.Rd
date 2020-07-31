@@ -18,7 +18,7 @@ map.and.write.histograms(
 \arguments{
 \item{wd}{the main data root directory}
 
-\item{Antibody_Opal}{the paired string for an antibody opal pair, 
+\item{Antibody_Opal}{the paired string for an antibody opal pair,
 designated as "AB (Opal NNN)"}
 
 \item{Concentration}{a numeric vector of concentrations used in the titration}

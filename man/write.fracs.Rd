@@ -14,7 +14,9 @@ write.fracs(
   connected.pixels,
   ihc.logical,
   ihc.Thresholds,
-  ihc.connected.pixels
+  ihc.connected.pixels,
+  folders.px,
+  theme1
 )
 }
 \arguments{
@@ -40,14 +42,19 @@ should be in the same order as the slide list}
 \item{ihc.connected.pixels}{a list of conn pixels used for each slide for the
 IHC, should be in the same order as the slide list}
 
+\item{folders.px}{whether or not tiffs are divided into a number of folders
+or not}
+
+\item{theme1}{graphing theme}
+
 \item{Slide_Desctipt}{a unique identifier for each slide to be analyzed}
 }
 \value{
 exports the fraction spreadsheets
 }
 \description{
-Created By: Benjamin Green, Charles Roberts
-Last Edited 05/21/2020
+Created By: Benjamin Green
+Last Edited 07/30/2020
 }
 \details{
 Designed to write out the fraction of positivity data for the PxP script
