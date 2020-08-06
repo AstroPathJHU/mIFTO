@@ -74,9 +74,15 @@ ic.plots.calculations<-function(
   for (tp in 1:length(n_pct)){
     for (z in 1:2){
       v1 <- quantile(data[[z]][['Antibody']], n_pct[[tp]][[z]])
-      data1 <- dplyr::filter(
-        data[[z]], Antibody >= v1
-      )
+      if (z == 1){
+        data1 <- dplyr::filter(
+          data[[z]], Antibody < v1
+        )
+      } else {
+        data1 <- dplyr::filter(
+          data[[z]], Antibody >= v1
+        )
+      }
       Values.tiles[[tp]][[z]]<- dplyr::mutate(
         data.table::setnames(
           cbind.data.frame(
