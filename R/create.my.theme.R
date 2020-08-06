@@ -1,19 +1,21 @@
 #################################create.my.theme################################
 
-#' Create a common theme for graphs that is relatable to multiple types of 
+#' Create a common theme for graphs that is relatable to multiple types of
 #' graphs
 #'CreateMyTheme
 #'Created By: Benjamin Green
 #'Last Edited 09/25/2019
 #'
-#'This function creates a usable theme for graphs so that the theme is common 
+#'This function creates a usable theme for graphs so that the theme is common
 #'the multiple graphs produced
 #'
-#' @return exports the theme and colors for graphs 
+#' @param Antibody_Opal the paired string for an antibody opal pair, designated as
+#' "AB (Opal NNN)"
+#' @return exports the theme and colors for graphs
 #' @export
 #'
 #'
-create.my.theme <- function(){
+create.my.theme <- function(Antibody_Opal){
   colors<-c("forestgreen", "darkorange1", "deepskyblue3",
             "red4", "aquamarine2", "gold2",'',
             'gray48','blue','darkslategray4')
@@ -44,5 +46,19 @@ create.my.theme <- function(){
     panel.border = ggplot2::element_rect(
       size=.5, color='black',fill=NA))
   #
-  out <- list(colors = colors, theme1 = theme1)
+  if (nchar(Antibody_Opal) > 14){
+    Antibody_Opal.ttest <- paste0('\n', Antibody_Opal)
+  } else {
+    Antibody_Opal.ttest <- Antibody_Opal
+  }
+  #
+  if (nchar(Antibody_Opal) > 19){
+    Antibody_Opal.snratio <- paste0('\n', Antibody_Opal)
+  } else {
+    Antibody_Opal.snratio <- Antibody_Opal
+  }
+  #
+  out <- list(colors = colors, theme1 = theme1,
+              Antibody_Opal.ttest = Antibody_Opal.ttest,
+              Antibody_Opal.snratio = Antibody_Opal.snratio)
 }

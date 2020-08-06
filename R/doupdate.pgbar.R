@@ -16,6 +16,5 @@
 #'
 doupdate.pgbar <- function(ii, pb, ll){
   Sys.sleep(0.1)
-  setWinProgressBar(pb, ii, title=paste0( ii,"% Complete"),
-    label = ll)
+  pb$set(message = ll, value = ii/100)
 }

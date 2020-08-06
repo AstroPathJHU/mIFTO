@@ -2,7 +2,7 @@
 % Please edit documentation in R/populate.tables.R
 \name{populate.tables}
 \alias{populate.tables}
-\title{Used to loop through each image, call the generate func and map back to 
+\title{Used to loop through each image, call the generate func and map back to
 Tables;
 Created By: Benjamin Green;
 Last Edited 05/29/2020}
@@ -39,10 +39,10 @@ as "AB (Opal NNN)"}
 
 \item{paths}{the data paths, one data path for each concentration}
 
-\item{titration.type.name}{the titration type for a given dilution set 
+\item{titration.type.name}{the titration type for a given dilution set
 (Primary or TSA)}
 
-\item{connected.pixels}{the number of pixels that a pixel must be connected 
+\item{connected.pixels}{the number of pixels that a pixel must be connected
 to for positivity measures}
 
 \item{pb.count}{current count for progress bar}
@@ -55,8 +55,8 @@ to for positivity measures}
 
 }
 \description{
-This function is desgined to do analysis for IF titration series 
-in Pixel by Pixel data provding output for each IMAGE individually 
+This function is desgined to do analysis for IF titration series
+in Pixel by Pixel data provding output for each IMAGE individually
 grouped by Concentration
 }
 \details{

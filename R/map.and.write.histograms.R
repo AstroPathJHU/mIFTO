@@ -10,7 +10,7 @@
 #'It is meant to be run through the PixelbyPixel function
 #'
 #' @param wd the main data root directory
-#' @param Antibody_Opal the paired string for an antibody opal pair, 
+#' @param Antibody_Opal the paired string for an antibody opal pair,
 #' designated as "AB (Opal NNN)"
 #' @param Slide_Desctipt a unique identifier for each slide to be analyzed
 #' @param Concentration a numeric vector of concentrations used in the titration
@@ -139,7 +139,7 @@ map.and.write.histograms <- function(
         "Intensity Distributions Separated by Slides and Concentration for ",
         Slide_Descript[[x]], " ", Antibody_Opal), ceiling(plots.sep.l/ 4))
       glist <- c(glist, m.grid.arrange(plots.sep, lbl, lbl2, 1, (i.c + (x-1)),
-                                       total.pages))   
+                                       total.pages))
     }
     #
     # set up the overlapped histogram view
@@ -148,7 +148,7 @@ map.and.write.histograms <- function(
       Conc.labels<-paste0('1to',Concentration)
       plots<-vector('list',length=length(Slide_Descript))
       #
-      # create a graph for each slide overlaying the intensity distribution of 
+      # create a graph for each slide overlaying the intensity distribution of
       # each concentration
       #
       for(x in 1:length(Slide_Descript)){
@@ -163,7 +163,7 @@ map.and.write.histograms <- function(
         plots[[x]]<-ggplot2::ggplot(
           data=tbl,ggplot2::aes(x=mids,y=density, group=Concentration)) +
           ggplot2::geom_line(ggplot2::aes(color=factor(Concentration))) +
-          
+
           ggplot2::labs(
             title =  paste0('Histogram Overlaying all Concentrations for ',
                             Slide_Descript[x], ' ', Antibody_Opal),
@@ -200,8 +200,8 @@ map.and.write.histograms <- function(
         "data \nto account for zeros."),
         ceiling(plots.l/ 2))
       #
-      glist <- c(glist, m.grid.arrange(
-        plots, lbl, lbl2, 0, (i.c + total.pages.a), total.pages))
+      glist <- c(glist, mIFTO::m.grid.arrange(
+        plots, lbl, lbl2, 2, (i.c + total.pages.a), total.pages))
     }
     #
     i.c = total.pages / 2
@@ -214,5 +214,5 @@ map.and.write.histograms <- function(
   ggplot2::ggsave(str,
                   gout,height = 9, width = 8.5, units = 'in', scale = 1, dpi = 300)
   #
-  
+
 }

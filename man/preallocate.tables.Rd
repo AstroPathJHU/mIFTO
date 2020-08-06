@@ -29,9 +29,9 @@ preallocate.tables(
 exports the Tables list and the Image.IDs sublists
 }
 \description{
-Preallocate the tables for the results values. All graphs will be 
-generated based off of values stored in the Tables list and all 
-ImageIDs (x and y coordinates) will be added to the Image.IDs 
-list later. This function prepopulates both of these tables 
+Preallocate the tables for the results values. All graphs will be
+generated based off of values stored in the Tables list and all
+ImageIDs (x and y coordinates) will be added to the Image.IDs
+list later. This function prepopulates both of these tables
 with separate subvectors for each concentration - slide pair
 }

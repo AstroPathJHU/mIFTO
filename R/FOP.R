@@ -1,5 +1,5 @@
 #################################FOP#####################################
-#'Main function to find the positivity for either tissue, 
+#'Main function to find the positivity for either tissue,
 #'cell segmentations and percent positive pixels
 #'
 #'FOP
@@ -8,7 +8,7 @@
 #'
 #'
 #'FOP
-#'this code will find positivity for either tissue seg, cell seg, or PPC pixel 
+#'this code will find positivity for either tissue seg, cell seg, or PPC pixel
 #'data##
 #'Created By: Benjamin Green 07.12.2018
 #'to run:
@@ -19,7 +19,7 @@
 #'Slide descriptor is the description of slide (ie Tonsil1, Tonsil3)
 #'Other condition delineation is something else that delinates conditions
 #'(ie monoplex/multplex, V1/ V2, 1to50/1to100)
-#'this does not need to be in the name of the slide just to differentiate 
+#'this does not need to be in the name of the slide just to differentiate
 #'conditions
 #'5.Click Run then select directory with the data
 #'6.A new yes/no box will open
@@ -59,7 +59,7 @@ FOP<-function(){
       style = fm.object$childinputstyle,
       #
       # create the General Input tab  -------------------------------------
-      # 
+      #
       shiny::br(),
       shiny::fixedRow(
         shiny::column(
@@ -76,7 +76,7 @@ FOP<-function(){
               shiny::h2(
                 shiny::div(
                   "(FOP) Fraction of Positivity",
-                  style = fm.object$subheadertextstyle), 
+                  style = fm.object$subheadertextstyle),
                 align = 'left'
               )
             ),
@@ -84,7 +84,7 @@ FOP<-function(){
               3, offset = 0, align = 'right',
               shiny::br(),
               shiny::actionLink(
-                "pdf", "Help", onclick = 
+                "pdf", "Help", onclick =
                   paste0("window.open('https://github.com",
                          "/beng1290/mIFTO/blob/master/README.pdf')"
                   )
@@ -105,22 +105,22 @@ FOP<-function(){
               #
               shiny::fixedRow(
                 #
-                # Slide Descriptor field
+                # Slide ID field
                 #
                 shiny::column(
                   6, align = "center", offset = 1,
                   shiny::textInput(
-                    "Slide_Descript",
+                    "Slide_ID",
                     shiny::div(
                       class = "textB",shiny::br(),
-                      "Slide Descriptor:",shiny::br(), 
+                      "Slide Identifier(s):",shiny::br(),
                       shiny::span(
-                        "(separate with a comma do not 
+                        "(separate with a comma do not
                         add `-` or spaces)",
                         style = fm.object$fineprintstyle
                       ),
-                      style = fm.object$commontextstyle 
-                    ), 
+                      style = fm.object$commontextstyle
+                    ),
                     placeholder = "EX: T1,T2,T3"
                   ),
                   style = fm.object$commoninputstyleline1
@@ -156,7 +156,7 @@ FOP<-function(){
                     shiny::div(shiny::br(),
                                "Other condition delineation: ",
                                shiny::br(),
-                               style = fm.object$commontextstyle 
+                               style = fm.object$commontextstyle
                     ),
                     placeholder = "EX: 50 or Multiplex"
                   ),
@@ -191,9 +191,9 @@ FOP<-function(){
                     "fraction.type",
                     shiny::div(
                       class = "textB",
-                      "What kind of positivity measure? ", 
+                      "What kind of positivity measure? ",
                       shiny::br(),style = fm.object$commontextstyle
-                    ), 
+                    ),
                     choices = c('PPC Pixels','Cells','Tissue')),
                   style = fm.object$commoninputstyle
                 ),
@@ -259,7 +259,7 @@ FOP<-function(){
     Opal1 <- my.vals$Opal1
     Concentration <- my.vals$delin
     IHC <- as.logical(my.vals$IHC)
-    Slide_Descript <- my.vals$Slide_Descript
+    Slide_ID <- my.vals$Slide_ID
     fraction.type <- out$fraction.type
     #find working directory
     wd<-choose.dir(my.vals$wd, caption = 'Data directory:')
@@ -295,16 +295,16 @@ FOP<-function(){
           ),
           Concentration=Concentration
         )
-      ##Antibody is the positive pixel count R does not read it in as a 
+      ##Antibody is the positive pixel count R does not read it in as a
       # numerical variable so we change it here
       CellSeg$Antibody<-as.numeric(CellSeg$Antibody)
       ##these two loops help shorten variable descritions
-      for(count3 in Slide_Descript){
+      for(count3 in Slide_ID){
         CellSeg$Slide.ID<-gsub(
           paste0('.*', count3,'.*'),
           count3, CellSeg$Slide.ID)
       }
-      ##this is the part of the script that determines the % +-ivity and 
+      ##this is the part of the script that determines the % +-ivity and
       # organizes the output
       Pos<-dplyr::mutate(
         reshape2::dcast(
@@ -325,7 +325,7 @@ FOP<-function(){
         ),
         Antibody = AB
       )
-      ##now we add it to a data data for export. This is the data table can be 
+      ##now we add it to a data data for export. This is the data table can be
       # added to for additional AB with the same SlideIDs.
       Positive.table<-rbind(Positive.table,Pos)
       Positive.table
@@ -346,9 +346,9 @@ FOP<-function(){
       ##change AB to a single variable
       CellSeg$Phenotype<-gsub(AB,'Antibody', CellSeg$Phenotype,perl=TRUE)
       ##find positive cells and generate output file
-      ##Positive_cells data.table can be added to for additional AB with the 
+      ##Positive_cells data.table can be added to for additional AB with the
       # same SlideIDs.
-      for(count3 in Slide_Descript){
+      for(count3 in Slide_ID){
         CellSeg$Slide.ID<-gsub(
           paste0('.*', count3,'.*'),
           count3, CellSeg$Slide.ID)}
@@ -393,12 +393,12 @@ FOP<-function(){
         ),
         Concentration = Concentration
       )
-      for(count3 in Slide_Descript){
+      for(count3 in Slide_ID){
         CellSeg$`Sample Name`<-gsub(
           paste0('.*', count3,'.*'),
           count3, CellSeg$`Sample Name`)}
       ##find positive cells and generate output file
-      ##Positive_cells data.table can be added to for additional 
+      ##Positive_cells data.table can be added to for additional
       # AB with the same SlideIDs.
       Positive.table<-rbind(Positive.table,resahpe2::dcast(
         dplyr::mutate(
@@ -422,7 +422,7 @@ FOP<-function(){
     # intialize passable variables
     #
     my.vals <- reactiveValues(
-      Slide_Descript=NULL, wd=NULL, Positive.table=NULL, delin = NULL,
+      Slide_ID=NULL, wd=NULL, Positive.table=NULL, delin = NULL,
       Opal1 = NULL, AB = NULL, IHC = NULL)
     #
     # another ab modal
@@ -467,7 +467,7 @@ FOP<-function(){
             shiny::div(shiny::br(),
                        "Other condition delineation: ",
                        shiny::br(),
-                       style = fm.object$commontextstyle 
+                       style = fm.object$commontextstyle
             ),
             value = my.vals$delin
           ),
@@ -491,7 +491,7 @@ FOP<-function(){
       tryCatch({
         #
         err.val = 0
-        my.vals$Slide_Descript <- unlist(strsplit(input$Slide_Descript,
+        my.vals$Slide_ID <- unlist(strsplit(input$Slide_ID,
                                                   split = ','))
         my.vals$delin = input$Concentration
         my.vals$Opal1 <- input$Opal1
@@ -598,7 +598,7 @@ FOP<-function(){
         modal_out <- shinyalert::shinyalert(
           title = "Finished",
           text = paste(
-            "" 
+            ""
           ),
           type = 'success',
           showConfirmButton = TRUE
@@ -607,7 +607,7 @@ FOP<-function(){
         modal_out <- shinyalert::shinyalert(
           title = "Failed to Save",
           text = paste(
-            "" 
+            ""
           ),
           type = 'error',
           showConfirmButton = TRUE
@@ -615,7 +615,7 @@ FOP<-function(){
           modal_out <- shinyalert::shinyalert(
             title = "Failed to Save",
             text = paste(
-              "" 
+              ""
             ),
             type = 'error',
             showConfirmButton = TRUE

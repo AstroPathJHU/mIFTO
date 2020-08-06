@@ -46,33 +46,33 @@ ui.map <- function (){
       style = fm.object$childinputstyle,
       #
       # create the General Input tab  -------------------------------------
-      # 
+      #
       shiny::br(),
       shiny::fluidRow(
         shiny::column(
-          12, align = 'left', # 12 columns 
+          12, align = 'left', # 12 columns
           #
           # header
           #
           shiny::fluidRow(
             shiny::column(
-              3, align = 'center',
+              4, align = 'left',
               shiny::h2(
                 shiny::div(
                   "General Input",
-                  style = fm.object$subheadertextstyle), 
-                align = 'center'
+                  style = fm.object$subheadertextstyle),
+                align = 'left'
               )
             ),
             shiny::column(
-              3, offset = 6, align = 'right',
+              1, offset = 7, align = 'right',
               shiny::br(),
               shiny::actionLink(
-                "pdf", "Help", onclick = 
+                "pdf", "Help", onclick =
                   paste0("window.open('https://github.com",
                          "/beng1290/mIFTO/blob/master/README.pdf')"
                          )
-                ,style="color: #f0f6ee;",
+                ,style="color: #f0f6ee;", align = 'right'
               )
             ),
             style ="padding-left: 2%;padding-right:2%;padding-top:0px;padding-bottom:0px"
@@ -84,26 +84,25 @@ ui.map <- function (){
             shiny::column(
               12, align = 'center',
               #
-              # first row in the general input 
+              # first row in the general input
               #
               shiny::fluidRow(
                 #
-                # Slide Descriptor field
+                # Slide ID field
                 #
                 shiny::column(
                   3, align = "center", offset = 1,
                   shiny::textInput(
-                    "Slide_Descript",
+                    "Slide_ID",
                     shiny::div(
                       class = "textB",shiny::br(),
-                      "Slide Descriptor(s):",shiny::br(), 
+                      "Slide Identifier(s):",shiny::br(),
                       shiny::span(
-                        "(separate with a comma do not 
-                        add `-` or spaces)",
+                        "(separate by a comma, do not add `-` or spaces)",
                         style = fm.object$fineprintstyle
                       ),
-                      style = fm.object$commontextstyle 
-                    ), 
+                      style = fm.object$commontextstyle
+                    ),
                     placeholder = "EX: T1,T2,T3"
                   ),
                   style = fm.object$commoninputstyleline1
@@ -117,11 +116,11 @@ ui.map <- function (){
                     "titration.type",
                     shiny::div(
                       class = "textB",shiny::br(),
-                      shiny::br(),"What is being titrated?", 
+                      shiny::br(),"What is being titrated?",
                       shiny::br(),
-                      style = fm.object$commontextstyle 
-                    ), 
-                    choices = c('Primary','TSA','Polymer')
+                      style = fm.object$commontextstyle
+                    ),
+                    choices = c('Primary Antibody','Fluorophore (TSA)') #'HRP Polymer'
                   ),
                   style = fm.object$commoninputstyleline1
                 ),
@@ -143,7 +142,7 @@ ui.map <- function (){
                 )
               ),
               #
-              # second row in the general input 
+              # second row in the general input
               #
               shiny::fluidRow(
                 #
@@ -156,10 +155,10 @@ ui.map <- function (){
                     shiny::div(
                       "Concentrations used: ",shiny::br(),
                       shiny::span(
-                        "(add only the number separating with a comma)",
+                        "(separate by a comma, add only the number)",
                         style = fm.object$fineprintstyle
                       ),
-                      style = fm.object$commontextstyle 
+                      style = fm.object$commontextstyle
                     ),
                     placeholder = "EX: 50,100,250"
                   ),
@@ -174,9 +173,9 @@ ui.map <- function (){
                     "protocol.type",
                     shiny::div(
                       class = "textB",shiny::br(),
-                      "Select staining protocol", 
+                      "Select staining protocol",
                       shiny::br(),style = fm.object$commontextstyle
-                    ), 
+                    ),
                     choices = c('7color','9color')),
                   style = fm.object$commoninputstyle
                 ),
@@ -188,7 +187,7 @@ ui.map <- function (){
                   shiny::textInput(
                     "Opal1",
                     shiny::div(
-                      shiny::br(),"Primary Opal:",shiny::br(),
+                      shiny::br(),"Fluorophore (TSA):",shiny::br(),
                       style = fm.object$commontextstyle
                     ),
                     placeholder = 'EX: 540'
@@ -209,10 +208,10 @@ ui.map <- function (){
                     "Polymer",
                     shiny::div(
                       "Polymer & Concentration used:",shiny::br(),
-                      shiny::span(
-                        "(separate with a comma for more than one)",
-                        style = fm.object$fineprintstyle
-                      ),
+                      #shiny::span(
+                      #  "(separate with a comma for more than one)",
+                      #  style = fm.object$fineprintstyle
+                      #),
                       style = fm.object$commontextstyle
                     ),
                     placeholder = 'EX: PE, PV30, PV50'
@@ -226,18 +225,15 @@ ui.map <- function (){
                   4, align = "center", offset = 1,
                   shiny::div(
                     shiny::br(),
-                    "Was more than one dilution used in the name?",
+                    "Was naming convention followed?",
                     shiny::br(),
                     shiny::span(
-                      "(i.e., Was naming convention followed,",
+                      "(i.e. Was more than one dilution used in the name,",
                     shiny::br(),
-                    shiny::span(
-                      "e.g., T1_PD1_1to150_PV50_Opal650_1to50)",
+                      "e.g. T1_PD1_1to150_PV50_Opal650_1to50 vs. T1_PD1_1to150)",
                       style = fm.object$fineprintstyle
                     ),
-                      style = fm.object$fineprintstyle
-                    ),
-                    style = fm.object$commontextstyle 
+                    style = fm.object$commontextstyle
                   ),
                   style = fm.object$commoninputstyle
                 ),
@@ -258,13 +254,13 @@ ui.map <- function (){
       ),
       #
       # create the bottom panels -----------------------------------------------
-      # 
+      #
       shiny::fluidRow(
         style = 'padding-top:20px',
-        # 
+        #
         # for cell seg data ----------------------------------------------------
         #
-        shiny::column(6, 
+        shiny::column(6,
           align = 'center',
           #
           # header
@@ -272,7 +268,7 @@ ui.map <- function (){
           shiny::fluidRow(
             shiny::h2(
               shiny::div(
-                " Info for Cell-by-Cell Analysis", 
+                " Info for Cell-by-Cell Analysis",
                 style = fm.object$subheadertextstyle
               ), align = 'center'
             )
@@ -282,7 +278,7 @@ ui.map <- function (){
           #
           shiny::fluidRow(
             shiny::column(
-              12, align = 'center', 
+              12, align = 'center',
               shiny::fluidRow(
                 shiny::column(
                   6, align = "left", offset = 0,
@@ -295,8 +291,8 @@ ui.map <- function (){
                       'Was the data phenotyped?',
                       'Is the data in separate folders according
                                                to dilution?',
-                      'Where the antibodies named in inForm?',
-                      'Is the antibody of interest sparse (ie. FoxP3)?'
+                      'Were the antibodies named in inForm?',
+                      'Is the antibody of interest sparse (e.g. FoxP3)?'
                     ),
                     choiceValues = list(
                       'Phenotype',
@@ -317,7 +313,7 @@ ui.map <- function (){
                     shiny::textInput(
                       "Pheno.Antibody",
                       shiny::div(
-                        shiny::br(),"What was the name used for the 
+                        shiny::br(),"What was the name used for the
                         positive phenotype?", shiny::br(),
                         style = fm.object$commontextstyle
                       ),
@@ -332,9 +328,9 @@ ui.map <- function (){
                     shiny::selectInput(
                       "Compartment",
                       shiny::div(class = "textB",
-                                 "Cell Compartment for Analysis", 
-                                 shiny::br(),style = fm.object$commontextstyle 
-                      ), 
+                                 "Cell Compartment for Analysis",
+                                 shiny::br(),style = fm.object$commontextstyle
+                      ),
                       choices = c('Membrane','Entire Cell','Nucleus')
                     ),
                     style = fm.object$commoninputstyle
@@ -369,13 +365,13 @@ ui.map <- function (){
                 )
               )
             ),
-            style = 'margin: 4%'
+            style = 'padding-bottom: 4%'
           ),
           style = paste0(
             fm.object$child3inputstyle, "margin-right: 1%;margin-left: 0px"
           )
         ),
-        # 
+        #
         # for pxp data  --------------------------------------------------------
         #
         shiny::column(
@@ -402,7 +398,7 @@ ui.map <- function (){
             # check box group
             #
             shiny::column(
-              12, align = 'left', 
+              12, align = 'left',
               shiny::fluidRow(
                 shiny::column(
                   6, align = "left", offset = 0,
@@ -411,13 +407,11 @@ ui.map <- function (){
                     "Vars_pxp",
                     shiny::div(
                       "Select all that apply:",
-                      style = fm.object$commontextstyle 
+                      style = fm.object$commontextstyle
                     ),
                     choiceNames = list(
-                      'Is the data in separate folders according
-                                                          to dilution?',
-                      'Was an IHC thresholded with this
-                                                      titration?',
+                      'Is the data in separate folders according to dilution?',
+                      'Was an IHC thresholded with this titration?',
                       'Were thresholds different for cases?'
                     ),
                     choiceValues = list(
@@ -435,8 +429,11 @@ ui.map <- function (){
                 shiny::column(
                   6, align = "center", offset = 0,
                   shiny::div(
-                    shiny::br(),"List the thresholds in order
-                                      of increasing dilution separated by a comma:",
+                    shiny::br(),paste0(
+                      "List the thresholds in order of ",
+                      "increasing dilution separated by a comma"
+                    ), shiny::br(),
+                    shiny::span('(add IHC to end of list)'), ":",
                     style = fm.object$commontextstyle
                   ),
                   shiny::uiOutput("ThreshControls"),
@@ -448,11 +445,14 @@ ui.map <- function (){
                 # connected pixels value
                 #
                 shiny::column(
-                  6, align = 'center', 
+                  6, align = 'center',
                   shiny::div(
                     shiny::br(),
-                    "List the 'connected pixel' values in order 
-                      of increasing dilution separated by a comma:",
+                    paste0("List the 'connected pixel' values in order ",
+                           "of increasing dilution separated by a comma"
+                    ),
+                    shiny::br(),
+                    shiny::span('(add IHC to end of list)'), ":",
                     shiny::br(),
                     style = fm.object$commontextstyle
                   ),
@@ -478,7 +478,7 @@ ui.map <- function (){
                 )
               )
             ),
-            style = 'margin: 4%'
+            style = 'padding-bottom: 4%'
           )
         )
       )
@@ -486,7 +486,7 @@ ui.map <- function (){
     shiny::tags$head(
       shiny::tags$style(
         shiny::HTML(
-          ".checkbox-inline { 
+          ".checkbox-inline {
                     margin-left: 10px;
                     margin-right: 0px;
           }
@@ -500,5 +500,5 @@ ui.map <- function (){
     ),
     shinyalert::useShinyalert()
   )
-  
+
 }

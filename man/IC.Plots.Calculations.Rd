@@ -11,7 +11,7 @@ ic.plots.calculations(All.Images, Opal1, Concentration, x, y)
 
 \item{Opal1}{is the Opal of interest (ie 540)}
 
-\item{Concentration}{is a numeric vector of the denominator of all 
+\item{Concentration}{is a numeric vector of the denominator of all
 concentration ratios
  which a boxplot will be created for (ie 25, 50, 100)}
 
@@ -20,8 +20,8 @@ concentration ratios
 \item{y}{is the numeric value of the current concentration}
 }
 \value{
-explots a data.frame with the columns: Median, 1st 
-(corresponds to 25th), 2nd (corresponds to 75th), top.inner.fence, 
+explots a data.frame with the columns: Median, 1st
+(corresponds to 25th), 2nd (corresponds to 75th), top.inner.fence,
 bottom.inner.fence
 }
 \description{
@@ -30,8 +30,8 @@ Created By: Benjamin Green, Charles Roberts
 Last Edited 11/12/2018
 }
 \details{
-This function is desgined to do generate quartiles and fence measurements 
-for creation of boxplots of decile, thresholded, and all data given IF 
-pixel data; the function; is also designed to return boxplots of the 
+This function is desgined to do generate quartiles and fence measurements
+for creation of boxplots of decile, thresholded, and all data given IF
+pixel data; the function; is also designed to return boxplots of the
 selected data
 }

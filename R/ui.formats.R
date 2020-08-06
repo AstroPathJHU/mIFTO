@@ -7,9 +7,9 @@
 #'Sets up the formats for all buttons in the UI
 #'
 #'@param w the width of the UI
-#'@param opts if value is 1 the full format list is returned otherwise only 
+#'@param opts if value is 1 the full format list is returned otherwise only
 #' commontextstyle and fineprintstyle are returned
-#'@return a list of different fonts and formatting styles which will be 
+#'@return a list of different fonts and formatting styles which will be
 #'referenced later on
 #'@export
 #'
@@ -23,7 +23,7 @@ ui.formats <- function(w, opts){
   #
   if (opts == 1) {
     #
-    fm.object$opt1  = "1px 1px 5px rgba(0, 0, 0, .8), -2px -2px 5px rgba(0, 0, 0, .6), 
+    fm.object$opt1  = "1px 1px 5px rgba(0, 0, 0, .8), -2px -2px 5px rgba(0, 0, 0, .6),
     -3px -3px 5px rgba(0, 0, 0, .4), 1px 1px 5px rgba(0, 0, 0, .8),
     2px 2px 5px rgba(0, 0, 0, .6), 3px 3px 5px rgba(0, 0, 0, .4);"
     fm.object$opt2  = "1px 1px 5px rgba(0, 0, 0, .8),-2px -2px 5px rgba(0, 0, 0, .6),
@@ -39,16 +39,16 @@ ui.formats <- function(w, opts){
     #
     fm.object$commoninputstyleline1 = 'height:115px;'#border: 2px inset lightgrey;'
     fm.object$commoninputstyleline2 = 'height:145px;'#border: 2px inset lightgrey;'
-    fm.object$commoninputstyle = 'height:100px;'#border:# 2px inset lightgrey;'
-    fm.object$commoninputstylelonglist = 'height:220px;'#border: 2px outset lightgrey;'
-    fm.object$commoninputstylelonglist3 = 'height:285px;'#border: 2px outset lightgrey;'
+    fm.object$commoninputstyle = 'height:115px;'#border:# 2px inset lightgrey;'
+    fm.object$commoninputstylelonglist = 'height:230px;'#border: 2px outset lightgrey;'
+    fm.object$commoninputstylelonglist3 = 'height:295px;'#border: 2px outset lightgrey;'
     fm.object$commoninputstylelonglist2 = 'height:180px;'#border: 2px outset lightgrey;'
     #
     # input boxes style
     # 240, 246, 238 #f0f6ee
     fm.object$child2inputstyle = paste0(
-      "height: 100 px; width: 100%; background-color:  rgba(240, 246, 238, .9);
-      background-clip: padding-box;padding-left: 1%;padding-right: 1%;
+      "height: 100%; width: 100%; background-color:  rgba(240, 246, 238, .9);
+      background-clip: padding-box;padding-left: 1%;padding-right: 1%; padding-bottom: 2%;
       margin: 0px; border: 0px")
     fm.object$child4inputstyle = paste0(
       "height: 100 px; width: 100%; background-color:  rgba(240, 246, 238, .9);
@@ -57,8 +57,8 @@ ui.formats <- function(w, opts){
     # General input overlay
     #
     fm.object$child1inputstyle = paste0(
-      "height:43%;width: 100%; background-color:  rgba(54, 58, 74, .9);padding: 0px;
-      box-shadow: ", fm.object$opt3)
+      "height:50%;width: 100%; background-color:  rgba(54, 58, 74, .9);padding: 0px;
+      padding-bottom: 2%; box-shadow: ", fm.object$opt3)
     #
     # bottom box styles
     #54, 58, 74 #363a4a
@@ -67,7 +67,7 @@ ui.formats <- function(w, opts){
       background-clip: content-box; margin-bottom: 1%;padding:0px;
        box-shadow: ", fm.object$opt3)
     #
-    # over all box 
+    # over all box
     #
     fm.object$childinputstyle = paste0("height:1050px;width: ",w,";")
     #

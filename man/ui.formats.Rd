@@ -11,11 +11,11 @@ ui.formats(w, opts)
 \arguments{
 \item{w}{the width of the UI}
 
-\item{opts}{if value is 1 the full format list is returned otherwise only 
+\item{opts}{if value is 1 the full format list is returned otherwise only
 commontextstyle and fineprintstyle are returned}
 }
 \value{
-a list of different fonts and formatting styles which will be 
+a list of different fonts and formatting styles which will be
 referenced later on
 }
 \description{

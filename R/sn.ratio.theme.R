@@ -21,11 +21,13 @@
 #' @return exports the fraction spreadsheets
 #' @export
 #'
-sn.ratio.theme <- function(tbl, Concentration, titl, xtitl, ytitl,Max, theme1,
-                           con_type){
+sn.ratio.theme <- function(tbl, Concentration, titl, xtitl, ytitl, Max, theme1,
+                            con_type){
   #
-  colvals <- c('red'='red','blue'='blue','black'='black')
-  collbls <- c('red'='S/N Ratio','blue'='Median Noise','black'='Median Signal')
+  colvals <- c('red4'='red4',
+               "#B2B2B2"="#B2B2B2",'deepskyblue3'='deepskyblue3')
+  collbls <- c('red4'='S/N Ratio',
+               "#B2B2B2"='Median Noise','deepskyblue3'='Median Signal')
   xcoords<-c(
     min(Concentration)-((min(Concentration))/2),
     max(Concentration)+((min(Concentration))/2)
@@ -41,7 +43,7 @@ sn.ratio.theme <- function(tbl, Concentration, titl, xtitl, ytitl,Max, theme1,
       )
     )
     x_scal <- ggplot2::scale_x_discrete(breaks=con_data)
-    conc_width <- .025 * (length(Concentration) - 1)
+    conc_width <- .035 * (length(Concentration) - 1)
     xcoords <- c(.5, length(Concentration) + .5)
   }else if (con_type == 'numeric'){
     con_data <- as.numeric(Concentration)
@@ -52,7 +54,7 @@ sn.ratio.theme <- function(tbl, Concentration, titl, xtitl, ytitl,Max, theme1,
       )
     )
     x_scal <- ggplot2::scale_x_continuous(breaks=con_data)
-    conc_width <- .025 * (
+    conc_width <- .035 * (
       Concentration[[length(Concentration)]] - Concentration[[1]])
     xcoords<-c(
       min(Concentration) - ((min(Concentration))/2),
@@ -61,38 +63,51 @@ sn.ratio.theme <- function(tbl, Concentration, titl, xtitl, ytitl,Max, theme1,
   }
   #
   graph_dat +
+    #
+    # sn ratio
+    #
     ggplot2::geom_line(
       ggplot2::aes(
-        x=con_data, y=SN_Ratio, color='red'
-      )
+        x=con_data, y=SN_Ratio, color= 'red4'
+      ), size=.40, alpha=.65
     ) +
     ggplot2::geom_errorbar(
       ggplot2::aes(
-        ymin = SN_Ratio - sd.SN_Ratio, ymax = SN_Ratio + sd.SN_Ratio
-      ),
-      color = 'red', width = conc_width, size=.40, alpha=.65
+        ymin = SN_Ratio - sd.SN_Ratio, ymax = SN_Ratio + sd.SN_Ratio,
+        color = 'red4'
+      ), width = conc_width, size=.40, alpha=.65
     ) +
+    #
+    # noise
+    #
     ggplot2::geom_line(
       ggplot2::aes(
-        x=con_data, y=Noise, color='blue'
-      )
+        x=con_data, y=Noise, color= "#B2B2B2"
+      ), size=.40, alpha=.65
     ) +
     ggplot2::geom_errorbar(
       ggplot2::aes(
-        ymin = Noise - sd.Noise, ymax = Noise + sd.Noise
-      ),
-      color = 'blue', width = conc_width, size=.40, alpha=.65
+        ymin = Noise - sd.Noise, ymax = Noise + sd.Noise,
+        color = "#B2B2B2"
+      ), width = conc_width, size=.40, alpha=.65
     ) +
+    #
+    # signal
+    #
     ggplot2::geom_line(
       ggplot2::aes(
-        x=con_data, y= Signal, color='black'
-      )
+        x=con_data, y= Signal, color='deepskyblue3'
+      ), size=.40, alpha=.65
     ) +
     ggplot2::geom_errorbar(
       ggplot2::aes(
-        ymin = Signal - sd.Signal, ymax = Signal + sd.Signal
-      ),
-      color = 'black', width =  conc_width, size=.40, alpha=.65) +
+        ymin = Signal - sd.Signal, ymax = Signal + sd.Signal,
+        color = 'deepskyblue3'
+      ), width =  conc_width, size=.40, alpha=.65
+    ) +
+    #
+    # display
+    #
     ggplot2::labs(
       title = titl, x =  xtitl, y = ytitl
     ) +
@@ -108,7 +123,7 @@ sn.ratio.theme <- function(tbl, Concentration, titl, xtitl, ytitl,Max, theme1,
     x_scal +
     theme1 + ggplot2::theme(
       legend.position = c(.85,.85)
-    ) + 
+    ) +
     ggplot2::theme(
       plot.margin = ggplot2::margin(
         t = 20, r = 20, b = 20, l = 20, unit = "pt"

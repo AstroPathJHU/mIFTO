@@ -4,7 +4,7 @@
 #'Created By: Benjamin Green
 #'Last Edited 06/04/2020
 #'
-#'This function is desgined to build the arrangement of plots for the mIFTO. 
+#'This function is desgined to build the arrangement of plots for the mIFTO.
 #'Four plots will be displayed on each page returned.
 #'
 #'
@@ -20,18 +20,25 @@ m.grid.arrange <- function(p, lbl, lbl2, opt, st.pg, total.pgs) {
   pdf(file = NULL) #invisible
   if (opt == 1){
     plots.per.page <- 4
-    lay <- rbind(c(NA, 5, 5, NA), 
+    lay <- rbind(c(NA, 5, 5, NA),
                  c(NA, 1, 2, NA),
-                 c(NA, 3, 4, NA), 
+                 c(NA, 3, 4, NA),
                  c(NA, 6, 6, NA),
                  c(NA, 7, 7, NA))
-  } else {
+  } else if (opt == 2) {
     plots.per.page <- 2
-    lay <- rbind(c(NA, 3, 3, NA), 
+    lay <- rbind(c(NA, 3, 3, NA),
                  c(NA, 1, 1, NA),
-                 c(NA, 2, 2, NA), 
+                 c(NA, 2, 2, NA),
                  c(NA, 4, 4, NA),
                  c(NA, 5, 5, NA))
+  } else if (opt == 3){
+    plots.per.page <- 1
+    lay <- rbind(c(NA, 2, 2, NA),
+                 c(NA, 1, 1, NA),
+                 c(NA, 1, 1, NA),
+                 c(NA, 3, 3, NA),
+                 c(NA, 4, 4, NA))
   }
   margin.size <- .5
   title.size <- 1
@@ -39,9 +46,9 @@ m.grid.arrange <- function(p, lbl, lbl2, opt, st.pg, total.pgs) {
   graph.h.size <- (9 - 2*margin.size - title.size - line.size) / 2
   graph.w.size <- (8.5 - 2*margin.size - line.size) / 2
   #
-  myfun <- function (..., newpage = TRUE) 
+  myfun <- function (..., newpage = TRUE)
   {
-    if (newpage) 
+    if (newpage)
       grid::grid.newpage()
     g <- gridExtra::arrangeGrob(...)
     grid::grid.draw(g)
@@ -83,7 +90,7 @@ m.grid.arrange <- function(p, lbl, lbl2, opt, st.pg, total.pgs) {
             list(graph.line),list(bottom.label))
     #
     args.do <-  c(g2,list(
-                       layout_matrix = lay, 
+                       layout_matrix = lay,
                   heights=grid::unit(
                     c(title.size, graph.h.size, graph.h.size,
                       line.size, margin.size),

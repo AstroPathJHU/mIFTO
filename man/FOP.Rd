@@ -2,7 +2,7 @@
 % Please edit documentation in R/FOP.R
 \name{FOP}
 \alias{FOP}
-\title{Main function to find the positivity for either tissue, 
+\title{Main function to find the positivity for either tissue,
 cell segmentations and percent positive pixels}
 \usage{
 FOP()
@@ -18,7 +18,7 @@ Last Edited 07/15/2020
 }
 \details{
 FOP
-this code will find positivity for either tissue seg, cell seg, or PPC pixel 
+this code will find positivity for either tissue seg, cell seg, or PPC pixel
 data##
 Created By: Benjamin Green 07.12.2018
 to run:
@@ -29,7 +29,7 @@ to run:
 Slide descriptor is the description of slide (ie Tonsil1, Tonsil3)
 Other condition delineation is something else that delinates conditions
 (ie monoplex/multplex, V1/ V2, 1to50/1to100)
-this does not need to be in the name of the slide just to differentiate 
+this does not need to be in the name of the slide just to differentiate
 conditions
 5.Click Run then select directory with the data
 6.A new yes/no box will open

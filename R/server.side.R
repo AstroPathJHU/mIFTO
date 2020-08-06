@@ -44,9 +44,9 @@ server.side <- function(input, output, session) {
     }
   })
   #
-  # if nConsistent is checked then thresholds are not 
+  # if nConsistent is checked then thresholds are not
   # Consistent and add thresholds for each specimen
-  # otherwise use a single threshold for each 
+  # otherwise use a single threshold for each
   #
   output$ThreshControls <- shiny::renderUI({
     #
@@ -59,15 +59,15 @@ server.side <- function(input, output, session) {
       Vars_pxp <- ','}
     if (grepl("nConsistent", Vars_pxp)) {
       #
-      if (!grepl(input$Slide_Descript,'NA')){
-        Slide_Descript <- strsplit(input$Slide_Descript,',')
-        Slide_Descript <- Slide_Descript[[1]]
+      if (!grepl(input$Slide_ID,'NA')){
+        Slide_ID <- strsplit(input$Slide_ID,',')
+        Slide_ID <- Slide_ID[[1]]
         #
-        lay <- lapply(1:length(Slide_Descript), function(x){
+        lay <- lapply(1:length(Slide_ID), function(x){
           shiny::textInput(
             paste0("Thresholds", x),
             div(
-              Slide_Descript[x]
+              Slide_ID[x]
             ),
             placeholder = 'EX: 3.2,4.5,2.9'
           )
@@ -75,9 +75,9 @@ server.side <- function(input, output, session) {
         s_count <- 0
         lay3 <- list()
         #
-        if (length(Slide_Descript) > 3){
-          for (i.1 in seq(1, length(Slide_Descript), 2)){
-            if (i.1 == length(Slide_Descript)){
+        if (length(Slide_ID) > 3){
+          for (i.1 in seq(1, length(Slide_ID), 2)){
+            if (i.1 == length(Slide_ID)){
               lay2 <- lay[[i.1]]
             } else {
               lay2 <- do.call(splitLayout, lay[i.1:(i.1+1)])
@@ -99,9 +99,9 @@ server.side <- function(input, output, session) {
     }
   })
   #
-  # if nConsistent is checked then thresholds are not 
+  # if nConsistent is checked then thresholds are not
   # Consistent and add thresholds for each specimen
-  # otherwise use a single threshold for each 
+  # otherwise use a single threshold for each
   #
   output$ConnpxControls <- shiny::renderUI({
     #
@@ -114,22 +114,22 @@ server.side <- function(input, output, session) {
       Vars_pxp <- ','}
     if (grepl("nConsistent", Vars_pxp)) {
       #
-      if (!grepl(input$Slide_Descript,'NA')){
-        Slide_Descript <- strsplit(input$Slide_Descript,',')
-        Slide_Descript <- Slide_Descript[[1]]
+      if (!grepl(input$Slide_ID,'NA')){
+        Slide_ID <- strsplit(input$Slide_ID,',')
+        Slide_ID <- Slide_ID[[1]]
         #
-        lay <- lapply(1:length(Slide_Descript), function(x){
+        lay <- lapply(1:length(Slide_ID), function(x){
           shiny::textInput(
             paste0("connected.pixels", x),
             div(
-              Slide_Descript[x]
+              Slide_ID[x]
             ),
             placeholder = 'EX: 3,4,2'
           )
         })
         s_count <- 0
         #
-        if (length(Slide_Descript) > 1){
+        if (length(Slide_ID) > 1){
             do.call(splitLayout, lay)
         } else {
           #
@@ -147,7 +147,14 @@ server.side <- function(input, output, session) {
   # Cell by cell button
   #
   shiny::observeEvent(input$CxC, {
-    message('still working on that')
+    modal_out <- shinyalert::shinyalert(
+      title = "Coming Soon.",
+      text = paste(
+        "Cell by Cell analysis needs updating for new GUI and Analysis Updates."
+      ),
+      type = 'error',
+      showConfirmButton = TRUE
+    )
   })
   #
   # Pixel by Pixel button
@@ -156,20 +163,18 @@ server.side <- function(input, output, session) {
     #
     # display a progress bar
     #
-    pb <- winProgressBar(
-      title = "0% Complete", label = 'Thinking',
-      min = 0,max = 100, width = 500
-      )
+    pb <- shiny::Progress$new()
+    pb$set(message = "Thinking", value = 0)
     #
     # run the code and catch any errors
     #
-    err.val <- PixelbyPixel(input,pb)
+    #err.val <- pixelbypixel(input,pb)
     #
     tryCatch({
       #
-      #err.val <- PixelbyPixel(input,pb)
+      err.val <- mIFTO::pixelbypixel(input,pb)
       #
-      close(pb);
+      on.exit(pb$close());
       if (err.val == 0){
         modal_out <- shinyalert::shinyalert(
           title = "Finished",
@@ -182,7 +187,7 @@ server.side <- function(input, output, session) {
       }
       #
     }, warning = function(cond){
-      close(pb);
+      on.exit(pb$close());
       modal_out <- shinyalert::shinyalert(
         title = "Undefined error.",
         text = paste(
@@ -193,7 +198,7 @@ server.side <- function(input, output, session) {
         showConfirmButton = TRUE
       )
     }, error = function(cond){
-      close(pb);
+      on.exit(pb$close());
       modal_out <- shinyalert::shinyalert(
         title = "Undefined error.",
         text = paste(
