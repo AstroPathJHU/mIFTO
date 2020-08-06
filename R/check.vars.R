@@ -164,7 +164,7 @@ if (Opal1 == ""){
 #
 # an antibody opal name pair
 #
-Antibody_Opal <- paste0(Antibody, ' (Opal ', Opal1, ')')
+Antibody_Opal <- paste0(Antibody, ' (', Opal1, ')')
 #
 # put the names together to find the proper dilutions
 #
@@ -172,9 +172,9 @@ Naming.convention<-out$Naming.convention
 titration.type<-out$titration.type
 #
 if(Naming.convention==T){
-  if(titration.type=='Primary'){
+  if(titration.type=='Primary Antibody'){
     titration.type.name<-Antibody
-  }else if (titration.type =='TSA'){
+  }else if (titration.type =='Fluorophore (TSA)'){
     titration.type.name<-Opal1}
 }else{
   titration.type.name<-''
@@ -237,7 +237,7 @@ if(grepl("ihc.Pixels",Vars_pxp)) {
     #
     if(length(cImage.IDs) == 0 ){
       modal_out <- shinyalert::shinyalert(
-        title =  paste0('Search failed for ', x, ' ', titration.type.name,
+        title =  paste('Search failed for', x, titration.type.name,
                         'IHC images'),
         text = paste0(
           'Please check slide names and that component data tiffs for ',

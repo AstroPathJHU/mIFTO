@@ -10,12 +10,12 @@
 #'It is meant to be run through the PixelbyPixel function
 #'
 #' @param wd the main data root directory
-#' @param Antibody_Opal the paired string for an antibody opal pair, designated as 
+#' @param Antibody_Opal the paired string for an antibody opal pair, designated as
 #' "AB (Opal NNN)"
 #' @param Slide_Desctipt a unique identifier for each slide to be analyzed
 #' @param Concentration a numeric vector of concentrations used in the titration
 #' @param Tables the table of statistics gathered by PxP
-#' @param theme1 the theme for the graphs 
+#' @param theme1 the theme for the graphs
 #' @param con_type the type of concentration vector to use factor or numeric
 #' @return exports a ggplot object to be printed for viewing
 #' @export
@@ -115,5 +115,25 @@ map.snratio.plots <- function(
       )
     }
   }
-  return(plots)
+  #
+  # fix output vector on plots so that different types lie on their own pages
+  #
+  p1 <- list(ggplot2::ggplot() + ggplot2::theme_void())
+  sn.plots.l <- (length(Slide_Descript) + 1)
+  sn.plots <- plots
+  v1 <-sn.plots.l+1
+  if ((sn.plots.l/4)%%1 == .25){
+    sn.plots <- c(sn.plots[1:sn.plots.l], p1,p1,p1,
+                  sn.plots[v1:length(sn.plots)],
+                  p1, p1, p1)
+  } else if ((sn.plots.l/4)%%1 == .5){
+    sn.plots <- c(sn.plots[1:sn.plots.l], p1,p1,
+                  sn.plots[v1:length(sn.plots)],
+                  p1, p1)
+  } else if ((sn.plots.l/4)%%1 == .75){
+    sn.plots <- c(sn.plots[1:sn.plots.l], p1,
+                  sn.plots[v1:length(sn.plots)],
+                  p1)
+  }
+  return(sn.plots)
 }

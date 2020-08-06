@@ -50,7 +50,6 @@ preallocate.tables <- function(
   Tables[['BoxPlots']] <- lapply(
     vector('list', 2), function(x)
       vector('list', length(Slide_Descript)))
-
   names(Tables[['BoxPlots']]) <- c('Noise','Signal')
   #
   # Make a plus 1 and a plus 001 list for the different epsilons
@@ -59,24 +58,20 @@ preallocate.tables <- function(
   # descriptors
   #
   for(z in 2:3){
-
     Tables[[z]]<-lapply(
       vector('list', 2), function(x)
         vector('list', length(Slide_Descript)))
-
     names(Tables[[z]])<-c('Plus1','Plus001')
-    }
+  }
   #
   # add sub headers for Concentration in each table
   #
   for(i.1 in 1:4){
     for (i.3 in 1:length(Tables[[i.1]])){
       for(i.2 in 1:length(Slide_Descript)){
-
         Tables[[i.1]][[i.3]][[i.2]] <-
           vector('list',length(Concentration))
         }
-
       names(Tables[[i.1]][[i.3]]) <- Slide_Descript
     }}
   Tables.wholeslide <- Tables
@@ -88,9 +83,12 @@ preallocate.tables <- function(
   # Here I develop a list for the Image.IDs. The image ids will be
   # filled in a vector: Image.IDs[[Slide_Descript]][[Concentration]]
   #
-  Image.IDs<-lapply(vector('list',length(Slide_Descript)),
-                    function(x) vector('list', length(Concentration)))
-
+  Image.IDs<-lapply(
+    vector(
+      'list',length(Slide_Descript)
+      ),
+    function(x) vector('list', length(Concentration))
+    )
   names(Image.IDs)<-Slide_Descript
   #
   #get the image id for each slide and concentration

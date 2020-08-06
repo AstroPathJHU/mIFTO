@@ -2,18 +2,22 @@
 % Please edit documentation in R/create.my.theme.R
 \name{create.my.theme}
 \alias{create.my.theme}
-\title{Create a common theme for graphs that is relatable to multiple types of 
+\title{Create a common theme for graphs that is relatable to multiple types of
 graphs
 CreateMyTheme
 Created By: Benjamin Green
 Last Edited 09/25/2019}
 \usage{
-create.my.theme()
+create.my.theme(Antibody_Opal)
+}
+\arguments{
+\item{Antibody_Opal}{the paired string for an antibody opal pair, designated as
+"AB (Opal NNN)"}
 }
 \value{
 exports the theme and colors for graphs
 }
 \description{
-This function creates a usable theme for graphs so that the theme is common 
+This function creates a usable theme for graphs so that the theme is common
 the multiple graphs produced
 }

@@ -38,13 +38,13 @@ map.ihc.comp.plots <- function(
   tbl_graph$Concentration <- factor(
     tbl_graph$Concentration, levels=c(Concentration,'IHC'))
   tbl_graph$Slide.ID <- factor(tbl_graph$Slide.ID)
-  y_top <- max(tbl_graph$mean) + .2
+  y_top <- round(max(tbl_graph$mean), 1) + .2
   #
   # map the graph
   #
   ihc.graphs <- ggplot2::ggplot(
     tbl_graph,
-    aes(
+    ggplot2::aes(
       y=mean, x=Slide.ID, ymin = mean - sd, ymax = mean + sd,
       fill=Concentration
     )
@@ -63,6 +63,7 @@ map.ihc.comp.plots <- function(
       x='Slide ID', y='Fraction'
     ) +
     ggplot2::ylim(-.1, y_top) +
+    #ggplot2::scale_y_continuous(breaks = seq(0, y_top, round((y_top / 6), 1)) +
     theme1  +
     ggplot2::theme(
       panel.grid.major.x = element_blank(),

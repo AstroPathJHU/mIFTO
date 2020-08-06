@@ -147,7 +147,14 @@ server.side <- function(input, output, session) {
   # Cell by cell button
   #
   shiny::observeEvent(input$CxC, {
-    message('still working on that')
+    modal_out <- shinyalert::shinyalert(
+      title = "Coming Soon.",
+      text = paste(
+        "Cell by Cell analysis needs updating for new GUI and Analysis Updates."
+      ),
+      type = 'error',
+      showConfirmButton = TRUE
+    )
   })
   #
   # Pixel by Pixel button
@@ -156,10 +163,8 @@ server.side <- function(input, output, session) {
     #
     # display a progress bar
     #
-    pb <- winProgressBar(
-      title = "0% Complete", label = 'Thinking',
-      min = 0,max = 100, width = 500
-      )
+    pb <- shiny::Progress$new()
+    pb$set(message = "Thinking", value = 0)
     #
     # run the code and catch any errors
     #
@@ -169,7 +174,7 @@ server.side <- function(input, output, session) {
       #
       err.val <- pixelbypixel(input,pb)
       #
-      close(pb);
+      on.exit(pb$close());
       if (err.val == 0){
         modal_out <- shinyalert::shinyalert(
           title = "Finished",
@@ -182,7 +187,7 @@ server.side <- function(input, output, session) {
       }
       #
     }, warning = function(cond){
-      close(pb);
+      on.exit(pb$close());
       modal_out <- shinyalert::shinyalert(
         title = "Undefined error.",
         text = paste(
@@ -193,7 +198,7 @@ server.side <- function(input, output, session) {
         showConfirmButton = TRUE
       )
     }, error = function(cond){
-      close(pb);
+      on.exit(pb$close());
       modal_out <- shinyalert::shinyalert(
         title = "Undefined error.",
         text = paste(

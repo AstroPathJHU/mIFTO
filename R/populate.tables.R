@@ -65,8 +65,15 @@ populate.tables <- function(
   Tables.wholeslide$T.Tests <- NULL
   Tables.byimage$Histograms <- NULL
   Tables.byimage$BoxPlots <- NULL
+  Tables.wholeslide$BoxPlots_90 <- Tables.wholeslide$BoxPlots
+  Tables.wholeslide$BoxPlots_95 <- Tables.wholeslide$BoxPlots
+  Tables.wholeslide$BoxPlots_98 <- Tables.wholeslide$BoxPlots
+  Tables.wholeslide$BoxPlots_99 <- Tables.wholeslide$BoxPlots
+  #
   table.names.byimage <-c('SN.Ratio','T.Tests')
-  table.names.wholeslide<-c('Histograms','BoxPlots')
+  table.names.wholeslide<-c('Histograms','BoxPlots',
+                            'BoxPlots_90','BoxPlots_95',
+                            'BoxPlots_98', 'BoxPlots_99')
   #
   rm(tables.out)
   #
@@ -91,7 +98,7 @@ populate.tables <- function(
       str1 = paste0("Processing ", x, ' 1:',Concentration[[y]])
       pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
       mIFTO::doupdate.pgbar(pb.count2, pb.Object, paste0(
-        str1,' - Reading Tiffs and Generating Image-by-Image Statistics - ',
+        str1,' - Reading Tiffs and Generating Image Statistics - ',
         length(Image.IDs[[x]][[y]])))
       #
       #############read each image and do by image stats###################
@@ -148,7 +155,6 @@ populate.tables <- function(
           return(list(err.val = err.val))
         }
       })
-
       #
       # progress bar
       #
@@ -190,7 +196,11 @@ populate.tables <- function(
           'Histograms' = mIFTO::histogram.calculations(
             c(All.Images[[1]],All.Images[[2]]), ## histo calc needs work
             Concentration[y],x,'All'),
-          'Boxplots' = ic.plots[['Boxplot.Calculations']]
+          'BoxPlots' = ic.plots[['Boxplot.Calculations']],
+          'BoxPlots_90' = ic.plots[['Boxplot.Calculations_90']],
+          'BoxPlots_95' = ic.plots[['Boxplot.Calculations_95']],
+          'BoxPlots_98' = ic.plots[['Boxplot.Calculations_98']],
+          'BoxPlots_99' = ic.plots[['Boxplot.Calculations_99']]
         )
         #
         for(i.1 in table.names.wholeslide){

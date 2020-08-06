@@ -71,8 +71,9 @@ pixelbypixel <- function(out,pb.Object) {
     Tables <- mIFTO::populate.tables(
       Slide_Descript, Concentration, Antibody_Opal, Thresholds, Opal1,
       flowout, Protocol, paths, titration.type.name, connected.pixels,
-      pb.count, pb.Object)
-      )
+      pb.count, pb.Object
+    )
+  )
   #
   err.val <- Tables$err.val
   if (err.val != 0) {
@@ -95,31 +96,21 @@ pixelbypixel <- function(out,pb.Object) {
   #
   ##################prepares some parameters for the graphs#############
   #
-  graph.out <- mIFTO::create.my.theme()
+  graph.out <- mIFTO::create.my.theme(Antibody_Opal)
   theme1 <- graph.out$theme1
   colors <- graph.out$colors
+  Antibody_Opal.snratio <- graph.out$Antibody_Opal.snratio
+  Antibody_Opal.ttest <- graph.out$Antibody_Opal.ttest
   con_type <- 'factor'
-  #
-  if (nchar(Antibody_Opal) > 14){
-    Antibody_Opal.ttest <- paste0('\n', Antibody_Opal)
-  } else {
-    Antibody_Opal.ttest <- Antibody_Opal
-  }
-  #
-  if (nchar(Antibody_Opal) > 19){
-    Antibody_Opal.snratio <- paste0('\n', Antibody_Opal)
-  } else {
-    Antibody_Opal.snratio <- Antibody_Opal
-  }
   #
   ###############################generate plots#########################
   #
   if (ihc.logical){
     mIFTO::doupdate.pgbar(
-      90, pb.Object, 'Write out the fractions tables and make IHC vs IF graph')
+      90, pb.Object, 'Writing out the fractions tables and making IHC vs IF graph')
 
   } else {
-    mIFTO::doupdate.pgbar(90, pb.Object, 'Write out the fractions tables')
+    mIFTO::doupdate.pgbar(90, pb.Object, 'Writing out the fractions tables')
   }
   #
   ihc.plots <- mIFTO::write.fracs(
@@ -130,48 +121,38 @@ pixelbypixel <- function(out,pb.Object) {
   if (!ihc.plots$err.val == 0){
     return(list(err.val = ihc.plots$err.val))
   }
-  ihc.plots <- ihc.plots$ihc.graphs
-  p1 <- list(ggplot2::ggplot() + ggplot2::theme_void())
-  ihc.plots <- list(ihc.plots)
+  ihc.plots <- list(ihc.plots$ihc.graphs)
   #
-  glist <- list()
-  lbl <-  'IHC to IF Comparison Graph'
-  lbl2 <- paste0(
-    'Compare the fraction of positivity of each IF dilution to the ',
-    'fraction of positivity from the IHC in order to determine when loss of ',
-    'signal occurs.'
-  )
-  p = ihc.plots = ihc.plots
-  glist <- c(
-    glist,
-    mIFTO::m.grid.arrange(
-      p,lbl,
-      lbl2, 3, 0, (ceiling(length(plots))/4 + 1)
-    )
-  )
-  #
-  mIFTO::doupdate.pgbar(91, pb.Object,
+  mIFTO::doupdate.pgbar(92, pb.Object,
                       'Generating Signal-to-Noise Ratio Graphs')
   #
-  sn.plots <- map.snratio.plots(
+  sn.plots <- mIFTO::map.snratio.plots(
     wd, Antibody_Opal, Slide_Descript,
     Concentration, Tables$Tables.byimage,
     Antibody_Opal.snratio, theme1, con_type
   )
   #
-  mIFTO::doupdate.pgbar(92, pb.Object, 'Generating t-Test Graphs')
+  mIFTO::doupdate.pgbar(93, pb.Object, 'Generating t-Test Graphs')
   #
-  tplots <- map.ttest.plots(
+  tplots <- mIFTO::map.ttest.plots(
     wd, Antibody_Opal, Slide_Descript,
     Concentration, Tables$Tables.byimage,
     Antibody_Opal.ttest, theme1, colors, con_type
   )
   #
+  mIFTO::doupdate.pgbar(94, pb.Object, 'Generating Boxplots')
+  #
+  bx.plots <- mIFTO::map.boxplots.plots(
+    wd, Antibody_Opal, Slide_Descript,
+    Concentration, Tables$Tables.wholeslide,
+    theme1, colors, con_type
+  )
+  #
   # print some graphs
   #
-  mIFTO::doupdate.pgbar(93, pb.Object, 'Printing Graphs')
+  mIFTO::doupdate.pgbar(95, pb.Object, 'Printing Graphs')
   #
-  # make sure ttests and sn ratios graphs types all appear on separate pages
+  # pull names vectors together
   #
   lbl <- "Welch's t Test Graphs"
   lbl2 <- paste0(
@@ -179,21 +160,6 @@ pixelbypixel <- function(out,pb.Object) {
     "variation. Higher values indicate more separation.")
   #
   sn.plots.l <- (length(Slide_Descript) + 1)
-  v1 <-sn.plots.l+1
-  if ((sn.plots.l/4)%%1 == .25){
-    sn.plots <- c(sn.plots[1:sn.plots.l], p1,p1,p1,
-                  sn.plots[v1:length(sn.plots)],
-                  p1, p1, p1)
-  } else if ((sn.plots.l/4)%%1 == .5){
-    sn.plots <- c(sn.plots[1:sn.plots.l], p1,p1,
-                  sn.plots[v1:length(sn.plots)],
-                  p1, p1)
-  } else if ((sn.plots.l/4)%%1 == .75){
-    sn.plots <- c(sn.plots[1:sn.plots.l], p1,
-                  sn.plots[v1:length(sn.plots)],
-                  p1)
-  }
-  #
   lbl <- c(lbl, rep("Mean S/N Ratio Graphs",
                     ceiling(sn.plots.l/ 4)))
   lbl <- c(lbl, rep("Median S/N Ratio Graphs",
@@ -203,9 +169,32 @@ pixelbypixel <- function(out,pb.Object) {
     " Higher values indicate more separation."),
     2*ceiling(sn.plots.l/ 4)))
   #
-  plots <- c(tplots, sn.plots)
-  glist <- c(glist, mIFTO::m.grid.arrange(
-    plots, lbl, lbl2, 1, 1, (ceiling(length(plots))/4 + 1))
+  lbl <- c(lbl, bx.plots$lbl)
+  lbl2 <- c(lbl2, bx.plots$lbl2)
+  #
+  plots <- c(tplots, sn.plots, bx.plots$bx.plots)
+  #
+  lbl.ihc <-  'IHC to IF Comparison Graph'
+  lbl2.ihc <- paste0(
+    'Compare the fraction of positivity of each IF dilution to the ',
+    'fraction of positivity from the IHC in order to determine when loss of ',
+    'signal occurs.'
+  )
+  #
+  glist <- list()
+  #
+  glist <- c(
+    glist,
+    mIFTO::m.grid.arrange(
+      ihc.plots,lbl.ihc,
+      lbl2.ihc, 3, 0, (ceiling(length(plots))/4 + 1)
+    )
+  )
+  glist <- c(
+    glist,
+    mIFTO::m.grid.arrange(
+      plots, lbl, lbl2, 1, 1, (ceiling(length(plots))/4 + 1)
+    )
   )
   gout <- gridExtra::marrangeGrob(grobs=glist,nrow=1,ncol=1,top=NULL)
   #
@@ -217,7 +206,7 @@ pixelbypixel <- function(out,pb.Object) {
   #
   ###############################Histogram Graphs ######################
   #
-  ii = 94;mIFTO::doupdate.pgbar(
+  ii = 96;mIFTO::doupdate.pgbar(
     ii, pb.Object, 'Generating Histogram Graphs')
   #
   map.and.write.histograms(
