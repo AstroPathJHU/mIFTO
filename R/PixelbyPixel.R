@@ -174,22 +174,24 @@ pixelbypixel <- function(out,pb.Object) {
   #
   plots <- c(tplots, sn.plots, bx.plots$bx.plots)
   #
-  lbl.ihc <-  'IHC to IF Comparison Graph'
-  lbl2.ihc <- paste0(
-    'Compare the fraction of positivity of each IF dilution to the ',
-    'fraction of positivity from the IHC in order to determine when loss of ',
-    'signal occurs.'
-  )
-  #
   glist <- list()
   #
-  glist <- c(
-    glist,
-    mIFTO::m.grid.arrange(
-      ihc.plots,lbl.ihc,
-      lbl2.ihc, 3, 0, (ceiling(length(plots))/4 + 1)
+  if (ihc.logical){
+    lbl.ihc <-  'IHC to IF Comparison Graph'
+    lbl2.ihc <- paste0(
+      'Compare the fraction of positivity of each IF dilution to the ',
+      'fraction of positivity from the IHC in order to determine when loss of ',
+      'signal occurs.'
     )
-  )
+    #
+    glist <- c(
+      glist,
+      mIFTO::m.grid.arrange(
+        ihc.plots,lbl.ihc,
+        lbl2.ihc, 3, 0, (ceiling(length(plots))/4 + 1)
+      )
+    )
+  }
   glist <- c(
     glist,
     mIFTO::m.grid.arrange(
