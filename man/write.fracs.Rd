@@ -7,6 +7,7 @@
 write.fracs(
   wd,
   Antibody_Opal,
+  Antibody,
   Slide_Descript,
   Concentration,
   tables_in,
@@ -24,6 +25,8 @@ write.fracs(
 
 \item{Antibody_Opal}{the paired string for an antibody opal pair, designated
 as "AB (Opal NNN)"}
+
+\item{Antibody}{the string for an antibody}
 
 \item{Concentration}{a numeric vector of concentrations used in the titration}
 

@@ -114,7 +114,7 @@ pixelbypixel <- function(out,pb.Object) {
   }
   #
   ihc.plots <- mIFTO::write.fracs(
-    wd, Antibody_Opal, Slide_Descript, Concentration, Tables$Tables.byimage,
+    wd, Antibody_Opal, Antibody, Slide_Descript, Concentration, Tables$Tables.byimage,
     Thresholds, connected.pixels, ihc.logical, ihc.Thresholds,
     ihc.connected.pixels, folders.px, theme1
   )

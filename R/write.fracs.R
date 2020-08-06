@@ -12,6 +12,7 @@
 #' @param wd the main data root directory
 #' @param Antibody_Opal the paired string for an antibody opal pair, designated
 #' as "AB (Opal NNN)"
+#' @param Antibody the string for an antibody
 #' @param Slide_Desctipt a unique identifier for each slide to be analyzed
 #' @param Concentration a numeric vector of concentrations used in the titration
 #' @param tables_in the table of statistics gathered by PxP
@@ -30,7 +31,7 @@
 #' @export
 #'
 write.fracs <- function (
-  wd, Antibody_Opal, Slide_Descript, Concentration, tables_in,
+  wd, Antibody_Opal, Antibody, Slide_Descript, Concentration, tables_in,
   Thresholds, connected.pixels, ihc.logical, ihc.Thresholds,
   ihc.connected.pixels, folders.px, theme1
   ){
