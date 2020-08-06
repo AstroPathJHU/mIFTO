@@ -253,6 +253,11 @@ if(grepl("ihc.Pixels",Vars_pxp)) {
   ihc.logical <- TRUE
 } else {
   ihc.logical <- FALSE
+  if(grepl("Folders.Pixels",Vars_pxp)) {
+    folders.px <- TRUE
+  } else {
+    folders.px <- FALSE
+  }
 }
 
 #
