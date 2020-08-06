@@ -66,8 +66,8 @@ map.ihc.comp.plots <- function(
     #ggplot2::scale_y_continuous(breaks = seq(0, y_top, round((y_top / 6), 1)) +
     theme1  +
     ggplot2::theme(
-      panel.grid.major.x = element_blank(),
-      panel.grid.minor.x = element_blank(),
+      panel.grid.major.x = ggplot2::element_blank(),
+      panel.grid.minor.x = ggplot2::element_blank(),
       panel.grid.major.y = ggplot2::element_line(
         size = .25,linetype = 'dotted',
         color = 'lightgrey'),
