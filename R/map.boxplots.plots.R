@@ -120,7 +120,7 @@ map.boxplots.plots <- function(
       #
       bx.plots <- c(bx.plots, list(
         ggplot2::ggplot(
-          data = tbl.graph.n, aes(
+          data = tbl.graph.n, ggplot2::aes(
             x = Concentration, y = Median, group = s.n.type
           )
         )  +
@@ -132,7 +132,7 @@ map.boxplots.plots <- function(
             size = .40, alpha = .65
           ) +
           ggplot2::geom_crossbar(
-            aes(ymin = `1st`, ymax = `2nd`),
+            ggplot2::aes(ymin = `1st`, ymax = `2nd`),
             colour = "black", width = conc_width,
             size = .40, alpha = .65
           ) +
