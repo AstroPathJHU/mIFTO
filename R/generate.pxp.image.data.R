@@ -4,8 +4,8 @@
 #'Created By: Benjamin Green;
 #'Last Edited 09/25/2019
 #'
-#'This function is desgined to do analysis for IF titration series 
-#'in Pixel by Pixel data provding output for each IMAGE individually 
+#'This function is desgined to do analysis for IF titration series
+#'in Pixel by Pixel data provding output for each IMAGE individually
 #'grouped by Concentration
 #'
 #'It is meant to be run through the RUN function
@@ -15,24 +15,24 @@
 #' @param x a unique identifier for the slide to be analyzed
 #' @param y the numeric of which index from the concentration vector to use
 #' @param q the image coordinates of the current image as a comma separated pair
-#' @param Antibody_Opal the paired string for an antibody opal pair, designated 
+#' @param Antibody_Opal the paired string for an antibody opal pair, designated
 #' as "AB (Opal NNN)"
-#' @param titration.type.name the type of titration that was performed 
+#' @param titration.type.name the type of titration that was performed
 #' (TSA or Primary)
 #' @param Protocol the scanning protocol used (7color or 9color)
 #' @param Thresholds a list of thresholds used for each concentration and slide
-#' @param paths the paths to the data as a list, with an element for each 
+#' @param paths the paths to the data as a list, with an element for each
 #' concentration
-#' @param connected.pixels the number of pixels that a pixel must be connected 
+#' @param connected.pixels the number of pixels that a pixel must be connected
 #' to for positivity measures
 #' @param flowout logical for whether or not flow like results will be produced
 #' @param Opal1 the opal value of interest
-#' @return 
+#' @return
 #' @export
 #'
 generate.pxp.image.data <- function(
-  Concentration, x, y, q, Antibody_Opal, 
-  titration.type.name, Protocol, Thresholds, paths, 
+  Concentration, x, y, q, Antibody_Opal,
+  titration.type.name, Protocol, Thresholds, paths,
   connected.pixels, flowout, Opal1
   ){
   #
@@ -63,7 +63,7 @@ generate.pxp.image.data <- function(
   }
   data.in <- data.in[[1]]
   #
-  # measure crosstalk between channels 
+  # measure crosstalk between channels
   #
   #***************************************************************
 
@@ -79,7 +79,7 @@ generate.pxp.image.data <- function(
     str = paste0(
       wd,'/Results.pixels/flow_like_tables/csv/',Antibody_Opal,'_',x,'_1to',
       Concentration[y],'_[',q,'].csv')
-    
+
     data.table::fwrite(data.in.write, file=str,sep=',')
   }
   #
@@ -89,7 +89,7 @@ generate.pxp.image.data <- function(
   #
   # get the positvity data
   #
-  if (length(connected.pixels) == 1){
+  if ((length(connected.pixels) == 1) & (grepl('NA', connected.pixels))){
     positivity.data <- mIFTO::define.image.positivity(
       data.in,Thresholds[[x]][y],connected.pixels)
   } else {

@@ -587,8 +587,10 @@ if (!is.element("EBImage", packages)){
 }
 #
 if (length(connected.pixels) == 1){
-  err.val <- 12
-  return(list(err.val = err.val))
+  if (grepl('NA',connected.pixels)){
+    err.val <- 12
+    return(list(err.val = err.val))
+  }
 }
 #
 rm(a,packages)
