@@ -95,7 +95,7 @@ write.fracs <- function (
       str =  paste0('.*', x, '.*IHC.*_component_data.tif')
       #
       if(folders.px) {
-        ihc.path <- paste0(wd, '/IHC')
+        ihc.path <- c(paste0(wd, '/IHC'), paste0(wd, '/',Antibody,'_IHC'))
       } else {
         ihc.path <- wd
       }

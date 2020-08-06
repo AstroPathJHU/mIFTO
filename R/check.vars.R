@@ -226,7 +226,8 @@ if(grepl("ihc.Pixels",Vars_pxp)) {
     if(grepl("Folders.Pixels",Vars_pxp)) {
         folders.px <- TRUE
         cImage.IDs <-  list.files(
-          paste0(wd, '/IHC'), pattern = str, ignore.case = T)
+          c(paste0(wd, '/IHC'), paste0(wd, '/',Antibody,'_IHC')),
+          pattern = str, ignore.case = T)
     } else {
         folders.px <- FALSE
         cImage.IDs <-  list.files(
@@ -241,7 +242,8 @@ if(grepl("ihc.Pixels",Vars_pxp)) {
                         'IHC images'),
         text = paste0(
           'Please check slide names and that component data tiffs for ',
-          x, ' IHC exist'),
+          x, ' IHC exist. For data separated in folders by dilution, put IHC ',
+          'data in an "IHC" or "',Antibody, '_IHC" folder'),
         type = 'error',
         showConfirmButton = TRUE
       )
