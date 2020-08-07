@@ -70,7 +70,7 @@ ui.map <- function (){
               shiny::actionLink(
                 "pdf", "Help", onclick =
                   paste0("window.open('https://github.com",
-                         "/beng1290/mIFTO/blob/master/README.pdf')"
+                         "/beng1290/mIFTO/blob/master/README.md')"
                          )
                 ,style="color: #f0f6ee;", align = 'right'
               )

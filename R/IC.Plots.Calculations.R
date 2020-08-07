@@ -65,7 +65,7 @@ ic.plots.calculations<-function(
   #
   n_pct <- list()
   n_pct[[1]] <- c(.10, .90)
-  n_pct[[2]] <-  c(.05, .95)
+  n_pct[[2]] <- c(.05, .95)
   n_pct[[3]] <- c(.02, .98)
   n_pct[[4]] <- c(.01, .99)
   Values.tiles <- vector('list', length(n_pct))
@@ -73,14 +73,14 @@ ic.plots.calculations<-function(
   #
   for (tp in 1:length(n_pct)){
     for (z in 1:2){
-      v1 <- quantile(data[[z]][['Antibody']], n_pct[[tp]][[z]])
+      v1 <- quantile(data[[1]][['Antibody']], n_pct[[tp]][[z]])
       if (z == 1){
         data1 <- dplyr::filter(
-          data[[z]], Antibody < v1
+          data[[1]], Antibody < v1
         )
       } else {
         data1 <- dplyr::filter(
-          data[[z]], Antibody >= v1
+          data[[1]], Antibody >= v1
         )
       }
       Values.tiles[[tp]][[z]]<- dplyr::mutate(
