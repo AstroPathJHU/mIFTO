@@ -239,10 +239,10 @@ For cell-by-cell analysis, export the cell segmented for each HPF.  For pixel-by
    - first check that the ```BiocManger``` and ```EBImage``` packages have installed correctly 
    - if they have then the error must be a bug in the code, please report any bugs as quickly as possible so that they can be resolved
 3. If the error causes the UI windows to grey out simply close the web browser window, select the red ‘stop sign’ in the RStudio console
-
-![Figure 7 Image](R/www/Fig7.PNG)
-
-Then rerun the app using ```‘mIFTO::mIFTOapp()’```
+   
+   ![Figure 7 Image](R/www/Fig7.PNG)
+   
+   Then rerun the app using ```‘mIFTO::mIFTOapp()’```
 
 4. Sometimes it may be necessary to resize the window manually to get the UI to line up appropriately.
 
