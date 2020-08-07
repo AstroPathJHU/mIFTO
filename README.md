@@ -243,6 +243,7 @@ For cell-by-cell analysis, export the cell segmented for each HPF.  For pixel-by
 ![Figure 7 Image](R/www/Fig7.PNG)
 
 Then rerun the app using ```‘mIFTO::mIFTOapp()’```
+
 4. Sometimes it may be necessary to resize the window manually to get the UI to line up appropriately.
 
 
