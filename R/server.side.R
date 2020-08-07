@@ -168,11 +168,11 @@ server.side <- function(input, output, session) {
     #
     # run the code and catch any errors
     #
-    err.val <- mIFTO::pixelbypixel(input,pb)
+    #err.val <- mIFTO::pixelbypixel(input,pb)
     #
     tryCatch({
       #
-      #err.val <- mIFTO::pixelbypixel(input,pb)
+      err.val <- mIFTO::pixelbypixel(input,pb)
       #
       on.exit(pb$close());
       if (err.val == 0){
