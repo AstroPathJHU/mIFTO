@@ -30,3 +30,5 @@ For more advanced users of R, it may be easier to specific additional options du
 This command will install ```‘devtools’``` without asking the user if it is okay to updated or compile a package and will carry out the procedures automatically. The command will also significantly reduce the output to the console. 
 
 When the ```install_github('beng1290/mIFTO')``` command is used, R will output the following messages, followed by a number of other messages. 
+
+![Figure 1 Image](R/www/Fig1.PNG)
