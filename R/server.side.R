@@ -168,7 +168,7 @@ server.side <- function(input, output, session) {
     #
     # run the code and catch any errors
     #
-    #err.val <- pixelbypixel(input,pb)
+    #err.val <- mIFTO::pixelbypixel(input,pb)
     #
     tryCatch({
       #

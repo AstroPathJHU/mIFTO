@@ -31,17 +31,17 @@ map.boxplots.plots <- function(
   #
   lbl <- rep("Boxplots of Signal and Noise",
                     ceiling(bx.plots.l/ 4))
-  lbl <- c(lbl, rep("Boxplots of 90th %-tile of Signal and 10th %-tile of Noise",
+  lbl <- c(lbl, rep("Boxplots of Top and Bottom 10% of Positive Signal",
                     ceiling(bx.plots.l/ 4)))
-  lbl <- c(lbl, rep("Boxplots of 95th %-tile of Signal and 5th %-tile of Noise",
+  lbl <- c(lbl, rep("Boxplots of Top and Bottom 5% of Positive Signal",
                     ceiling(bx.plots.l/ 4)))
-  lbl <- c(lbl, rep("Boxplots of 98th %-tile of Signal and 2nd %-tile of Noise",
+  lbl <- c(lbl, rep("Boxplots of Top and Bottom 2% of Positive Signal",
                     ceiling(bx.plots.l/ 4)))
-  lbl <- c(lbl, rep("Boxplots of 99th %-tile of Signal and 1st %-tile of Noise",
+  lbl <- c(lbl, rep("Boxplots of Top and Bottom 1% of Positive Signal",
                     ceiling(bx.plots.l/ 4)))
   lbl2 <- rep(paste0(
     'Measures the normalized flourescence intensity (NFI) or "counts" ',
-    'distribution of the signal and noise, these plots are useful to evaluate \n',
+    'distribution of the signal and\\or noise, these plots are useful to evaluate \n',
     'the TSA dilution series. When optimizing a panel, balance the counts ',
     'across the opals to establish accurate unmixing and prevent \n',
     'crosstalk (bleedthrough) between opals. Values are computed from the ',
@@ -52,17 +52,21 @@ map.boxplots.plots <- function(
   #
   collbls <- list()
   collbls[[1]] <- c("#B2B2B2"='Noise','deepskyblue3'='Signal')
-  collbls[[2]] <- c("#B2B2B2"='10th %-tile','deepskyblue3'='90th %-tile')
-  collbls[[3]] <- c("#B2B2B2"='5th %-tile','deepskyblue3'='95th %-tile')
-  collbls[[4]] <- c("#B2B2B2"='2nd %-tile','deepskyblue3'='98th %-tile')
-  collbls[[5]] <- c("#B2B2B2"='1st %-tile','deepskyblue3'='99th %-tile')
+  collbls[[2]] <- c("#B2B2B2"='Bottom 10%',
+                    'deepskyblue3'='Top 10%')
+  collbls[[3]] <- c("#B2B2B2"='Bottom 5%',
+                    'deepskyblue3'='Top 5%')
+  collbls[[4]] <- c("#B2B2B2"='Bottom 2%',
+                    'deepskyblue3'='Top 2%')
+  collbls[[5]] <- c("#B2B2B2"='Bottom 1%',
+                    'deepskyblue3'='Top 1%')
   names(collbls) <- data.names
   #
-  zn = c('Boxplots of Signal and NFI \n for Slide ',
-         'Boxplots of 90th %-tile and 10th %-tile NFI \n for Slide ',
-         'Boxplots of 95th %-tile and 5th %-tile NFI \n for Slide ',
-         'Boxplots of 98th %-tile and 2nd %-tile NFI \n for Slide ',
-         'Boxplots of 99th %-tile and 1st %-tile NFI \n for Slide ')
+  zn = c('Boxplots of Signal and Noise NFI \n for Slide ',
+         'Boxplots of Top and Bottom 10% of Positive Signal NFI \n for Slide ',
+         'Boxplots of Top and Bottom 5% of Positive Signal NFI\n for Slide ',
+         'Boxplots of Top and Bottom 2% of Positive Signal NFI\n for Slide ',
+         'Boxplots of Top and Bottom 1% of Positive Signal NFI\n for Slide ')
   names(zn) <- data.names
   bx.plots <- list()
   #

@@ -30,20 +30,20 @@ generate.pxp.image.data(
 
 \item{q}{the image coordinates of the current image as a comma separated pair}
 
-\item{Antibody_Opal}{the paired string for an antibody opal pair, designated 
+\item{Antibody_Opal}{the paired string for an antibody opal pair, designated
 as "AB (Opal NNN)"}
 
-\item{titration.type.name}{the type of titration that was performed 
+\item{titration.type.name}{the type of titration that was performed
 (TSA or Primary)}
 
 \item{Protocol}{the scanning protocol used (7color or 9color)}
 
 \item{Thresholds}{a list of thresholds used for each concentration and slide}
 
-\item{paths}{the paths to the data as a list, with an element for each 
+\item{paths}{the paths to the data as a list, with an element for each
 concentration}
 
-\item{connected.pixels}{the number of pixels that a pixel must be connected 
+\item{connected.pixels}{the number of pixels that a pixel must be connected
 to for positivity measures}
 
 \item{flowout}{logical for whether or not flow like results will be produced}
@@ -54,8 +54,8 @@ to for positivity measures}
 
 }
 \description{
-This function is desgined to do analysis for IF titration series 
-in Pixel by Pixel data provding output for each IMAGE individually 
+This function is desgined to do analysis for IF titration series
+in Pixel by Pixel data provding output for each IMAGE individually
 grouped by Concentration
 }
 \details{
