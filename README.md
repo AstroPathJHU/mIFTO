@@ -1,6 +1,7 @@
 # Multiplex Immunoflouresence Titration Optimization (mIFTO) R Package 
 #### <div align="center">***v.2.00.0021***</div>
 #### <div align="center">Created by: Benjamin Green & Charles Roberts</div>
+#### <div align="center">Code based on R scripts orginally written by Dr. Nicolas Giraldo-Castillo</div>
 #### <div align="center">Tumor Microenvironment Technology Development Center</div>
 #### <div align="center">The Johns Hopkins University Bloomberg~Kimmel Institute for Cancer Immunotherapy</div>
 #### <div align="center">Correspondence to: bgreen42@jhu.edu</div>
