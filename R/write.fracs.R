@@ -251,7 +251,7 @@ write.fracs <- function (
   # write out raw fracs
   #
   str = paste0(
-    wd,'/Results.pixels/stats/fractions/Raw Fractions of + Pixels ',
+    wd,'/Results.pixels/data/raw/Raw Fractions of + Pixels ',
     Antibody_Opal,'.csv'
   )
   data.table::fwrite(tbl,file = str,sep = ',')
@@ -259,7 +259,7 @@ write.fracs <- function (
   # write out average fracs
   #
   str = paste0(
-    wd,'/Results.pixels/stats/fractions/Average Fractions of + Pixels ',
+    wd,'/Results.pixels/data/stats/Average Fractions of + Pixels ',
     Antibody_Opal,'.csv'
   )
   data.table::fwrite(tbl_avg,file = str,sep = ',')
@@ -267,7 +267,7 @@ write.fracs <- function (
   # write out threshold values
   #
   str = paste0(
-    wd,'/Results.pixels/stats/fractions/Threshold values ',
+    wd,'/Results.pixels/data/Threshold values ',
     Antibody_Opal,'.csv'
   )
   rownames(t.vals) <- row.vals.names
@@ -276,7 +276,7 @@ write.fracs <- function (
   # write out connected pixel values
   #
   str = paste0(
-    wd,'/Results.pixels/stats/fractions/ connected pixel values ',
+    wd,'/Results.pixels/data/connected pixel values ',
     Antibody_Opal,'.csv'
   )
   rownames(con.vals) <- row.vals.names

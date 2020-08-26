@@ -17,12 +17,21 @@
 #' @param Tables the table of statistics gathered by PxP
 #' @param theme1 the theme for the graphs
 #' @param con_type the type of concentration vector to use factor or numeric
+#' @param m.opt option of whether to use decile type tables or threshold
 #' @return exports a ggplot object to be printed for viewing
 #' @export
 #'
 map.snratio.plots <- function(
   wd, Antibody_Opal, Slide_Descript, Concentration, tables_in, Antibody_Opal.2,
-  theme1, con_type){
+  theme1, con_type, m.opt){
+  #
+  # which data to use
+  #
+  if (m.opt == 'decile'){
+    m.data.type <- 'decile.SN.Ratio'
+  } else if (m.opt == 'threshold'){
+    m.data.type <- 'SN.Ratio'
+  }
   #
   SN.Ratio.names<-c('Mean','Median')
   plots<-list()
@@ -33,19 +42,15 @@ map.snratio.plots <- function(
     #
     # write out the sn ratio spreadsheet
     #
-    str <- paste0(wd,'/Results.pixels/stats/Graphs/',
-                  x,' SN Ratio of ',Antibody_Opal)
-    tbl <- tables_in[['SN.Ratio']][[x]]
+    str <- paste0(wd,'/Results.pixels/data/stats/',
+                  x,' SN Ratio of ',Antibody_Opal,' ',m.opt)
+    tbl <- tables_in[[m.data.type]][[x]]
     #
-    tbl$SN_Ratio[is.nan(tbl$Signal)]<-0
-    tbl$SN_Ratio[is.na(tbl$Signal)]<-0
-    tbl$Signal[is.nan(tbl$Signal)]<-0
-    tbl$Signal[is.na(tbl$Signal)]<-0
+    tbl$SN_Ratio[!is.finite(tbl$Signal)]<-0
+    tbl$Signal[!is.finite(tbl$Signal)]<-0
     #
-    tbl$SN_Ratio[is.nan(tbl$Noise)]<-0
-    tbl$Noise[is.nan(tbl$Noise)]<-0
-    tbl$SN_Ratio[is.na(tbl$Noise)]<-0
-    tbl$Noise[is.na(tbl$Noise)]<-0
+    tbl$SN_Ratio[!is.finite(tbl$Noise)]<-0
+    tbl$Noise[!is.finite(tbl$Noise)]<-0
     #
     tbl$Image.ID <- paste0('[',tbl$Image.ID,']')
     #
@@ -62,14 +67,25 @@ map.snratio.plots <- function(
     #
     # aggregate data for average table
     #
-    tbl2 <- dplyr::summarize(
-      dplyr::group_by(
-        tbl, Concentration
-      ),
-      sd.Signal = sd(Signal),sd.Noise = sd(Noise), sd.SN_Ratio = sd(SN_Ratio),
-      Signal = mean(Signal), Noise = mean(Noise),SN_Ratio = mean(SN_Ratio),
-      .groups = 'drop'
-    )
+    #if (x == 'Mean'){
+      tbl2 <- dplyr::summarize(
+        dplyr::group_by(
+          tbl, Concentration
+        ),
+        sd.Signal = sd(Signal),sd.Noise = sd(Noise), sd.SN_Ratio = sd(SN_Ratio),
+        Signal = mean(Signal), Noise = mean(Noise),SN_Ratio = mean(SN_Ratio),
+        .groups = 'drop'
+      )
+    #} else {
+    #  tbl2 <- dplyr::summarize(
+    #    dplyr::group_by(
+    #      tbl, Concentration
+    ##    ),
+    #    sd.Signal = IQR(Signal),sd.Noise = IQR(Noise), sd.SN_Ratio = IQR(SN_Ratio),
+    #    Signal = median(Signal), Noise = median(Noise),SN_Ratio = median(SN_Ratio),
+    #    .groups = 'drop'
+    #  )
+    #}
     #
     # set up the labels
     #
@@ -96,7 +112,7 @@ map.snratio.plots <- function(
       #
       tbl2 = dplyr::summarize(
         dplyr::group_by(
-          tbl[which(tables_in[['SN.Ratio']][[x]]
+          tbl[which(tables_in[[m.data.type]][[x]]
                     $'Slide.ID'== Slide_Descript[i.1]),], Concentration
         ),
         sd.Signal = sd(Signal),sd.Noise = sd(Noise),sd.SN_Ratio = sd(SN_Ratio),

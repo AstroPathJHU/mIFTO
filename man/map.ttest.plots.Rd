@@ -13,7 +13,8 @@ map.ttest.plots(
   Antibody_Opal.2,
   theme1,
   colors,
-  con_type
+  con_type,
+  m.opt
 )
 }
 \arguments{
@@ -33,6 +34,8 @@ map.ttest.plots(
 \item{colors}{the color vectors for the t test and histograms}
 
 \item{con_type}{the type of concentration vector to use factor or numeric}
+
+\item{m.opt}{option of whether to use decile type tables or threshold}
 
 \item{Slide_Desctipt}{a unique identifier for each slide to be analyzed}
 }

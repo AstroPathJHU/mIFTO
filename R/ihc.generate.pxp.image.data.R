@@ -33,7 +33,7 @@ ihc.generate.pxp.image.data <- function (
   # read in image data
   #
   data.in <- tryCatch({
-    data.in <- mIFTO::tiff.list(ihc.path, pattern.in = str, 'IHC')
+    data.in <- mIFTO::tiff.list(ihc.path, pattern.in = str)
     err.val <- data.in$err.val
     if (!err.val == 0){
       return(-1)
@@ -50,7 +50,9 @@ ihc.generate.pxp.image.data <- function (
   }
   data.in <- data.in[[1]]
   #
-  data.in <- data.in[['DAB']]
+  nn <- names(data.in)
+  d.v <- grep('DAB', nn, value = T)
+  data.in <- data.in[[d.v]]
   pos <- define.image.positivity(data.in, ihc.Thresholds[[x]],ihc.connected.pixels[[x]])
   positivity.inside <- cbind.data.frame(
     fraction = sum(pos$pos.mask) / length(pos$pos.mask), Slide.ID = x,

@@ -27,7 +27,7 @@ sn.ratio.theme <- function(tbl, Concentration, titl, xtitl, ytitl, Max, theme1,
   colvals <- c('red4'='red4',
                "#B2B2B2"="#B2B2B2",'deepskyblue3'='deepskyblue3')
   collbls <- c('red4'='S/N Ratio',
-               "#B2B2B2"='Median Noise','deepskyblue3'='Median Signal')
+               "#B2B2B2"='Noise','deepskyblue3'='Signal')
   xcoords<-c(
     min(Concentration)-((min(Concentration))/2),
     max(Concentration)+((min(Concentration))/2)
@@ -122,7 +122,7 @@ sn.ratio.theme <- function(tbl, Concentration, titl, xtitl, ytitl, Max, theme1,
     ) +
     x_scal +
     theme1 + ggplot2::theme(
-      legend.position = c(.85,.85)
+      legend.position = c(.88,.87)
     ) +
     ggplot2::theme(
       plot.margin = ggplot2::margin(

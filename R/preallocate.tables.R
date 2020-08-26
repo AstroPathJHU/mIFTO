@@ -15,11 +15,15 @@
 #' @param titration.type.name the titration type for a given dilution set (Primary or TSA)
 #' @param table.names the table names for whole slide names
 #' @param paths the data paths, one data path for each concentration
+#' @param Protocol the protocol type (7color or 9color)
+#' @param decile.logical whether or not to run a decile approach analysis
+#' @param threshold.logical whether or not to run a threshold approach analysis
 #' @return exports the Tables list and the Image.IDs sublists
 #' @export
 #'
 preallocate.tables <- function(
-  Slide_Descript,Concentration, titration.type.name, table.names, paths){
+  Slide_Descript,Concentration, titration.type.name, table.names, paths,
+  Protocol, decile.logical, threshold.logical){
   err.val <- 0
   #
   # preallocate tables with 4 sub tables for each type of graph/
@@ -94,6 +98,11 @@ preallocate.tables <- function(
   #get the image id for each slide and concentration
   #
   Image.ID.fullstrings <- list()
+  if (Protocol == '7color'){
+    Protocol.layers <- 9
+  } else {
+    Protocol.layers <- 11
+  }
   #
   for(x in Slide_Descript){
     names(Image.IDs[[x]])<- Concentration
@@ -139,6 +148,28 @@ preallocate.tables <- function(
         err.val <- 13
         return(list(err.val = err.val))
       }
+      #
+      for (i.1 in 1:length(cImage.IDs)){
+        a <- ijtiff::read_tags(paste0(paths[y],'\\',cImage.IDs[[i.1]]), 'all' )
+        if (!length(a) == Protocol.layers){
+          modal_out <- shinyalert::shinyalert(
+            title =  paste0(
+              'Wrong number of layers in image for unmixing protocol: ',
+              Protocol),
+            text = paste0(
+              'Please check that slides were unmixed properly for ',
+              x, ' ', titration.type.name,'_1to', Concentration[y],
+              '; Image name: ',
+              cImage.IDs[[i.1]]),
+            type = 'error',
+            showConfirmButton = TRUE
+          )
+          err.val <- 13
+          return(list(err.val = err.val))
+        }
+      }
+
+
       Image.IDs[[x]][[y]]<-gsub('.*\\[|\\].*','',cImage.IDs)
       #
       Image.ID.fullstrings <- c(Image.ID.fullstrings,cImage.IDs)
@@ -154,17 +185,51 @@ preallocate.tables <- function(
     }
   }
   #
-  # Here I add another list for the Violin Plots similar to the
-  # Image.IDs list
+  # allocate decile tables if applicable
   #
-  Violin.Plots <- lapply(vector('list', length(Slide_Descript)),
-                         function(x)vector('list',length(Concentration)))
-  names(Violin.Plots) <- Slide_Descript
-
+  if (decile.logical){
+    Tables$decile.SN.Ratio <- Tables$SN.Ratio
+    Tables$decile.T.Tests <- Tables$T.Tests
+    table.names.byimage.1 <- c('decile.SN.Ratio','decile.T.Tests')
+    Tables.wholeslide$decile.BoxPlots<- Tables.wholeslide$BoxPlots
+    table.names.wholeslide.1 <- 'decile.Boxplots'
+  } else{
+    table.names.byimage.1 <- NULL
+    table.names.wholeslide.1 <- NULL
+  }
+  #
+  if (threshold.logical){
+    Tables.wholeslide$BoxPlots_90 <- Tables.wholeslide$BoxPlots
+    Tables.wholeslide$BoxPlots_95 <- Tables.wholeslide$BoxPlots
+    Tables.wholeslide$BoxPlots_98 <- Tables.wholeslide$BoxPlots
+    Tables.wholeslide$BoxPlots_99 <- Tables.wholeslide$BoxPlots
+    table.names.byimage.2 <-c('SN.Ratio','T.Tests')
+    table.names.wholeslide.2<-c('Histograms','BoxPlots',
+                              'BoxPlots_90','BoxPlots_95',
+                              'BoxPlots_98', 'BoxPlots_99')
+  } else {
+    Tables$SN.Ratio <- NULL
+    Tables$T.Tests <- NULL
+    Tables.wholeslide$BoxPlots <- NULL
+    table.names.byimage.2 <- NULL
+    table.names.wholeslide.2 <- NULL
+  }
+  #
+  # clean out unused tables
+  #
+  Tables.wholeslide$SN.Ratio <- NULL
+  Tables.wholeslide$T.Tests <- NULL
+  Tables$Histograms <- NULL
+  Tables$BoxPlots <- NULL
+  #
+  table.names.wholeslide <- c(table.names.wholeslide.1, table.names.wholeslide.2)
+  table.names.byimage <- c(table.names.byimage.1, table.names.byimage.2)
+  #
   out <- list(err.val = err.val, Tables.byimage = Tables,
               Tables.wholeslide = Tables.wholeslide,
               Image.IDs = Image.IDs,
-              Violin.Plots = Violin.Plots,
+              table.names.byimage = table.names.byimage,
+              table.names.wholeslide = table.names.wholeslide,
               Image.ID.fullstrings = Image.ID.fullstrings)
 
 }

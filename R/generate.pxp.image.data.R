@@ -2,7 +2,7 @@
 #
 #'Used to create the pixel-by-pixel graph data and return a table;
 #'Created By: Benjamin Green;
-#'Last Edited 09/25/2019
+#'Last Edited 08/11/2020
 #'
 #'This function is desgined to do analysis for IF titration series
 #'in Pixel by Pixel data provding output for each IMAGE individually
@@ -19,7 +19,6 @@
 #' as "AB (Opal NNN)"
 #' @param titration.type.name the type of titration that was performed
 #' (TSA or Primary)
-#' @param Protocol the scanning protocol used (7color or 9color)
 #' @param Thresholds a list of thresholds used for each concentration and slide
 #' @param paths the paths to the data as a list, with an element for each
 #' concentration
@@ -27,26 +26,29 @@
 #' to for positivity measures
 #' @param flowout logical for whether or not flow like results will be produced
 #' @param Opal1 the opal value of interest
+#' @param decile.logical whether or not to run a decile approach analysis
+#' @param threshold.logical whether or not to run a threshold approach analysis
 #' @return
 #' @export
 #'
 generate.pxp.image.data <- function(
   Concentration, x, y, q, Antibody_Opal,
-  titration.type.name, Protocol, Thresholds, paths,
-  connected.pixels, flowout, Opal1
-  ){
+  titration.type.name, Thresholds, paths,
+  connected.pixels, flowout, Opal1,
+  decile.logical, threshold.logical
+){
   #
   # this is the current image name
   #
   str = paste0(
     '.*', x, '.*',titration.type.name, '_1to', Concentration[y],
     '_.*\\[',q, '\\]'
-    )
+  )
   #
   # read that image in
   #
   data.in <- tryCatch({
-    data.in <- mIFTO::tiff.list(paths[[y]], pattern.in = str, Protocol)
+    data.in <- mIFTO::tiff.list(paths[[y]], pattern.in = str)
     err.val <- data.in$err.val
     if (!err.val == 0){
       return(-1)
@@ -62,6 +64,8 @@ generate.pxp.image.data <- function(
     stop('error in slide ', str)
   }
   data.in <- data.in[[1]]
+  nn <- names(data.in)
+  d.v <- grep(Opal1, nn, value = T)
   #
   # measure crosstalk between channels
   #
@@ -77,7 +81,7 @@ generate.pxp.image.data <- function(
     }
     names(data.in.write) <- names(data.in)
     str = paste0(
-      wd,'/Results.pixels/flow_like_tables/csv/',Antibody_Opal,'_',x,'_1to',
+      wd,'/Results.pixels/data/raw/flow_like_tables/',Antibody_Opal,'_',x,'_1to',
       Concentration[y],'_[',q,'].csv')
 
     data.table::fwrite(data.in.write, file=str,sep=',')
@@ -85,39 +89,65 @@ generate.pxp.image.data <- function(
   #
   # select and store only the desired data
   #
-  data.in <- data.in[[Opal1]]
+  data.in <- data.in[[d.v]]
   #
-  # get the positvity data
+  small.tables <- list()
   #
-  if ((length(connected.pixels) == 1) & (grepl('NA', connected.pixels))){
-    positivity.data <- mIFTO::define.image.positivity(
-      data.in,Thresholds[[x]][y],connected.pixels)
-  } else {
-    positivity.data <- mIFTO::define.image.positivity(
-      data.in,Thresholds[[x]][y],connected.pixels[[x]][y])
+  if(decile.logical){
+    #
+    decile.positivity.data <- mIFTO::decile.define.image.positivity(
+      data.in, 10)
+    decile.positivity.data.out <- lapply(
+      1:length(decile.positivity.data),
+      function(x) c(decile.positivity.data[[x]]))
+    small.tables<-c(small.tables,
+                    'decile.SN.Ratio' = mIFTO::sn.ratio.calculations(
+                      decile.positivity.data,Concentration[y],x,q),
+                    'decile.T.Tests' = mIFTO::welch.t.test.calculations(
+                      decile.positivity.data,Concentration[y],x,q),
+                    'decile.Image' = decile.positivity.data.out
+    )
   }
-  positivity.data.out <- lapply(
-    1:length(positivity.data),
-    function(x) c(positivity.data[[x]]))
   #
-  # do the calculations for each type of graph and store
-  # Histograms = mIFTO::Histogram.Calculations(
-  #  data.in,Concentration[y],x,q),
+  if(threshold.logical){
+    #
+    # get the positvity data
+    #
+    if ((length(connected.pixels) == 1) & (grepl('NA', connected.pixels))){
+      positivity.data <- mIFTO::define.image.positivity(
+        data.in,Thresholds[[x]][y],connected.pixels)
+    } else {
+      positivity.data <- mIFTO::define.image.positivity(
+        data.in,Thresholds[[x]][y],connected.pixels[[x]][y])
+    }
+    positivity.data.out <- lapply(
+      1:length(positivity.data),
+      function(x) c(positivity.data[[x]]))
+    #
+    # do the calculations for each type of graph and store
+    #
+    small.tables<-c(small.tables,
+      'SN.Ratio' = mIFTO::sn.ratio.calculations(
+        positivity.data,Concentration[y],x,q),
+      'T.Tests' = mIFTO::welch.t.test.calculations(
+        positivity.data,Concentration[y],x,q),
+      'Image.ID' = paste0(
+        '[',q,']'),
+      'Image' = positivity.data.out
+    )
+    #
+    # the rest of the loop moves the data into a format that allows
+    # the data to be more readily available
+    #
+    rm(positivity.data, positivity.data.out)
+  } else {
+    small.tables <- c(
+      small.tables,
+      'Image' = as.vector(data.in)
+    )
+  }
   #
-  small.tables<-list(
-    'SN.Ratio' = mIFTO::sn.ratio.calculations(
-      positivity.data,Concentration[y],x,q),
-    'T.Tests' = mIFTO::welch.t.test.calculations(
-      positivity.data,Concentration[y],x,q),
-    'Image.ID' = paste0(
-      '[',q,']'),
-    'Image' = positivity.data.out
-  )
-  #
-  # the rest of the loop moves the data into a format that allows
-  # the data to be more readily available
-  #
-  rm(positivity.data, positivity.data.out, data.in)
+  rm(data.in)
   return(small.tables)
   #rm(small.tables)
-  }
+}

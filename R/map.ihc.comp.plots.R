@@ -71,7 +71,7 @@ map.ihc.comp.plots <- function(
       panel.grid.major.y = ggplot2::element_line(
         size = .25,linetype = 'dotted',
         color = 'lightgrey'),
-      legend.position = c(.92, .9), aspect.ratio = .5,
+      legend.position = c(.92, .8), aspect.ratio = .5,
       plot.margin = ggplot2::margin(
         t =.05, r = 0, b = 3, l = 0, unit = "in"
       )

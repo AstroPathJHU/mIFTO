@@ -2,7 +2,7 @@
 % Please edit documentation in R/define.image.positivity.R
 \name{define.image.positivity}
 \alias{define.image.positivity}
-\title{Used by analysis funtions to calculate to define image positivity using the 
+\title{Used by analysis functions to calculate to define image positivity using the
 thresholds and connected pixel value}
 \usage{
 define.image.positivity(data.in, threshold, connected.pixels.now)
@@ -10,12 +10,12 @@ define.image.positivity(data.in, threshold, connected.pixels.now)
 \arguments{
 \item{data.in}{is the image for which positivity needs to be defined}
 
-\item{threshold}{is the curren threshold}
+\item{threshold}{is the current threshold}
 
 \item{connected.pixels.now}{is the current connected pixels value}
 }
 \value{
-a list with three data.frames; a sn means, sn medians, and a 
+a list with three data.frames; a sn means, sn medians, and a
 fraction of pos
 }
 \description{

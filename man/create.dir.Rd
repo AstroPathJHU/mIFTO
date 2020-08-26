@@ -2,7 +2,7 @@
 % Please edit documentation in R/create.dir.R
 \name{create.dir}
 \alias{create.dir}
-\title{Create the output directories for either Results.pixels or 
+\title{Create the output directories for either Results.pixels or
 Results.cell recursively checking that the full file tree will be created;
 Created By: Benjamin Green;
 Last Edited 09/25/2019}
@@ -17,6 +17,6 @@ create.dir(wd, type, flowout)
 \item{flowout}{logical for whether or not flow like results will be produced}
 }
 \description{
-Create the output directories for either Results.pixels or 
+Create the output directories for either Results.pixels or
 Results.cell recursively checking that the full file tree will be created
 }

@@ -19,12 +19,21 @@
 #' @param theme1 the theme for the graphs
 #' @param colors the color vectors for the t test and histograms
 #' @param con_type the type of concentration vector to use factor or numeric
+#' @param m.opt option of whether to use decile type tables or threshold
 #' @return exports a ggplot object to be printed for viewing
 #' @export
 #'
 map.ttest.plots <- function(
   wd, Antibody_Opal,Slide_Descript, Concentration,
-  tables_in, Antibody_Opal.2, theme1, colors, con_type) {
+  tables_in, Antibody_Opal.2, theme1, colors, con_type, m.opt) {
+  #
+  # which data to use
+  #
+  if (m.opt == 'decile'){
+    m.data.type <- 'decile.T.Tests'
+  } else if (m.opt == 'threshold'){
+    m.data.type <- 'T.Tests'
+  }
   #
   # names for the epsilon values
   #
@@ -37,11 +46,11 @@ map.ttest.plots <- function(
     # write out tables of raw data
     #
     str = paste0(
-      wd,'/Results.pixels/stats/Graphs/t test of ',
-      Antibody_Opal,' ',z,'.csv'
+      wd,'/Results.pixels/data/stats/t test of ',
+      Antibody_Opal,' ',z,' ', m.opt,'.csv'
     )
     #
-    tbl <- tables_in[['T.Tests']][[z]]
+    tbl <- tables_in[[m.data.type]][[z]]
     tbl$Image.ID <- paste0('[', tbl$Image.ID,']')
     data.table::fwrite(tbl, file = str,sep = ',')
     #
@@ -115,14 +124,14 @@ map.ttest.plots <- function(
       x_scal +
       ggplot2::coord_cartesian(
         xlim = xcoords, ylim = c(
-          round(min(tables_in[['T.Tests']][[z]]
+          round(min(tables_in[[m.data.type]][[z]]
                     ['statistic'])-75,digits = -2),
-          round(max(tables_in[['T.Tests']][[z]]
+          round(max(tables_in[[m.data.type]][[z]]
                     ['statistic'])+75,digits = -2)),
         expand = F
       ) +
       theme1 + ggplot2::theme(
-        legend.position = c(.85, .77),
+        legend.position = c(.88, .8),
         plot.margin = ggplot2::margin(
           t =10, r = 20, b = 10, l = 20, unit = "pt"
         )
@@ -133,7 +142,7 @@ map.ttest.plots <- function(
     p_count <- p_count + 1
     tbl = dplyr::summarize(
       dplyr::group_by(
-        tables_in[['T.Tests']][[z]], Concentration, Slide.ID
+        tables_in[[m.data.type]][[z]], Concentration, Slide.ID
       ),
       sd.statistic = sd(statistic), statistic = mean(statistic)
     )
@@ -169,9 +178,9 @@ map.ttest.plots <- function(
       x_scal +
       ggplot2::coord_cartesian(
         xlim = xcoords,ylim = c(
-          round(min(tables_in[['T.Tests']][[z]]
+          round(min(tables_in[[m.data.type]][[z]]
                     ['statistic'])-75,digits = -2),
-          round(max(tables_in[['T.Tests']][[z]]
+          round(max(tables_in[[m.data.type]][[z]]
                     ['statistic'])+75,digits = -2)),expand = F) +
       theme1 + ggplot2::theme(legend.position = c(.85,.77)) +
       ggplot2::theme(

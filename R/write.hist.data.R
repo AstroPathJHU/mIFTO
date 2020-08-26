@@ -7,9 +7,9 @@
 #'Write out the histogram datasets for later use
 #'
 #'
-#' @param table_in the table 
+#' @param table_in the table
 #' @param wd the main data root directory
-#' @param Antibody_Opal the paired string for an antibody opal pair, 
+#' @param Antibody_Opal the paired string for an antibody opal pair,
 #' designated as "AB (Opal NNN)"
 #' @param Slide_Desctipt a unique identifier for each slide to be analyzed
 #' @param Concentration a numeric vector of concentrations used in the titration
@@ -26,7 +26,7 @@ write.hist.data <- function(
         table_in[['Histograms']][[i.1]],
         grepl(paste0('1to',y),Concentration),
         Slide.ID==x)
-      str = paste0(wd,'/Results.pixels/histograms/data/',
+      str = paste0(wd,'/Results.pixels/data/raw/hist/',
                    i.1,'/',Antibody_Opal,'_',x,'_1to',y,'.csv')
       data.table::fwrite(tbl,file = str,sep=',')
     }

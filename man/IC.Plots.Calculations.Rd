@@ -4,7 +4,7 @@
 \alias{ic.plots.calculations}
 \title{Usedby analysis functions for violin plot calculations}
 \usage{
-ic.plots.calculations(All.Images, Opal1, Concentration, x, y)
+ic.plots.calculations(All.Images, Opal1, Concentration, x, y, m.opt)
 }
 \arguments{
 \item{All.Images}{the full image vector of a case}
@@ -12,12 +12,14 @@ ic.plots.calculations(All.Images, Opal1, Concentration, x, y)
 \item{Opal1}{is the Opal of interest (ie 540)}
 
 \item{Concentration}{is a numeric vector of the denominator of all
-concentration ratios
- which a boxplot will be created for (ie 25, 50, 100)}
+concentration ratios which a boxplot will be created for (ie 25, 50, 100)}
 
 \item{x}{is the Slide Indicator (ie Tonsil2)}
 
 \item{y}{is the numeric value of the current concentration}
+
+\item{m.opt}{optionally export the percentile boxplots between 10% and 2%,
+always export the signal and noise boxplots}
 }
 \value{
 explots a data.frame with the columns: Median, 1st
