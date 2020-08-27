@@ -13,12 +13,13 @@ parallel.invoke.gpxp(
   Image.IDs,
   Antibody_Opal,
   titration.type.name,
-  Protocol,
   Thresholds,
   paths,
   connected.pixels,
   flowout,
   Opal1,
+  decile.logical,
+  threshold.logical,
   cl
 )
 }
@@ -38,8 +39,6 @@ designated as "AB (Opal NNN)"}
 \item{titration.type.name}{the type of titration that was performed
 (TSA or Primary)}
 
-\item{Protocol}{the scanning protocol used (7color or 9color)}
-
 \item{Thresholds}{a list of thresholds used for each concentration and slide}
 
 \item{paths}{the paths to the data as a list, with an element for each
@@ -51,6 +50,10 @@ to for positivity measures}
 \item{flowout}{logical for whether or not flow like results will be produced}
 
 \item{Opal1}{the opal value of interest}
+
+\item{decile.logical}{whether or not to run a decile approach analysis}
+
+\item{threshold.logical}{whether or not to run a threshold approach analysis}
 
 \item{cl}{cluster object}
 }

@@ -11,7 +11,10 @@ preallocate.tables(
   Concentration,
   titration.type.name,
   table.names,
-  paths
+  paths,
+  Protocol,
+  decile.logical,
+  threshold.logical
 )
 }
 \arguments{
@@ -22,6 +25,12 @@ preallocate.tables(
 \item{table.names}{the table names for whole slide names}
 
 \item{paths}{the data paths, one data path for each concentration}
+
+\item{Protocol}{the protocol type (7color or 9color)}
+
+\item{decile.logical}{whether or not to run a decile approach analysis}
+
+\item{threshold.logical}{whether or not to run a threshold approach analysis}
 
 \item{Slide_Desctipt}{a unique identifier for each slide to be analyzed}
 }

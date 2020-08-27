@@ -26,6 +26,8 @@
 #' (Primary or TSA)
 #' @param connected.pixels the number of pixels that a pixel must be connected
 #' to for positivity measures
+#' @param decile.logical whether or not to run a decile approach analysis
+#' @param threshold.logical whether or not to run a threshold approach analysis
 #' @param pb.count current count for progress bar
 #' @param pb.Object progress bar object
 #' @return
@@ -34,7 +36,7 @@
 populate.tables <- function(
   Slide_Descript, Concentration, Antibody_Opal, Thresholds, Opal1,
   flowout, Protocol, paths, titration.type.name, connected.pixels,
-  pb.count, pb.Object){
+  decile.logical, threshold.logical, pb.count, pb.Object){
   #
   #############pre-allocating tables to store results###################
   #
@@ -46,7 +48,7 @@ populate.tables <- function(
   #
   tables.out <- mIFTO::preallocate.tables(
     Slide_Descript, Concentration, titration.type.name,
-    table.names.wholeslide, paths)
+    table.names.wholeslide, paths, Protocol,decile.logical, threshold.logical)
   err.val <- tables.out$err.val
   if (err.val != 0) {
     return(list(err.val = err.val))
@@ -55,25 +57,8 @@ populate.tables <- function(
   Tables.byimage <- tables.out$Tables.byimage
   Tables.wholeslide <- tables.out$Tables.wholeslide
   Image.IDs <- tables.out$Image.IDs
-  # Violin.Plots <- tables.out$Violin.Plots # runtime and RAM usage for Violin
-  # plots was not managable. May want to work on this in the future.
-  #
-  # clean out unused tables, we could code these out in the preallocate
-  # step but we may still need to implement them later
-  #
-  Tables.wholeslide$SN.Ratio <- NULL
-  Tables.wholeslide$T.Tests <- NULL
-  Tables.byimage$Histograms <- NULL
-  Tables.byimage$BoxPlots <- NULL
-  Tables.wholeslide$BoxPlots_90 <- Tables.wholeslide$BoxPlots
-  Tables.wholeslide$BoxPlots_95 <- Tables.wholeslide$BoxPlots
-  Tables.wholeslide$BoxPlots_98 <- Tables.wholeslide$BoxPlots
-  Tables.wholeslide$BoxPlots_99 <- Tables.wholeslide$BoxPlots
-  #
-  table.names.byimage <-c('SN.Ratio','T.Tests')
-  table.names.wholeslide<-c('Histograms','BoxPlots',
-                            'BoxPlots_90','BoxPlots_95',
-                            'BoxPlots_98', 'BoxPlots_99')
+  table.names.byimage <- tables.out$table.names.byimage
+  table.names.wholeslide <- tables.out$table.names.wholeslide
   #
   rm(tables.out)
   #
@@ -114,8 +99,9 @@ populate.tables <- function(
         small.tables.byimage <- tryCatch({
           mIFTO::parallel.invoke.gpxp(
             Concentration, x, y, Image.IDs, Antibody_Opal,
-            titration.type.name, Protocol, Thresholds, paths,
-            connected.pixels, flowout, Opal1, cl
+            titration.type.name, Thresholds, paths,
+            connected.pixels, flowout, Opal1,
+            decile.logical, threshold.logical, cl
           )
         }, warning = function(cond) {
           modal_out <- shinyalert::shinyalert(
@@ -165,19 +151,36 @@ populate.tables <- function(
       # reorganize to small table format to fit into the main 'Tables' list
       #
       All.Images <-vector('list',4)
+      decile.All.Images <-vector('list',4)
+      #
       for (i.3 in 1:length(small.tables.byimage)){ # for each image
-        for (i.1 in table.names.byimage){
-          for (i.2 in 1:length(Tables.byimage[[i.1]])){
+        for (i.1 in table.names.byimage){ # analysis type sn.ratio, t.test
+          for (i.2 in 1:length(Tables.byimage[[i.1]])){ # analysis sub types (mean, median\ plus1, plus001)
             Tables.byimage[[i.1]][[i.2]][[x]][[y]][[i.3]] <-
               small.tables.byimage[[i.3]][[i.1]][[i.2]]
           }
         }
         #
-        # get the image data out for each image so that total slide-conc.
-        # pair metrics can be produced
+        # reorganize to 4 column image vector (pos, neg, pos mask, neg mask)
         #
-        All.Images <- lapply(1:4, function(x) c(
-          All.Images[[x]],small.tables.byimage[[i.3]][[4]][[x]]))
+        if (threshold.logical){
+          All.Images <- lapply(1:4, function(x) c(
+            All.Images[[x]],
+            small.tables.byimage[[i.3]][['Image']][[x]])
+          )
+        }else {
+          All.Images[[1]] <- c(All.Images[[1]],
+            small.tables.byimage[[i.3]][['Image']]
+          )
+        }
+        #
+        if (decile.logical){
+          decile.All.Images <- lapply(1:4, function(x) c(
+            decile.All.Images[[x]],
+            small.tables.byimage[[i.3]][['decile.Image']][[x]])
+          )
+        }
+        #
       }
       #
       names(All.Images) <- c('pos','neg','pos.mask','neg.mask')
@@ -190,18 +193,36 @@ populate.tables <- function(
       #############do whole image stats###################
       #
       time <- system.time({
-        ic.plots <- mIFTO::ic.plots.calculations(
-          All.Images,Opal1,Concentration,x,y)
-        small.wholeslide.tables<-list(
-          'Histograms' = mIFTO::histogram.calculations(
-            c(All.Images[[1]],All.Images[[2]]), ## histo calc needs work
-            Concentration[y],x,'All'),
-          'BoxPlots' = ic.plots[['Boxplot.Calculations']],
-          'BoxPlots_90' = ic.plots[['Boxplot.Calculations_90']],
-          'BoxPlots_95' = ic.plots[['Boxplot.Calculations_95']],
-          'BoxPlots_98' = ic.plots[['Boxplot.Calculations_98']],
-          'BoxPlots_99' = ic.plots[['Boxplot.Calculations_99']]
-        )
+        if (threshold.logical){
+          ic.plots <- mIFTO::ic.plots.calculations(
+            All.Images, Opal1, Concentration, x, y, 1)
+          #
+          small.wholeslide.tables<-list(
+            'Histograms' = mIFTO::histogram.calculations(
+              c(All.Images[[1]],All.Images[[2]]), ## histo calc needs work
+              Concentration[y],x,'All'),
+            'BoxPlots' = ic.plots[['Boxplot.Calculations']],
+            'BoxPlots_90' = ic.plots[['Boxplot.Calculations_90']],
+            'BoxPlots_95' = ic.plots[['Boxplot.Calculations_95']],
+            'BoxPlots_98' = ic.plots[['Boxplot.Calculations_98']],
+            'BoxPlots_99' = ic.plots[['Boxplot.Calculations_99']]
+          )
+        } else {
+          small.wholeslide.tables<-list(
+            'Histograms' = mIFTO::histogram.calculations(
+              All.Images, ## histo calc needs work
+              Concentration[y],x,'All')
+          )
+        }
+        #
+        if (decile.logical){
+          ic.plots <- mIFTO::ic.plots.calculations(
+            decile.All.Images, Opal1, Concentration, x, y, 1)
+          #
+          small.wholeslide.tables <- c(
+            small.wholeslide.tables,
+            'decile.BoxPlots' = ic.plots[['Boxplot.Calculations']])
+        }
         #
         for(i.1 in table.names.wholeslide){
           for(z in 1:length(Tables.wholeslide[[i.1]])){

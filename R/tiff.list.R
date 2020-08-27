@@ -4,14 +4,14 @@
 #'component_tiff images
 #'
 #'tiff.list;
-#'Created By: Benjamin Green, Charles Roberts;
+#'Created By: Benjamin Green;
 #'Last Edited 11/12/2018
 #'
-#'This script is designed to read in the designated 8 layer
+#'This script is designed to read in the
 #'component_tiff image or images exported from inForm (R) CellAnaylsis
-#'The function returns a data.frame of 8 columns, each column in the
+#'The function returns a data.frame of n columns, each column in the
 #'data.frame designates a different layer of the image designated
-#'here as DAPI 520-690; however the column/names order may change
+#'here as DAPI; Flours; AF; however the column/names order may change
 #'depending on the library used to export images from inForm(R)
 #'
 #' @param wd is the working directory
@@ -19,7 +19,7 @@
 #' @return tiff.list is an 8 column data.frame where each column holds the pixel intensities for a single image layer
 #' @export
 #'
-tiff.list <- function(wd, pattern.in,Protocol) {
+tiff.list <- function(wd, pattern.in) {
   #
   # get all images with similar image names
   #
@@ -30,35 +30,29 @@ tiff.list <- function(wd, pattern.in,Protocol) {
     full.names = T,
     ignore.case = T
   )
+  if (length(image_names) > 1){
+    err.val <- 1
+    return(list(err.val = err.val))
+  }
+  pattern.match="\\<Name\\>(.*?)\\<Name\\>"
   #
-  # get the names of the layers for the protocol type
+  # get the names of the layers for the protocol
   #
-  if (Protocol  == '7color'){
-    types <- c('DAPI', '520', '540', '570', '620', '650', '690', 'AF')
-  } else if (Protocol == '9color'){
-    types <- c('DAPI','480', '520', '540', '570', '620',
-               '650', '690','780', 'AF')
-  } else if (Protocol == 'IHC') {
-    a <- ijtiff::read_tags(image_names,'all' )
-    # extract the initial value
-    pattern.match="\\<Name\\>(.*?)\\<Name\\>"
+  a <- ijtiff::read_tags(image_names,'all' )
+  results.match <- matrix(length(a), 1)
+  #
+  for (i.1 in 1:length(a)){
     result.match.1 <- regmatches(
-      a$frame1$description, regexec(pattern.match,a$frame1$description)
+      a[[i.1]]$description, regexec(pattern.match,a[[i.1]]$description)
     )
     result.match.1 <- result.match.1[[1]][2]
     result.match.1 <- substring(
       result.match.1, 2, (nchar(result.match.1[[1]])-2)
     )
-    # extract the second value
-    result.match.2 <- regmatches(
-      a$frame2$description, regexec(pattern.match,a$frame2$description)
-    )
-    result.match.2 <- result.match.2[[1]][2]
-    result.match.2 <- substring(
-      result.match.2, 2, (nchar(result.match.2[[1]])-2)
-    )
-    types <- c(result.match.1, result.match.2)
+    results.match[[i.1]] <- result.match.1
   }
+  #
+  types <- results.match[1:length(results.match)-1]
   #
   m2 <- list()
   #

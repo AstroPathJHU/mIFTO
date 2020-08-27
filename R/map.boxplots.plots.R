@@ -18,55 +18,89 @@
 #' @param theme1 the theme for the graphs
 #' @param colors the color vectors for the t test and histograms
 #' @param con_type the type of concentration vector to use factor or numeric
+#' @param m.opt option of whether to use decile type tables or threshold
 #' @return exports a ggplot object to be printed for viewing
 #' @export
 #'
 map.boxplots.plots <- function(
   wd, Antibody_Opal,Slide_Descript, Concentration,
-  tables_in, theme1, colors, con_type) {
+  tables_in, theme1, colors, con_type, m.opt) {
   #
-  data.names <- c('BoxPlots','BoxPlots_90','BoxPlots_95','BoxPlots_98','BoxPlots_99')
   p0 <- list(ggplot2::ggplot() + ggplot2::theme_void())
   bx.plots.l <- (length(Slide_Descript))
   #
-  lbl <- rep("Boxplots of Signal and Noise",
-                    ceiling(bx.plots.l/ 4))
-  lbl <- c(lbl, rep("Boxplots of Top and Bottom 10% of Positive Signal",
-                    ceiling(bx.plots.l/ 4)))
-  lbl <- c(lbl, rep("Boxplots of Top and Bottom 5% of Positive Signal",
-                    ceiling(bx.plots.l/ 4)))
-  lbl <- c(lbl, rep("Boxplots of Top and Bottom 2% of Positive Signal",
-                    ceiling(bx.plots.l/ 4)))
-  lbl <- c(lbl, rep("Boxplots of Top and Bottom 1% of Positive Signal",
-                    ceiling(bx.plots.l/ 4)))
-  lbl2 <- rep(paste0(
-    'Measures the normalized flourescence intensity (NFI) or "counts" ',
-    'distribution of the signal and\\or noise, these plots are useful to evaluate \n',
-    'the TSA dilution series. When optimizing a panel, balance the counts ',
-    'across the opals to establish accurate unmixing and prevent \n',
-    'crosstalk (bleedthrough) between opals. Values are computed from the ',
-    'thresholded signal and noise of all images across a case.'),
-    length(data.names)*ceiling(bx.plots.l/ 4))
+  # which data to use
   #
-  # color labels on graphs
+  if (m.opt == 'decile'){
+    #
+    data.names <- 'decile.BoxPlots'
+    #
+    # descriptive labeles
+    #
+    lbl <- rep("Boxplots of Top and Bottom 10% of all Signal",
+               ceiling(bx.plots.l/ 4))
+    lbl2 <- rep(paste0(
+      'Measures the normalized flourescence intensity (NFI) or "counts" ',
+      'distribution of the signal, these plots are useful to evaluate \n',
+      'the TSA dilution series. When optimizing a panel, balance the counts ',
+      'across the opals to establish accurate unmixing and prevent \n',
+      'crosstalk (bleedthrough) between opals. Values are computed from the ',
+      'full signal for all images across a case.'),
+      length(data.names)*ceiling(bx.plots.l/ 4))
+    #
+    # color labels on graphs
+    #
+    collbls <- list()
+    collbls[[1]] <- c('Bottom 10%','Top 10%')
+    #
+    # graph title
+    #
+    zn = 'Boxplots of Top and Bottom 10% of NFI \n for Slide'
+    #
+  } else if (m.opt == 'threshold'){
+    data.names <- c('BoxPlots','BoxPlots_90','BoxPlots_95','BoxPlots_98','BoxPlots_99')
+    #
+    # color labels on graphs
+    #
+    collbls <- list()
+    collbls[[1]] <- c('Noise','Signal')
+    collbls[[2]] <- c('Bottom 10%','Top 10%')
+    collbls[[3]] <- c('Bottom 5%','Top 5%')
+    collbls[[4]] <- c('Bottom 2%','Top 2%')
+    collbls[[5]] <- c('Bottom 1%','Top 1%')
+    #
+    # descriptive labeles
+    #
+    lbl <- rep("Boxplots of Signal and Noise",
+               ceiling(bx.plots.l/ 4))
+    lbl <- c(lbl, rep("Boxplots of Top and Bottom 10% of Positive Signal",
+                      ceiling(bx.plots.l/ 4)))
+    lbl <- c(lbl, rep("Boxplots of Top and Bottom 5% of Positive Signal",
+                      ceiling(bx.plots.l/ 4)))
+    lbl <- c(lbl, rep("Boxplots of Top and Bottom 2% of Positive Signal",
+                      ceiling(bx.plots.l/ 4)))
+    lbl <- c(lbl, rep("Boxplots of Top and Bottom 1% of Positive Signal",
+                      ceiling(bx.plots.l/ 4)))
+    #
+    lbl2 <- rep(paste0(
+      'Measures the normalized flourescence intensity (NFI) or "counts" ',
+      'distribution of the signal and\\or noise, these plots are useful to evaluate \n',
+      'the TSA dilution series. When optimizing a panel, balance the counts ',
+      'across the opals to establish accurate unmixing and prevent \n',
+      'crosstalk (bleedthrough) between opals. Values are computed from the ',
+      'thresholded signal and noise of all images across a case.'),
+      length(data.names)*ceiling(bx.plots.l/ 4))
+    #
+    # graph titles
+    #
+    zn = c('Signal and Noise NFI \n for Slide ',
+           'Top and Bottom 10% of + Signal NFI\n for Slide ',
+           'Top and Bottom 5% of + Signal NFI\n for Slide ',
+           'Top and Bottom 2% of + Signal NFI\n for Slide ',
+           'Top and Bottom 1% of + Signal NFI\n for Slide ')
+  }
   #
-  collbls <- list()
-  collbls[[1]] <- c("#B2B2B2"='Noise','deepskyblue3'='Signal')
-  collbls[[2]] <- c("#B2B2B2"='Bottom 10%',
-                    'deepskyblue3'='Top 10%')
-  collbls[[3]] <- c("#B2B2B2"='Bottom 5%',
-                    'deepskyblue3'='Top 5%')
-  collbls[[4]] <- c("#B2B2B2"='Bottom 2%',
-                    'deepskyblue3'='Top 2%')
-  collbls[[5]] <- c("#B2B2B2"='Bottom 1%',
-                    'deepskyblue3'='Top 1%')
   names(collbls) <- data.names
-  #
-  zn = c('Boxplots of Signal and Noise NFI \n for Slide ',
-         'Boxplots of Top and Bottom 10% of Positive Signal NFI \n for Slide ',
-         'Boxplots of Top and Bottom 5% of Positive Signal NFI\n for Slide ',
-         'Boxplots of Top and Bottom 2% of Positive Signal NFI\n for Slide ',
-         'Boxplots of Top and Bottom 1% of Positive Signal NFI\n for Slide ')
   names(zn) <- data.names
   bx.plots <- list()
   #
@@ -83,11 +117,29 @@ map.boxplots.plots <- function(
     #
     tbl.graph$bottom.Inner.fence[
       tbl.graph$bottom.Inner.fence < 0] <- 0
+    tbl.graph$Median[!is.finite(tbl.graph$Median)]<-0
+    tbl.graph$`1st`[!is.finite(tbl.graph$`1st`)]<-0    #
+    tbl.graph$`2nd`[!is.finite(tbl.graph$`2nd`)]<-0    #
+    tbl.graph$top.Inner.fence[!is.finite(tbl.graph$top.Inner.fence)]<-0 
+    tbl.graph$bottom.Inner.fence[!is.finite(tbl.graph$bottom.Inner.fence)]<-0 
     #
     # set y coords
     #
     y_bottom <- -5
-    y_top <- round(max(tbl.graph$top.Inner.fence), -1) + 10
+    y_top <- max(tbl.graph$top.Inner.fence)
+    if (y_top > 30 & y_top < 100) {
+      y_top <- round(y_top, -1) + 10
+      y_seq <- 10
+    } else if (y_top >= 100 & y_top < 500){
+      y_top <- round(y_top, -2) + 100
+      y_seq <- 50
+    } else if (y_top >= 500){
+      y_top <- round(y_top, -2) + 100
+      y_seq <- 100
+    } else {
+      y_top <- round(y_top, -1) + 5
+      y_seq <- 5
+    }
     #
     # numeric or factor graphs changes the spacing of y values
     #
@@ -134,6 +186,12 @@ map.boxplots.plots <- function(
               color = s.n.type
             ),
             size = .40, alpha = .65
+          )  +
+          ggplot2::scale_color_manual(
+            values = c(
+             "#B2B2B2", "deepskyblue3"),
+            labels = collbls[[i1]],
+            name = ''
           ) +
           ggplot2::geom_crossbar(
             ggplot2::aes(ymin = `1st`, ymax = `2nd`),
@@ -151,17 +209,13 @@ map.boxplots.plots <- function(
               zn[[i1]],i2, ': ', Antibody_Opal),
             y = 'NFI', x='Dilution (1: )'
           ) +
-          ggplot2::scale_color_manual(
-            name = '', values = c("#B2B2B2", colors[[3]]),
-            labels = collbls[[i1]]
-          ) +
           ggplot2::coord_cartesian(
             xlim = xcoords, ylim = c(y_bottom, y_top), expand = F
           ) +
-          ggplot2::scale_y_continuous(breaks = seq(0, y_top, 10)) +
+          ggplot2::scale_y_continuous(breaks = seq(0, y_top, y_seq)) +
           x_scal +
           theme1 + ggplot2::theme(
-            legend.position = c(.85,.85),
+            legend.position = c(.88,.87),
             plot.margin = ggplot2::margin(
               t =10, r = 20, b = 10, l = 20, unit = "pt"
             )

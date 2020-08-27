@@ -55,6 +55,8 @@ pixelbypixel <- function(out,pb.Object) {
   paths <- outchecked$paths
   titration.type.name <- outchecked$titration.type.name
   connected.pixels <- outchecked$connected.pixels
+  decile.logical <- outchecked$decile.logical
+  threshold.logical <- outchecked$threshold.logical
   #
   rm(outchecked, out)
   #
@@ -71,7 +73,7 @@ pixelbypixel <- function(out,pb.Object) {
     Tables <- mIFTO::populate.tables(
       Slide_Descript, Concentration, Antibody_Opal, Thresholds, Opal1,
       flowout, Protocol, paths, titration.type.name, connected.pixels,
-      pb.count, pb.Object
+      decile.logical, threshold.logical, pb.count, pb.Object
     )
   )
   #
@@ -105,113 +107,29 @@ pixelbypixel <- function(out,pb.Object) {
   #
   ###############################generate plots#########################
   #
-  if (ihc.logical){
-    mIFTO::doupdate.pgbar(
-      90, pb.Object, 'Writing out the fractions tables and making IHC vs IF graph')
-
-  } else {
-    mIFTO::doupdate.pgbar(90, pb.Object, 'Writing out the fractions tables')
+  if (threshold.logical){
+    mIFTO::map.and.plot.threshold.graphs(
+      wd, Antibody_Opal, Antibody, Slide_Descript, Concentration, Tables,
+      Thresholds, connected.pixels, ihc.logical, ihc.Thresholds,
+      ihc.connected.pixels, folders.px, theme1, con_type, colors,
+      Antibody_Opal.snratio, Antibody_Opal.ttest, pb.Object)
   }
   #
-  ihc.plots <- mIFTO::write.fracs(
-    wd, Antibody_Opal, Antibody, Slide_Descript, Concentration, Tables$Tables.byimage,
-    Thresholds, connected.pixels, ihc.logical, ihc.Thresholds,
-    ihc.connected.pixels, folders.px, theme1
-  )
-  if (!ihc.plots$err.val == 0){
-    return(list(err.val = ihc.plots$err.val))
+  # some decile graphs
+  #
+  if (decile.logical){
+    mIFTO::map.and.plot.decile.graphs(
+      wd, Antibody_Opal, Antibody, Slide_Descript, Concentration, Tables,
+      theme1, con_type, colors, Antibody_Opal.snratio, Antibody_Opal.ttest,
+      pb.Object)
   }
-  ihc.plots <- list(ihc.plots$ihc.graphs)
-  #
-  mIFTO::doupdate.pgbar(92, pb.Object,
-                      'Generating Signal-to-Noise Ratio Graphs')
-  #
-  sn.plots <- mIFTO::map.snratio.plots(
-    wd, Antibody_Opal, Slide_Descript,
-    Concentration, Tables$Tables.byimage,
-    Antibody_Opal.snratio, theme1, con_type
-  )
-  #
-  mIFTO::doupdate.pgbar(93, pb.Object, 'Generating t-Test Graphs')
-  #
-  tplots <- mIFTO::map.ttest.plots(
-    wd, Antibody_Opal, Slide_Descript,
-    Concentration, Tables$Tables.byimage,
-    Antibody_Opal.ttest, theme1, colors, con_type
-  )
-  #
-  mIFTO::doupdate.pgbar(94, pb.Object, 'Generating Boxplots')
-  #
-  bx.plots <- mIFTO::map.boxplots.plots(
-    wd, Antibody_Opal, Slide_Descript,
-    Concentration, Tables$Tables.wholeslide,
-    theme1, colors, con_type
-  )
-  #
-  # print some graphs
-  #
-  mIFTO::doupdate.pgbar(95, pb.Object, 'Printing Graphs')
-  #
-  # pull names vectors together
-  #
-  lbl <- "Welch's t Test Graphs"
-  lbl2 <- paste0(
-    "Measures the difference between signal and noise accounting for ",
-    "variation. Higher values indicate more separation.")
-  #
-  sn.plots.l <- (length(Slide_Descript) + 1)
-  lbl <- c(lbl, rep("Mean S/N Ratio Graphs",
-                    ceiling(sn.plots.l/ 4)))
-  lbl <- c(lbl, rep("Median S/N Ratio Graphs",
-                   ceiling(sn.plots.l/ 4)))
-  lbl2 <- c(lbl2, rep(paste0(
-    "Measures the difference between signal and noise using a simple ratio.",
-    " Higher values indicate more separation."),
-    2*ceiling(sn.plots.l/ 4)))
-  #
-  lbl <- c(lbl, bx.plots$lbl)
-  lbl2 <- c(lbl2, bx.plots$lbl2)
-  #
-  plots <- c(tplots, sn.plots, bx.plots$bx.plots)
-  #
-  glist <- list()
-  #
-  if (ihc.logical){
-    lbl.ihc <-  'IHC to IF Comparison Graph'
-    lbl2.ihc <- paste0(
-      'Compare the fraction of positivity of each IF dilution to the ',
-      'fraction of positivity from the IHC in order to determine when loss of ',
-      'signal occurs.'
-    )
-    #
-    glist <- c(
-      glist,
-      mIFTO::m.grid.arrange(
-        ihc.plots,lbl.ihc,
-        lbl2.ihc, 3, 0, (ceiling(length(plots))/4 + 1)
-      )
-    )
-  }
-  glist <- c(
-    glist,
-    mIFTO::m.grid.arrange(
-      plots, lbl, lbl2, 1, 1, (ceiling(length(plots))/4 + 1)
-    )
-  )
-  gout <- gridExtra::marrangeGrob(grobs=glist,nrow=1,ncol=1,top=NULL)
-  #
-  str = paste0(wd,'/Results.pixels/stats/graphs/',
-                'Graphs for ', Antibody_Opal)
-  #
-  ggplot2::ggsave(paste0(str,'.pdf'),gout,
-    height = 9, width = 8.5, units = 'in', scale = 1, dpi = 300)
   #
   ###############################Histogram Graphs ######################
   #
-  ii = 96;mIFTO::doupdate.pgbar(
+  ii = 97;mIFTO::doupdate.pgbar(
     ii, pb.Object, 'Generating Histogram Graphs')
   #
-  map.and.write.histograms(
+  mIFTO::map.and.write.histograms(
     wd, Antibody_Opal, Slide_Descript,
     Concentration, Thresholds, Tables$Tables.wholeslide, theme1, colors)
   #

@@ -18,6 +18,8 @@ populate.tables(
   paths,
   titration.type.name,
   connected.pixels,
+  decile.logical,
+  threshold.logical,
   pb.count,
   pb.Object
 )
@@ -44,6 +46,10 @@ as "AB (Opal NNN)"}
 
 \item{connected.pixels}{the number of pixels that a pixel must be connected
 to for positivity measures}
+
+\item{decile.logical}{whether or not to run a decile approach analysis}
+
+\item{threshold.logical}{whether or not to run a threshold approach analysis}
 
 \item{pb.count}{current count for progress bar}
 

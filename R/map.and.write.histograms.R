@@ -27,11 +27,12 @@ map.and.write.histograms <- function(
   #
   # set up vars
   #
+  plots.per.page <- 6
   correction.val<-c(1,.001)
   Histograms.names<-c('Plus1','Plus001')
   names(correction.val)<-Histograms.names
   glist <- list()
-  total.pages <- ceiling(length(Concentration)/4) * length(Slide_Descript)
+  total.pages <- ceiling(length(Concentration)/ plots.per.page) * length(Slide_Descript)
   if (length(Concentration) <= length(colors)){
     total.pages.a <- total.pages
     total.pages <- total.pages + ceiling(length(Slide_Descript)/2)
@@ -69,9 +70,12 @@ map.and.write.histograms <- function(
     if (i.1 == 'Plus1'){
       zn <- 'ln(NFI + 1)'
       inm <- '1'
+      theme2 <- ggplot2::theme(
+        axis.text.x = ggplot2::element_text(vjust = 1.5))
     } else {
       zn <- 'ln(NFI + .001)'
       inm <- '.001'
+      theme2 <- ggplot2::theme()
     }
     #
     # set up limits and labels for plotting
@@ -85,7 +89,7 @@ map.and.write.histograms <- function(
     lbl2 <- rep(paste0(
       lbl.a," A value of ", inm,
       " has been added to the data to account for zeros."),
-      ceiling(plots.sep.l/ 4)
+      ceiling(plots.sep.l/ plots.per.page)
       )
     #
     # plot for each slide, concentration
@@ -98,6 +102,14 @@ map.and.write.histograms <- function(
       names(Thresholds[[x]])<-Concentration
       #
       for (y in Concentration){
+        if (y == max(Concentration) ||
+            which(y == Concentration)%%plots.per.page == 0){
+          zn1 = zn
+          theme3 <- theme2
+        } else {
+          zn1 = ''
+          theme3 <- ggplot2::theme()
+          }
           #
           # prepare data
           #
@@ -111,35 +123,51 @@ map.and.write.histograms <- function(
             ggplot2::geom_line() +
             ggplot2::labs(title= paste0(
               Slide_Descript[x], ' 1:', y,' ', Antibody_Opal),
-              x = zn, y = 'Density') +
+              x = zn1, y = 'Density') +
             ggplot2::scale_x_continuous(breaks = seq(
               from=round(MIN_X),to = round(MAX_X), by=1)) +
             ggplot2::coord_cartesian(
               xlim = c(round(MIN_X), round(MAX_X)), expand = F,
               ylim = c(0, round(MAX_Y+.001, digits = 3))) +
-            theme1 + ggplot2::theme(legend.position = c(.9,.8)) +
             ggplot2::geom_vline(
               xintercept = log(Thresholds[[x]][[which(
-                Concentration==y)]]+correction.val[i.1])) +
-            ggplot2::theme(
+                Concentration==y)]]+correction.val[i.1])
+            ) + theme1 + ggplot2::theme(
+              legend.position = c(.9,.8),
               plot.margin = ggplot2::margin(
-                t = 20, r = 20, b = 20, l = 20, unit = "pt"))
+                t = 0, r = 0, b = 0, l = 0, unit = "pt"),
+              aspect.ratio = .1,
+              title = ggplot2::element_text(size = 8, vjust = -6),
+              axis.title.x = ggplot2::element_text(size = 8, vjust = 2.5),
+              axis.title.y = ggplot2::element_text(size = 8),
+              axis.ticks.length=unit(.05, "cm")
+            ) + theme3
           #
           plot.count<-plot.count+1
       }
-      if ((plots.sep.l/4)%%1 == .25){
-        plots.sep <- c(plots.sep[1:plots.sep.l], p1,p1,p1)
-      } else if ((plots.sep.l/4)%%1 == .5){
-        plots.sep <- c(plots.sep[1:plots.sep.l], p1,p1)
-      } else if ((plots.sep.l/4)%%1 == .75){
-        plots.sep <- c(plots.sep[1:plots.sep.l], p1)
+      #
+      if ((plots.sep.l/ plots.per.page)%%1 != 0){
+        plots.sep <- c(
+          plots.sep, rep(
+            p1, plots.per.page - (
+              (plots.sep.l/ plots.per.page)%%1 *  plots.per.page
+            )
+          )
+        )
       }
       #
       lbl <- rep(paste0(
         "Intensity Distributions Separated by Slides and Concentration for ",
-        Slide_Descript[[x]], " ", Antibody_Opal), ceiling(plots.sep.l/ 4))
-      glist <- c(glist, m.grid.arrange(plots.sep, lbl, lbl2, 1, (i.c + (x-1)),
-                                       total.pages))
+        Slide_Descript[[x]], " ", Antibody_Opal),
+        ceiling(plots.sep.l/ plots.per.page)
+      )
+      glist <- c(
+        glist,
+        mIFTO::m.grid.arrange(
+          plots.sep, lbl, lbl2, 4, (i.c + (x-1)),
+          total.pages
+        )
+      )
     }
     #
     # set up the overlapped histogram view
@@ -209,7 +237,7 @@ map.and.write.histograms <- function(
   #
   gout <- gridExtra::marrangeGrob(grobs=glist,nrow=1,ncol=1,top=NULL)
   #
-  str = paste0(wd,'/Results.pixels/histograms/Histograms for ',
+  str = paste0(wd,'/Results.pixels/Histograms for ',
                Antibody_Opal,'.pdf')
   ggplot2::ggsave(str,
                   gout,height = 9, width = 8.5, units = 'in', scale = 1, dpi = 300)

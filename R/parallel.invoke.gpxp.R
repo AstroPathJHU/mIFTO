@@ -20,7 +20,6 @@
 #' designated as "AB (Opal NNN)"
 #' @param titration.type.name the type of titration that was performed
 #' (TSA or Primary)
-#' @param Protocol the scanning protocol used (7color or 9color)
 #' @param Thresholds a list of thresholds used for each concentration and slide
 #' @param paths the paths to the data as a list, with an element for each
 #'  concentration
@@ -28,6 +27,8 @@
 #' to for positivity measures
 #' @param flowout logical for whether or not flow like results will be produced
 #' @param Opal1 the opal value of interest
+#' @param decile.logical whether or not to run a decile approach analysis
+#' @param threshold.logical whether or not to run a threshold approach analysis
 #' @param cl cluster object
 #' @return
 #' @export
@@ -35,8 +36,9 @@
 #'
 parallel.invoke.gpxp <- function (
   Concentration, x, y, Image.IDs, Antibody_Opal,
-  titration.type.name, Protocol, Thresholds, paths,
-  connected.pixels, flowout, Opal1, cl){
+  titration.type.name, Thresholds, paths,
+  connected.pixels, flowout, Opal1,
+  decile.logical, threshold.logical, cl){
   #
   # define the environment for the cluster
   #
@@ -51,8 +53,9 @@ parallel.invoke.gpxp <- function (
   #
   parallel::clusterExport(
     cl=cl, varlist=c("Concentration", "x", "y", "Antibody_Opal",
-                     "titration.type.name","Protocol","Thresholds","paths",
-                     "connected.pixels","flowout","Opal1"),
+                     "titration.type.name","Thresholds","paths",
+                     "connected.pixels","flowout","Opal1",
+                     "decile.logical", "threshold.logical"),
     envir=my_env)
   #
   ###### need to add a try catch, but also need to determine what happens
@@ -60,7 +63,8 @@ parallel.invoke.gpxp <- function (
     small.tables.byimage<- parallel::parLapply(
       cl,Image.IDs[[x]][[y]],function(z) mIFTO::generate.pxp.image.data(
         Concentration, x, y, z, Antibody_Opal,
-        titration.type.name, Protocol, Thresholds, paths,
-        connected.pixels, flowout, Opal1))
+        titration.type.name, Thresholds, paths,
+        connected.pixels, flowout, Opal1,
+        decile.logical, threshold.logical))
   #
 }

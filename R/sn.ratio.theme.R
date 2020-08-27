@@ -27,12 +27,23 @@ sn.ratio.theme <- function(tbl, Concentration, titl, xtitl, ytitl, Max, theme1,
   colvals <- c('red4'='red4',
                "#B2B2B2"="#B2B2B2",'deepskyblue3'='deepskyblue3')
   collbls <- c('red4'='S/N Ratio',
-               "#B2B2B2"='Median Noise','deepskyblue3'='Median Signal')
+               "#B2B2B2"='Noise','deepskyblue3'='Signal')
   xcoords<-c(
     min(Concentration)-((min(Concentration))/2),
     max(Concentration)+((min(Concentration))/2)
   )
-
+  #
+  if (Max < 100){
+    Max = round(Max, -1) + 5
+    ybre <- seq(0,100,5)
+  } else if (Max >= 100 & Max < 500) {
+    Max = round(Max, -2) + 100
+    ybre <- seq(0, Max, 50)
+  } else {
+    Max = round(Max, -2) + 100
+    ybre <- seq(0, Max + 100, 100)
+    
+  }
   #
   if (con_type == 'factor'){
     con_data <- as.factor(Concentration)
@@ -118,11 +129,11 @@ sn.ratio.theme <- function(tbl, Concentration, titl, xtitl, ytitl, Max, theme1,
       xlim = xcoords, ylim = c(-5,Max), expand = F
     ) +
     ggplot2::scale_y_continuous(
-      breaks=seq(0,100,5)
+      breaks=ybre
     ) +
     x_scal +
     theme1 + ggplot2::theme(
-      legend.position = c(.85,.85)
+      legend.position = c(.88,.87)
     ) +
     ggplot2::theme(
       plot.margin = ggplot2::margin(

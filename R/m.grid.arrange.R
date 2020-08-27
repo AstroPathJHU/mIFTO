@@ -17,6 +17,19 @@
 
 m.grid.arrange <- function(p, lbl, lbl2, opt, st.pg, total.pgs) {
   #
+  # sizing
+  #
+  margin.size <- .5
+  title.size <- 1
+  line.size <- .02
+  graph.h.size <- (9 - 2*margin.size - title.size - line.size) / 2
+  graph.w.size <- (8.5 - 2*margin.size - line.size) / 2
+  row.unit <- c('inches', 'inches','inches','inches', 'inches')
+  row.sizes <- c(title.size, graph.h.size, graph.h.size,
+                 line.size, margin.size)
+  col.unit <- c('inches', 'inches','inches','inches')
+  col.sizes <- c(margin.size, graph.w.size, graph.w.size, margin.size)
+  #
   pdf(file = NULL) #invisible
   if (opt == 1){
     plots.per.page <- 4
@@ -39,12 +52,27 @@ m.grid.arrange <- function(p, lbl, lbl2, opt, st.pg, total.pgs) {
                  c(NA, 1, 1, NA),
                  c(NA, 3, 3, NA),
                  c(NA, 4, 4, NA))
+  } else if (opt == 4) {
+    plots.per.page <- 6
+    lay <- rbind(c(NA, 7, 7, NA),
+                 c(NA, 1, 1, NA),
+                 c(NA, 2, 2, NA),
+                 c(NA, 3, 3, NA),
+                 c(NA, 4, 4, NA),
+                 c(NA, 5, 5, NA),
+                 c(NA, 6, 6, NA),
+                 c(NA, 8, 8, NA),
+                 c(NA, 9, 9, NA))
+    title.size <- 1.475
+    graph.h.size <- (9 - 2*margin.size - title.size - line.size) / 6
+    row.unit <- c('inches', 'inches','inches', 'inches','inches',
+                  'inches', 'inches', 'inches', 'inches')
+    row.sizes <- c(title.size, graph.h.size, graph.h.size, graph.h.size,
+                   graph.h.size, graph.h.size, graph.h.size,
+                   line.size, margin.size)
+    col.unit <- c('inches', 'inches','inches','inches')
+    col.sizes <- c(margin.size, graph.w.size, graph.w.size, margin.size)
   }
-  margin.size <- .5
-  title.size <- 1
-  line.size <- .02
-  graph.h.size <- (9 - 2*margin.size - title.size - line.size) / 2
-  graph.w.size <- (8.5 - 2*margin.size - line.size) / 2
   #
   myfun <- function (..., newpage = TRUE)
   {
@@ -92,13 +120,12 @@ m.grid.arrange <- function(p, lbl, lbl2, opt, st.pg, total.pgs) {
     args.do <-  c(g2,list(
                        layout_matrix = lay,
                   heights=grid::unit(
-                    c(title.size, graph.h.size, graph.h.size,
-                      line.size, margin.size),
-                    c('inches', 'inches','inches','inches','inches')
+                    row.sizes,
+                    row.unit
                   ),
                   widths=grid::unit(
-                    c(margin.size, graph.w.size, graph.w.size, margin.size),
-                    c('inches', 'inches','inches','inches')
+                    col.sizes,
+                    col.unit
                   ), padding = NULL
     ))
     do.call(myfun,args.do)

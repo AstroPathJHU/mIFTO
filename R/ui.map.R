@@ -412,12 +412,14 @@ ui.map <- function (){
                     choiceNames = list(
                       'Is the data in separate folders according to dilution?',
                       'Was an IHC thresholded with this titration?',
-                      'Were thresholds different for cases?'
+                      'Were thresholds different for cases?',
+                      'Export csv files of flow-like data (column vec format)?'
                     ),
                     choiceValues = list(
                       'Folders.Pixels',
                       'ihc.Pixels',
-                      'nConsistent'
+                      'nConsistent',
+                      'flowout.Pixels'
                     ),
                     selected = 'Folders.Pixels',
                     inline = TRUE),

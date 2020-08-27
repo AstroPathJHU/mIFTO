@@ -4,7 +4,7 @@
 \alias{generate.pxp.image.data}
 \title{Used to create the pixel-by-pixel graph data and return a table;
 Created By: Benjamin Green;
-Last Edited 09/25/2019}
+Last Edited 08/11/2020}
 \usage{
 generate.pxp.image.data(
   Concentration,
@@ -13,12 +13,13 @@ generate.pxp.image.data(
   q,
   Antibody_Opal,
   titration.type.name,
-  Protocol,
   Thresholds,
   paths,
   connected.pixels,
   flowout,
-  Opal1
+  Opal1,
+  decile.logical,
+  threshold.logical
 )
 }
 \arguments{
@@ -36,8 +37,6 @@ as "AB (Opal NNN)"}
 \item{titration.type.name}{the type of titration that was performed
 (TSA or Primary)}
 
-\item{Protocol}{the scanning protocol used (7color or 9color)}
-
 \item{Thresholds}{a list of thresholds used for each concentration and slide}
 
 \item{paths}{the paths to the data as a list, with an element for each
@@ -49,6 +48,10 @@ to for positivity measures}
 \item{flowout}{logical for whether or not flow like results will be produced}
 
 \item{Opal1}{the opal value of interest}
+
+\item{decile.logical}{whether or not to run a decile approach analysis}
+
+\item{threshold.logical}{whether or not to run a threshold approach analysis}
 }
 \value{
 
