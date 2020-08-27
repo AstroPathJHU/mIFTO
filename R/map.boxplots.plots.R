@@ -93,11 +93,11 @@ map.boxplots.plots <- function(
     #
     # graph titles
     #
-    zn = c('Boxplots of Signal and Noise NFI \n for Slide',
-           'Boxplots of Top and Bottom 10% of \n Positive Signal NFI for Slide',
-           'Boxplots of Top and Bottom 5% of \n Positive Signal NFI for Slide',
-           'Boxplots of Top and Bottom 2% of \n Positive Signal NFI for Slide',
-           'Boxplots of Top and Bottom 1% of \n Positive Signal NFI for Slide')
+    zn = c('Signal and Noise NFI \n for Slide ',
+           'Top and Bottom 10% of + Signal NFI\n for Slide ',
+           'Top and Bottom 5% of + Signal NFI\n for Slide ',
+           'Top and Bottom 2% of + Signal NFI\n for Slide ',
+           'Top and Bottom 1% of + Signal NFI\n for Slide ')
   }
   #
   names(collbls) <- data.names
@@ -127,9 +127,15 @@ map.boxplots.plots <- function(
     #
     y_bottom <- -5
     y_top <- max(tbl.graph$top.Inner.fence)
-    if (y_top > 30) {
+    if (y_top > 30 & y_top < 100) {
       y_top <- round(y_top, -1) + 10
       y_seq <- 10
+    } else if (y_top >= 100 & y_top < 500){
+      y_top <- round(y_top, -2) + 100
+      y_seq <- 50
+    } else if (y_top >= 500){
+      y_top <- round(y_top, -2) + 100
+      y_seq <- 100
     } else {
       y_top <- round(y_top, -1) + 5
       y_seq <- 5

@@ -46,11 +46,11 @@ map.snratio.plots <- function(
                   x,' SN Ratio of ',Antibody_Opal,' ',m.opt)
     tbl <- tables_in[[m.data.type]][[x]]
     #
-    tbl$SN_Ratio[!is.finite(tbl$Signal)]<-0
     tbl$Signal[!is.finite(tbl$Signal)]<-0
     #
-    tbl$SN_Ratio[!is.finite(tbl$Noise)]<-0
     tbl$Noise[!is.finite(tbl$Noise)]<-0
+    #
+    tbl$SN_Ratio[!is.finite(tbl$SN_Ratio)]<-0
     #
     tbl$Image.ID <- paste0('[',tbl$Image.ID,']')
     #
@@ -59,11 +59,20 @@ map.snratio.plots <- function(
     #
     # find upper limit for graphs
     #
+    m_tbl <- dplyr::summarize(
+      dplyr::group_by(
+        tbl, Slide.ID, Concentration
+        ),
+      Sig = mean(Signal) + sd(Signal),
+      SN = mean(SN_Ratio) + sd(SN_Ratio),
+      .groups = 'drop'
+      )
+    #
     Max<-round(
-      max(tbl$SN_Ratio[is.finite(
-        tbl$SN_Ratio)],
-        tbl$Signal[is.finite(
-          tbl$Signal)]), digits = -1)+5
+      max(
+        m_tbl$SN, m_tbl$Sig
+        ), digits = -1
+      )
     #
     # aggregate data for average table
     #

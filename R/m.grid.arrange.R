@@ -63,7 +63,7 @@ m.grid.arrange <- function(p, lbl, lbl2, opt, st.pg, total.pgs) {
                  c(NA, 6, 6, NA),
                  c(NA, 8, 8, NA),
                  c(NA, 9, 9, NA))
-    title.size <- 1.5
+    title.size <- 1.475
     graph.h.size <- (9 - 2*margin.size - title.size - line.size) / 6
     row.unit <- c('inches', 'inches','inches', 'inches','inches',
                   'inches', 'inches', 'inches', 'inches')

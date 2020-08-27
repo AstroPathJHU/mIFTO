@@ -32,7 +32,18 @@ sn.ratio.theme <- function(tbl, Concentration, titl, xtitl, ytitl, Max, theme1,
     min(Concentration)-((min(Concentration))/2),
     max(Concentration)+((min(Concentration))/2)
   )
-
+  #
+  if (Max < 100){
+    Max = round(Max, -1) + 5
+    ybre <- seq(0,100,5)
+  } else if (Max >= 100 & Max < 500) {
+    Max = round(Max, -2) + 100
+    ybre <- seq(0, Max, 50)
+  } else {
+    Max = round(Max, -2) + 100
+    ybre <- seq(0, Max + 100, 100)
+    
+  }
   #
   if (con_type == 'factor'){
     con_data <- as.factor(Concentration)
@@ -118,7 +129,7 @@ sn.ratio.theme <- function(tbl, Concentration, titl, xtitl, ytitl, Max, theme1,
       xlim = xcoords, ylim = c(-5,Max), expand = F
     ) +
     ggplot2::scale_y_continuous(
-      breaks=seq(0,100,5)
+      breaks=ybre
     ) +
     x_scal +
     theme1 + ggplot2::theme(

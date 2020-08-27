@@ -16,5 +16,5 @@
 #'
 doupdate.pgbar <- function(ii, pb, ll){
   Sys.sleep(0.1)
-  #pb$set(message = ll, value = ii/100)
+  pb$set(message = ll, value = ii/100)
 }

@@ -70,9 +70,12 @@ map.and.write.histograms <- function(
     if (i.1 == 'Plus1'){
       zn <- 'ln(NFI + 1)'
       inm <- '1'
+      theme2 <- ggplot2::theme(
+        axis.text.x = ggplot2::element_text(vjust = 1.5))
     } else {
       zn <- 'ln(NFI + .001)'
       inm <- '.001'
+      theme2 <- ggplot2::theme()
     }
     #
     # set up limits and labels for plotting
@@ -99,6 +102,14 @@ map.and.write.histograms <- function(
       names(Thresholds[[x]])<-Concentration
       #
       for (y in Concentration){
+        if (y == max(Concentration) ||
+            which(y == Concentration)%%plots.per.page == 0){
+          zn1 = zn
+          theme3 <- theme2
+        } else {
+          zn1 = ''
+          theme3 <- ggplot2::theme()
+          }
           #
           # prepare data
           #
@@ -112,7 +123,7 @@ map.and.write.histograms <- function(
             ggplot2::geom_line() +
             ggplot2::labs(title= paste0(
               Slide_Descript[x], ' 1:', y,' ', Antibody_Opal),
-              x = zn, y = 'Density') +
+              x = zn1, y = 'Density') +
             ggplot2::scale_x_continuous(breaks = seq(
               from=round(MIN_X),to = round(MAX_X), by=1)) +
             ggplot2::coord_cartesian(
@@ -127,27 +138,23 @@ map.and.write.histograms <- function(
                 t = 0, r = 0, b = 0, l = 0, unit = "pt"),
               aspect.ratio = .1,
               title = ggplot2::element_text(size = 8, vjust = -6),
-              axis.title.x = ggplot2::element_text(size = 8, vjust = 4),
-              axis.title.y = ggplot2::element_text(size = 8)
-            )
+              axis.title.x = ggplot2::element_text(size = 8, vjust = 2.5),
+              axis.title.y = ggplot2::element_text(size = 8),
+              axis.ticks.length=unit(.05, "cm")
+            ) + theme3
           #
           plot.count<-plot.count+1
       }
       #
-      # if ((plots.sep.l/4)%%1 == .25){
-      #   plots.sep <- c(plots.sep[1:plots.sep.l], p1,p1,p1)
-      # } else if ((plots.sep.l/4)%%1 == .5){
-      #   plots.sep <- c(plots.sep[1:plots.sep.l], p1,p1)
-      # } else if ((plots.sep.l/4)%%1 == .75){
-      #   plots.sep <- c(plots.sep[1:plots.sep.l], p1)
-      # }
-      plots.sep <- c(
-        plots.sep, rep(
-          p1, plots.per.page - (
-            (plots.sep.l/ plots.per.page)%%1 *  plots.per.page
+      if ((plots.sep.l/ plots.per.page)%%1 != 0){
+        plots.sep <- c(
+          plots.sep, rep(
+            p1, plots.per.page - (
+              (plots.sep.l/ plots.per.page)%%1 *  plots.per.page
+            )
           )
         )
-      )
+      }
       #
       lbl <- rep(paste0(
         "Intensity Distributions Separated by Slides and Concentration for ",

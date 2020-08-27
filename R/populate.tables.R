@@ -198,20 +198,20 @@ populate.tables <- function(
             All.Images, Opal1, Concentration, x, y, 1)
           #
           small.wholeslide.tables<-list(
-            'Histograms' = list(mIFTO::histogram.calculations(
+            'Histograms' = mIFTO::histogram.calculations(
               c(All.Images[[1]],All.Images[[2]]), ## histo calc needs work
-              Concentration[y],x,'All')),
-            'BoxPlots' = list(ic.plots[['Boxplot.Calculations']]),
-            'BoxPlots_90' = list(ic.plots[['Boxplot.Calculations_90']]),
-            'BoxPlots_95' = list(ic.plots[['Boxplot.Calculations_95']]),
-            'BoxPlots_98' = list(ic.plots[['Boxplot.Calculations_98']]),
-            'BoxPlots_99' = list(ic.plots[['Boxplot.Calculations_99']])
+              Concentration[y],x,'All'),
+            'BoxPlots' = ic.plots[['Boxplot.Calculations']],
+            'BoxPlots_90' = ic.plots[['Boxplot.Calculations_90']],
+            'BoxPlots_95' = ic.plots[['Boxplot.Calculations_95']],
+            'BoxPlots_98' = ic.plots[['Boxplot.Calculations_98']],
+            'BoxPlots_99' = ic.plots[['Boxplot.Calculations_99']]
           )
         } else {
           small.wholeslide.tables<-list(
-            'Histograms' = list(mIFTO::histogram.calculations(
+            'Histograms' = mIFTO::histogram.calculations(
               All.Images, ## histo calc needs work
-              Concentration[y],x,'All'))
+              Concentration[y],x,'All')
           )
         }
         #
@@ -221,7 +221,7 @@ populate.tables <- function(
           #
           small.wholeslide.tables <- c(
             small.wholeslide.tables,
-            'decile.BoxPlots' = list(ic.plots[['Boxplot.Calculations']]))
+            'decile.BoxPlots' = ic.plots[['Boxplot.Calculations']])
         }
         #
         for(i.1 in table.names.wholeslide){
