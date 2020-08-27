@@ -117,6 +117,11 @@ map.boxplots.plots <- function(
     #
     tbl.graph$bottom.Inner.fence[
       tbl.graph$bottom.Inner.fence < 0] <- 0
+    tbl.graph$Median[!is.finite(tbl.graph$Median)]<-0
+    tbl.graph$`1st`[!is.finite(tbl.graph$`1st`)]<-0    #
+    tbl.graph$`2nd`[!is.finite(tbl.graph$`2nd`)]<-0    #
+    tbl.graph$top.Inner.fence[!is.finite(tbl.graph$top.Inner.fence)]<-0 
+    tbl.graph$bottom.Inner.fence[!is.finite(tbl.graph$bottom.Inner.fence)]<-0 
     #
     # set y coords
     #

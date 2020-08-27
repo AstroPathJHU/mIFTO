@@ -97,15 +97,12 @@ generate.pxp.image.data <- function(
     #
     decile.positivity.data <- mIFTO::decile.define.image.positivity(
       data.in, 10)
-    decile.positivity.data.out <- lapply(
-      1:length(decile.positivity.data),
-      function(x) c(decile.positivity.data[[x]]))
     small.tables<-c(small.tables,
-                    'decile.SN.Ratio' = mIFTO::sn.ratio.calculations(
-                      decile.positivity.data,Concentration[y],x,q),
-                    'decile.T.Tests' = mIFTO::welch.t.test.calculations(
-                      decile.positivity.data,Concentration[y],x,q),
-                    'decile.Image' = decile.positivity.data.out
+                    'decile.SN.Ratio' = list(mIFTO::sn.ratio.calculations(
+                      decile.positivity.data,Concentration[y],x,q)),
+                    'decile.T.Tests' = list(mIFTO::welch.t.test.calculations(
+                      decile.positivity.data,Concentration[y],x,q)),
+                    'decile.Image' = list(decile.positivity.data)
     )
   }
   #
@@ -120,26 +117,20 @@ generate.pxp.image.data <- function(
       positivity.data <- mIFTO::define.image.positivity(
         data.in,Thresholds[[x]][y],connected.pixels[[x]][y])
     }
-    positivity.data.out <- lapply(
-      1:length(positivity.data),
-      function(x) c(positivity.data[[x]]))
     #
     # do the calculations for each type of graph and store
     #
     small.tables<-c(small.tables,
-      'SN.Ratio' = mIFTO::sn.ratio.calculations(
-        positivity.data,Concentration[y],x,q),
-      'T.Tests' = mIFTO::welch.t.test.calculations(
-        positivity.data,Concentration[y],x,q),
+      'SN.Ratio' = list(mIFTO::sn.ratio.calculations(
+        positivity.data,Concentration[y],x,q)),
+      'T.Tests' = list(mIFTO::welch.t.test.calculations(
+        positivity.data,Concentration[y],x,q)),
       'Image.ID' = paste0(
         '[',q,']'),
-      'Image' = positivity.data.out
+      'Image' = list(positivity.data)
     )
     #
-    # the rest of the loop moves the data into a format that allows
-    # the data to be more readily available
-    #
-    rm(positivity.data, positivity.data.out)
+    rm(positivity.data)
   } else {
     small.tables <- c(
       small.tables,
