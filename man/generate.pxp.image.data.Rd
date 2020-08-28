@@ -19,7 +19,8 @@ generate.pxp.image.data(
   flowout,
   Opal1,
   decile.logical,
-  threshold.logical
+  threshold.logical,
+  step.value
 )
 }
 \arguments{
@@ -52,6 +53,9 @@ to for positivity measures}
 \item{decile.logical}{whether or not to run a decile approach analysis}
 
 \item{threshold.logical}{whether or not to run a threshold approach analysis}
+
+\item{step.value}{the number of tiles to divide the data into for decile 
+approach}
 }
 \value{
 

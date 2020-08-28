@@ -75,7 +75,7 @@ ic.plots.calculations<-function(
     #
     for (tp in 1:length(n_pct)){
       for (z in 1:2){
-        v1 <- quantile(data[[1]][['Antibody']], n_pct[[tp]][[z]])
+        v1 <- quantile(data[[2]][['Antibody']], n_pct[[tp]][[z]])
         if (z == 1){
           data1 <- dplyr::filter(
             data[[2]], Antibody < v1

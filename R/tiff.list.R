@@ -28,7 +28,9 @@ tiff.list <- function(wd, pattern.in) {
     wd,
     pattern = paste0(pattern.in, '_component_data.tif'),
     full.names = T,
-    ignore.case = T
+    ignore.case = T,
+    recursive = F,
+    include.dirs = F
   )
   if (length(image_names) > 1){
     err.val <- 1

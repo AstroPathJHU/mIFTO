@@ -29,6 +29,8 @@
 #' @param Opal1 the opal value of interest
 #' @param decile.logical whether or not to run a decile approach analysis
 #' @param threshold.logical whether or not to run a threshold approach analysis
+#' @param step.value the number of tiles to divide the data into for decile 
+#' approach
 #' @param cl cluster object
 #' @return
 #' @export
@@ -38,7 +40,7 @@ parallel.invoke.gpxp <- function (
   Concentration, x, y, Image.IDs, Antibody_Opal,
   titration.type.name, Thresholds, paths,
   connected.pixels, flowout, Opal1,
-  decile.logical, threshold.logical, cl){
+  decile.logical, threshold.logical, step.value, cl){
   #
   # define the environment for the cluster
   #
@@ -55,7 +57,7 @@ parallel.invoke.gpxp <- function (
     cl=cl, varlist=c("Concentration", "x", "y", "Antibody_Opal",
                      "titration.type.name","Thresholds","paths",
                      "connected.pixels","flowout","Opal1",
-                     "decile.logical", "threshold.logical"),
+                     "decile.logical", "threshold.logical", "step.value"),
     envir=my_env)
   #
   ###### need to add a try catch, but also need to determine what happens
@@ -65,6 +67,6 @@ parallel.invoke.gpxp <- function (
         Concentration, x, y, z, Antibody_Opal,
         titration.type.name, Thresholds, paths,
         connected.pixels, flowout, Opal1,
-        decile.logical, threshold.logical))
+        decile.logical, threshold.logical, step.value))
   #
 }

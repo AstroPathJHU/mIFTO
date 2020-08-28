@@ -28,6 +28,8 @@
 #' @param Opal1 the opal value of interest
 #' @param decile.logical whether or not to run a decile approach analysis
 #' @param threshold.logical whether or not to run a threshold approach analysis
+#' @param step.value the number of tiles to divide the data into for decile 
+#' approach
 #' @return
 #' @export
 #'
@@ -35,7 +37,7 @@ generate.pxp.image.data <- function(
   Concentration, x, y, q, Antibody_Opal,
   titration.type.name, Thresholds, paths,
   connected.pixels, flowout, Opal1,
-  decile.logical, threshold.logical
+  decile.logical, threshold.logical, step.value
 ){
   #
   # this is the current image name
@@ -96,7 +98,7 @@ generate.pxp.image.data <- function(
   if(decile.logical){
     #
     decile.positivity.data <- mIFTO::decile.define.image.positivity(
-      data.in, 10)
+      data.in, step.value)
     small.tables<-c(small.tables,
                     'decile.SN.Ratio' = list(mIFTO::sn.ratio.calculations(
                       decile.positivity.data,Concentration[y],x,q)),
@@ -134,7 +136,7 @@ generate.pxp.image.data <- function(
   } else {
     small.tables <- c(
       small.tables,
-      'Image' = as.vector(data.in)
+      'Image' = list(as.vector(data.in))
     )
   }
   #

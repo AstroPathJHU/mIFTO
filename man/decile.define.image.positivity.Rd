@@ -16,9 +16,9 @@ decile.define.image.positivity(data.in, step.value)
 exports multiple variables for use in the main titration codes
 }
 \description{
-define.image.positivity;
+decile.define.image.positivity;
 Created By: Benjamin Green;
-Last Edited 08/11/2020
+Last Edited 08/27/2020
 }
 \details{
 Takes in an image, a threshold, and connected pixel values

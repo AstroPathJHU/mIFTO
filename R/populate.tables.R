@@ -28,6 +28,8 @@
 #' to for positivity measures
 #' @param decile.logical whether or not to run a decile approach analysis
 #' @param threshold.logical whether or not to run a threshold approach analysis
+#' @param step.value the number of tiles to divide the data into for decile 
+#' approach
 #' @param pb.count current count for progress bar
 #' @param pb.Object progress bar object
 #' @return
@@ -36,7 +38,7 @@
 populate.tables <- function(
   Slide_Descript, Concentration, Antibody_Opal, Thresholds, Opal1,
   flowout, Protocol, paths, titration.type.name, connected.pixels,
-  decile.logical, threshold.logical, pb.count, pb.Object){
+  decile.logical, threshold.logical, step.value, pb.count, pb.Object){
   #
   #############pre-allocating tables to store results###################
   #
@@ -101,7 +103,7 @@ populate.tables <- function(
             Concentration, x, y, Image.IDs, Antibody_Opal,
             titration.type.name, Thresholds, paths,
             connected.pixels, flowout, Opal1,
-            decile.logical, threshold.logical, cl
+            decile.logical, threshold.logical, step.value, cl
           )
         }, warning = function(cond) {
           modal_out <- shinyalert::shinyalert(
@@ -184,6 +186,9 @@ populate.tables <- function(
       }
       #
       names(All.Images) <- c('pos','neg','pos.mask','neg.mask')
+      if (decile.logical){
+        names(decile.All.Images) <- c('pos','neg','pos.mask','neg.mask')
+      }
       rm(small.tables.byimage)
       #
       pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
@@ -210,7 +215,7 @@ populate.tables <- function(
         } else {
           small.wholeslide.tables<-list(
             'Histograms' = mIFTO::histogram.calculations(
-              All.Images, ## histo calc needs work
+              All.Images[[1]], ## histo calc needs work
               Concentration[y],x,'All')
           )
         }
@@ -221,7 +226,8 @@ populate.tables <- function(
           #
           small.wholeslide.tables <- c(
             small.wholeslide.tables,
-            'decile.BoxPlots' = ic.plots[['Boxplot.Calculations']])
+            'decile.BoxPlots' = list(ic.plots[['Boxplot.Calculations']])
+          )
         }
         #
         for(i.1 in table.names.wholeslide){

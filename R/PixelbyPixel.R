@@ -57,6 +57,7 @@ pixelbypixel <- function(out,pb.Object) {
   connected.pixels <- outchecked$connected.pixels
   decile.logical <- outchecked$decile.logical
   threshold.logical <- outchecked$threshold.logical
+  step.value <- 10
   #
   rm(outchecked, out)
   #
@@ -73,7 +74,7 @@ pixelbypixel <- function(out,pb.Object) {
     Tables <- mIFTO::populate.tables(
       Slide_Descript, Concentration, Antibody_Opal, Thresholds, Opal1,
       flowout, Protocol, paths, titration.type.name, connected.pixels,
-      decile.logical, threshold.logical, pb.count, pb.Object
+      decile.logical, threshold.logical,step.value, pb.count, pb.Object
     )
   )
   #

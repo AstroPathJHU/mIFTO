@@ -113,7 +113,10 @@ preallocate.tables <- function(
       str =  paste0('.*', x, '.*',titration.type.name,
                     '_1to', Concentration[y], '[^0].*_component_data.tif')
       #
-      cImage.IDs <-  list.files(paths[[y]],pattern = str, ignore.case = T)
+      cImage.IDs <-  list.files(
+        paths[[y]],pattern = str, ignore.case = T, recursive = F,
+        include.dirs = F
+        )
       #
       # search for M files
       #
@@ -192,7 +195,7 @@ preallocate.tables <- function(
     Tables$decile.T.Tests <- Tables$T.Tests
     table.names.byimage.1 <- c('decile.SN.Ratio','decile.T.Tests')
     Tables.wholeslide$decile.BoxPlots<- Tables.wholeslide$BoxPlots
-    table.names.wholeslide.1 <- 'decile.Boxplots'
+    table.names.wholeslide.1 <- 'decile.BoxPlots'
   } else{
     table.names.byimage.1 <- NULL
     table.names.wholeslide.1 <- NULL
@@ -212,7 +215,7 @@ preallocate.tables <- function(
     Tables$T.Tests <- NULL
     Tables.wholeslide$BoxPlots <- NULL
     table.names.byimage.2 <- NULL
-    table.names.wholeslide.2 <- NULL
+    table.names.wholeslide.2 <- c('Histograms')
   }
   #
   # clean out unused tables

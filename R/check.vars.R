@@ -208,7 +208,7 @@ check.vars <- function(out) {
   #
   if(grepl("Folders.Pixels",Vars_pxp)) {
     #
-    pp <- list.dirs(wd)
+    pp <- list.dirs(wd, recursive = F)
     #
     paths<-sapply(1:length(Concentration),function(x){
       str = paste0(
@@ -237,7 +237,7 @@ check.vars <- function(out) {
         folders.px <- TRUE
         cImage.IDs <-  list.files(
           c(paste0(wd, '/IHC'), paste0(wd, '/',Antibody,'_IHC')),
-          pattern = str, ignore.case = T)
+          pattern = str, ignore.case = T, include.dirs = F)
       } else {
         folders.px <- FALSE
         cImage.IDs <-  list.files(
@@ -271,7 +271,7 @@ check.vars <- function(out) {
       folders.px <- FALSE
     }
   }
-
+  
   #
   # check that there is one path for each concentration
   # (if folders is false vector paths will be filled with one
@@ -301,13 +301,14 @@ check.vars <- function(out) {
   } else {
     threshold.logical <- FALSE
   }
+  #
   threshold.logical <- TRUE
   #
   # if both threshold and logical pixels are false then return an error
   #
   if ((!threshold.logical & !decile.logical)){
     modal_out <- shinyalert::shinyalert(
-      title = "Error must apply thresholds or run quantile analysis.",
+      title = "ERROR: Must apply thresholds or run quantile analysis.",
       text = paste(
         "Both analysis types cannot be left blank, please threshold the data or ",
         "run the quantile analysis."
@@ -321,25 +322,42 @@ check.vars <- function(out) {
   #
   # create the threshold values and connected pixel values
   #
-  if (!grepl("nConsistent",Vars_pxp)) {
-    #
-    Thresholds = lapply(
-      1:length(Slide_ID), function(x)out$Thresholds
-    )
-    #
-    connected.pixels <- lapply(
-      1:length(Slide_ID), function(x)out$connected.pixels
-    )
+  if (threshold.logical){
+    if (!grepl("nConsistent",Vars_pxp)) {
+      #
+      Thresholds = lapply(
+        1:length(Slide_ID), function(x)out$Thresholds
+      )
+      #
+      connected.pixels <- lapply(
+        1:length(Slide_ID), function(x)out$connected.pixels
+      )
+    } else {
+      #
+      Thresholds = lapply(
+        1:length(Slide_ID), function(x)out[[paste0("Thresholds",x)]]
+      )
+      #
+      connected.pixels <- lapply(
+        1:length(Slide_ID), function(x)out[[paste0("connected.pixels",x)]]
+      )
+      #
+    }
   } else {
-    #
     Thresholds = lapply(
-      1:length(Slide_ID), function(x)out[[paste0("Thresholds",x)]]
+      1:length(Slide_ID), function(x)rep(0,length(Concentration))
     )
     #
     connected.pixels <- lapply(
-      1:length(Slide_ID), function(x)out[[paste0("connected.pixels",x)]]
+      1:length(Slide_ID), function(x)rep(0,length(Concentration))
     )
-    #
+    if (ihc.logical){
+      n <- shiny::showNotification(
+        paste("Must use threshold analysis for",
+              "IHC compatability"),
+        type = 'warning')
+      ihc.logical <- F
+    }
   }
   #
   names(Thresholds) <- Slide_ID
@@ -350,192 +368,190 @@ check.vars <- function(out) {
   ihc.connected.pixels <- vector(mode = 'list', length= length(Slide_ID))
   names(ihc.connected.pixels) <- Slide_ID
   #
-  if (threshold.logical){
-    v1 = 1
-    v2 = 1
-    v3 = 1
+  v1 = 1
+  v2 = 1
+  v3 = 1
+  #
+  for (x in 1:length(Slide_ID)){
     #
-    for (x in 1:length(Slide_ID)){
-      #
-      if( grepl(' ',Thresholds[[x]],perl = TRUE )) {
-        if (v1 == 1){
-          n <- shiny::showNotification(
-            'Thresholds contain spaces ... removing spaces in threshold list',
-            type = 'warning')
-          v1 = 0
-        }
-        Thresholds[[x]] <- gsub(" ", "",Thresholds[[x]], fixed = TRUE)
-      } else {
-        Thresholds[[x]] <- Thresholds[[x]]
+    if( grepl(' ',Thresholds[[x]],perl = TRUE )) {
+      if (v1 == 1){
+        n <- shiny::showNotification(
+          'Thresholds contain spaces ... removing spaces in threshold list',
+          type = 'warning')
+        v1 = 0
       }
-      #
-      # try to convert to a valid string
-      #
-      Thresholds1 <- tryCatch({
-        as.numeric(
-          unlist(
-            strsplit(
-              Thresholds[[x]], split =','
-            )
-          )
-        )
-      }, warning = function(cond) {
-        modal_out <- shinyalert::shinyalert(
-          title = "Error in threshold input.",
-          text = paste0(
-            "Could not parse threshold input:", Thresholds[[x]],
-            ". Please enter a valid list of numeric thresholds, separated by ",
-            "commas."
-          ),
-          type = 'error',
-          showConfirmButton = TRUE
-        )
-        return(-1)
-      }, error = function(cond) {
-        modal_out <- shinyalert::shinyalert(
-          title = "Error in threshold input.",
-          text = paste0(
-            "Could not parse threshold input:", Thresholds[[x]],
-            ". Please enter a valid list of numeric thresholds, separated by ",
-            "commas."
-          ),
-          type = 'error',
-          showConfirmButton = TRUE
-        )
-        return(-1)
-      })
-      #
-      if (length(Thresholds1) == 1){
-        if (Thresholds1 == -1){
-          err.val = 8
-          return(list(err.val = err.val))
-        }
-      }
-      #
-      Thresholds[[x]] <- Thresholds1
-      #
-      # remove the ihc threshold and place into a new vector if applicable
-      #
-      if (ihc.logical){
-        ihc.Thresholds[[x]] <- Thresholds[[x]][[length(Thresholds[[x]])]]
-        Thresholds[[x]] <- Thresholds[[x]][-length(Thresholds[[x]])]
-      }
-      #
-      # check that the number of thresholds
-      # == the number of concentrations
-      #
-      if (length(Concentration) != length(Thresholds[[x]])){
-        modal_out <- shinyalert::shinyalert(
-          title = "Error in threshold input.",
-          text = paste(
-            "The length of concentration list does",
-            "not equal the length of threshold list"
-          ),
-          type = 'error',
-          showConfirmButton = TRUE
-        )
-        err.val <- 9
-        return(list(err.val = err.val))
-      }
-      #
-      # set up connected pixel values
-      #
-      if( grepl(' ',connected.pixels[[x]],perl = TRUE ) ) {
-        if (v2 == 1){
-          n <- shiny::showNotification(
-            paste("Connected pixel list contains spaces",
-                  "... removing spaces in connected pixel list"),
-            type = 'warning')
-          v2 = 0
-        }
-        connected.pixels[[x]] <- gsub(
-          " ", "",connected.pixels[[x]], fixed = TRUE
-        )
-      } else {
-        connected.pixels[[x]] <- connected.pixels[[x]]
-      }
-      #
-      # try to convert to a valid string
-      #
-      connected.pixels1 <- tryCatch({
-        as.numeric(
-          unlist(
-            strsplit(
-              connected.pixels[[x]], split =','
-            )
-          )
-        )
-      }, warning = function(cond) {
-        modal_out <- shinyalert::shinyalert(
-          title = "Error in connected pixel input.",
-          text = paste0(
-            "Could not parse connected pixel input:", Thresholds[[x]],
-            ". Please enter a valid list of numeric connected pixel values, ",
-            "separated by commas."
-          ),
-          type = 'error',
-          showConfirmButton = TRUE
-        )
-        return(-1)
-      }, error = function(cond) {
-        modal_out <- shinyalert::shinyalert(
-          title = "Error in connected pixel input.",
-          text = paste0(
-            "Could not parse connected pixel input:", Thresholds[[x]],
-            ". Please enter a valid list of numeric connected pixel values, ",
-            "separated by commas."
-          ),
-          type = 'error',
-          showConfirmButton = TRUE
-        )
-        return(-1)
-      }
-      )
-      #
-      if (length(connected.pixels1) == 1){
-        if (connected.pixels1 == -1){
-          err.val = 10
-          return(list(err.val = err.val))
-        }
-      }
-      #
-      if(!isTRUE(all(connected.pixels1 == floor(connected.pixels1)))){
-        if (v3 == 1){
-          n <- shiny::showNotification(
-            paste("Connected pixel list must contain",
-                  "integers ... rounding down"),
-            type = 'warning')
-          v3 = 0
-        }
-        connected.pixels1 <- floor(connected.pixels1)
-      }
-      connected.pixels[[x]] <- connected.pixels1
-      #
-      # remove the ihc con pixels and place into a new vector if applicable
-      #
-      if (ihc.logical){
-        ihc.connected.pixels[[x]] <- connected.pixels[[x]][[length(connected.pixels[[x]])]]
-        connected.pixels[[x]] <- connected.pixels[[x]][-length(connected.pixels[[x]])]
-      }
-      #
-      # check that the number of conn pixels
-      # == the number of concentrations
-      #
-      if (length(Concentration) != length(connected.pixels[[x]])){
-        modal_out <- shinyalert::shinyalert(
-          title = "Error in connected pixels input.",
-          text = paste(
-            "The length of concentration list does",
-            "not equal the length of connected pixels list"
-          ),
-          type = 'error',
-          showConfirmButton = TRUE
-        )
-        err.val <- 11
-        return(list(err.val = err.val))
-      }
-      #
+      Thresholds[[x]] <- gsub(" ", "",Thresholds[[x]], fixed = TRUE)
+    } else {
+      Thresholds[[x]] <- Thresholds[[x]]
     }
+    #
+    # try to convert to a valid string
+    #
+    Thresholds1 <- tryCatch({
+      as.numeric(
+        unlist(
+          strsplit(
+            Thresholds[[x]], split =','
+          )
+        )
+      )
+    }, warning = function(cond) {
+      modal_out <- shinyalert::shinyalert(
+        title = "Error in threshold input.",
+        text = paste0(
+          "Could not parse threshold input:", Thresholds[[x]],
+          ". Please enter a valid list of numeric thresholds, separated by ",
+          "commas."
+        ),
+        type = 'error',
+        showConfirmButton = TRUE
+      )
+      return(-1)
+    }, error = function(cond) {
+      modal_out <- shinyalert::shinyalert(
+        title = "Error in threshold input.",
+        text = paste0(
+          "Could not parse threshold input:", Thresholds[[x]],
+          ". Please enter a valid list of numeric thresholds, separated by ",
+          "commas."
+        ),
+        type = 'error',
+        showConfirmButton = TRUE
+      )
+      return(-1)
+    })
+    #
+    if (length(Thresholds1) == 1){
+      if (Thresholds1 == -1){
+        err.val = 8
+        return(list(err.val = err.val))
+      }
+    }
+    #
+    Thresholds[[x]] <- Thresholds1
+    #
+    # remove the ihc threshold and place into a new vector if applicable
+    #
+    if (ihc.logical){
+      ihc.Thresholds[[x]] <- Thresholds[[x]][[length(Thresholds[[x]])]]
+      Thresholds[[x]] <- Thresholds[[x]][-length(Thresholds[[x]])]
+    }
+    #
+    # check that the number of thresholds
+    # == the number of concentrations
+    #
+    if (length(Concentration) != length(Thresholds[[x]])){
+      modal_out <- shinyalert::shinyalert(
+        title = "Error in threshold input.",
+        text = paste(
+          "The length of concentration list does",
+          "not equal the length of threshold list"
+        ),
+        type = 'error',
+        showConfirmButton = TRUE
+      )
+      err.val <- 9
+      return(list(err.val = err.val))
+    }
+    #
+    # set up connected pixel values
+    #
+    if( grepl(' ',connected.pixels[[x]],perl = TRUE ) ) {
+      if (v2 == 1){
+        n <- shiny::showNotification(
+          paste("Connected pixel list contains spaces",
+                "... removing spaces in connected pixel list"),
+          type = 'warning')
+        v2 = 0
+      }
+      connected.pixels[[x]] <- gsub(
+        " ", "",connected.pixels[[x]], fixed = TRUE
+      )
+    } else {
+      connected.pixels[[x]] <- connected.pixels[[x]]
+    }
+    #
+    # try to convert to a valid string
+    #
+    connected.pixels1 <- tryCatch({
+      as.numeric(
+        unlist(
+          strsplit(
+            connected.pixels[[x]], split =','
+          )
+        )
+      )
+    }, warning = function(cond) {
+      modal_out <- shinyalert::shinyalert(
+        title = "Error in connected pixel input.",
+        text = paste0(
+          "Could not parse connected pixel input:", Thresholds[[x]],
+          ". Please enter a valid list of numeric connected pixel values, ",
+          "separated by commas."
+        ),
+        type = 'error',
+        showConfirmButton = TRUE
+      )
+      return(-1)
+    }, error = function(cond) {
+      modal_out <- shinyalert::shinyalert(
+        title = "Error in connected pixel input.",
+        text = paste0(
+          "Could not parse connected pixel input:", Thresholds[[x]],
+          ". Please enter a valid list of numeric connected pixel values, ",
+          "separated by commas."
+        ),
+        type = 'error',
+        showConfirmButton = TRUE
+      )
+      return(-1)
+    }
+    )
+    #
+    if (length(connected.pixels1) == 1){
+      if (connected.pixels1 == -1){
+        err.val = 10
+        return(list(err.val = err.val))
+      }
+    }
+    #
+    if(!isTRUE(all(connected.pixels1 == floor(connected.pixels1)))){
+      if (v3 == 1){
+        n <- shiny::showNotification(
+          paste("Connected pixel list must contain",
+                "integers ... rounding down"),
+          type = 'warning')
+        v3 = 0
+      }
+      connected.pixels1 <- floor(connected.pixels1)
+    }
+    connected.pixels[[x]] <- connected.pixels1
+    #
+    # remove the ihc con pixels and place into a new vector if applicable
+    #
+    if (ihc.logical){
+      ihc.connected.pixels[[x]] <- connected.pixels[[x]][[length(connected.pixels[[x]])]]
+      connected.pixels[[x]] <- connected.pixels[[x]][-length(connected.pixels[[x]])]
+    }
+    #
+    # check that the number of conn pixels
+    # == the number of concentrations
+    #
+    if (length(Concentration) != length(connected.pixels[[x]])){
+      modal_out <- shinyalert::shinyalert(
+        title = "Error in connected pixels input.",
+        text = paste(
+          "The length of concentration list does",
+          "not equal the length of connected pixels list"
+        ),
+        type = 'error',
+        showConfirmButton = TRUE
+      )
+      err.val <- 11
+      return(list(err.val = err.val))
+    }
+    #
   }
   #
   # get the protocol type

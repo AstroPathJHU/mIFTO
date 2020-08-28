@@ -149,7 +149,7 @@ map.and.plot.threshold.graphs <- function(
   gout <- gridExtra::marrangeGrob(grobs=glist,nrow=1,ncol=1,top=NULL)
   #
   str = paste0(wd,'/Results.pixels/',
-               'Graphs for ', Antibody_Opal)
+               'Threshold Analysis Graphs for ', Antibody_Opal)
   #
   ggplot2::ggsave(paste0(str,'.pdf'),gout,
                   height = 9, width = 8.5, units = 'in', scale = 1, dpi = 300)
