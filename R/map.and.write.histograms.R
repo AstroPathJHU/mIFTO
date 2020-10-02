@@ -205,10 +205,11 @@ map.and.write.histograms <- function(
             xlim = c(round(MIN_X), round(MAX_X)),expand = F,
             ylim = c(0, round(MAX_Y+.001, digits = 3))) +
           theme1 + ggplot2::theme(
-            legend.position = c(.9,.8),aspect.ratio = .5) +
-          ggplot2::theme(
+            legend.position = c(.9,.8),
+            aspect.ratio = .5,
             plot.margin = ggplot2::margin(
-              t = 20, r = 20, b = 20, l = 20, unit = "pt"))
+              t = 20, r = 20, b = 20, l = 20, unit = "pt")
+            )
       }
       #
       # aggregate plots
