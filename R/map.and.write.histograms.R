@@ -140,7 +140,7 @@ map.and.write.histograms <- function(
               title = ggplot2::element_text(size = 8, vjust = -6),
               axis.title.x = ggplot2::element_text(size = 8, vjust = 2.5),
               axis.title.y = ggplot2::element_text(size = 8),
-              axis.ticks.length=unit(.05, "cm")
+              axis.ticks.length=ggplot2::unit(.05, "cm")
             ) + theme3
           #
           plot.count<-plot.count+1
