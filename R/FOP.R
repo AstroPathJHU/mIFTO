@@ -338,7 +338,7 @@ FOP<-function(){
               rbind,lapply(
                 list.files(wd,
                            pattern = '.*]_cell_seg_data.txt$',full.names=TRUE),
-                function(x) fread(x, na.strings=c('NA', '#N/A'),
+                function(x) data.table::fread(x, na.strings=c('NA', '#N/A'),
                                   select=c('Slide ID','Phenotype'),
                                   data.table = FALSE))),
             c('Slide.ID','Phenotype')),
@@ -382,7 +382,7 @@ FOP<-function(){
                          pattern = '.*]_tissue_seg_data_summary.txt$',
                          full.names=TRUE
               ),
-              function(x) fread(
+              function(x) data.table::fread(
                 x, na.strings=c('NA', '#N/A'),
                 select = c(
                   'Sample Name','Tissue Category','Region Area (pixels)'),
@@ -400,7 +400,7 @@ FOP<-function(){
       ##find positive cells and generate output file
       ##Positive_cells data.table can be added to for additional
       # AB with the same SlideIDs.
-      Positive.table<-rbind(Positive.table,resahpe2::dcast(
+      Positive.table<-rbind(Positive.table,reshape2::dcast(
         dplyr::mutate(
           dplyr::summarise(
             dplyr::group_by(
