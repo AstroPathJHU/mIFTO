@@ -14,7 +14,7 @@ Open an Rstudio session to get started. Next, install the package from github us
 ```
 install.packages(‘devtools’)
 library(devtools)
-install_github('beng1290/mIFTO')
+install_github('AstropathJHU/mIFTO')
 ```
 When the package begins to install a number of messages will appear in the console indicating the status of different events, especially during the initial install or just after R has been updated, this is normal. Some of the messages may be in red, this does not indicate an error. If there is an error during installation, usually the output message to the console will start with ```“Error:”``` or ```“Warning:”```, then describe the corresponding error. 
 
