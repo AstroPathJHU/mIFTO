@@ -32,7 +32,7 @@ For more advanced users of R, it may be easier to specific additional options du
 
 This command will install ```‘devtools’``` without asking the user if it is okay to updated or compile a package and will carry out the procedures automatically. The command will also significantly reduce the output to the console. 
 
-When the ```install_github('beng1290/mIFTO')``` command is used, R will output the following messages, followed by a number of other messages. 
+When the ```install_github('AstropathJHU/mIFTO')``` command is used, R will output the following messages, followed by a number of other messages. 
 
 ![Figure 1 Image](R/www/Fig1.PNG)
 
@@ -49,14 +49,14 @@ After the new R session is open, the advisable steps for updating the mIFTO R pa
 ```
 install.packages(‘devtools’)
 library(devtools)
-install_github('beng1290/mIFTO')
+install_github('AstropathJHU/mIFTO')
 ```
 
 For additional details see section 2.1. If the most up to date package is already installed under the current user profile the following message may appear instead:
 
 ![Figure 3 Image](R/www/Fig3.PNG)
 
-If this is a potential mistake it is then possible to use ```install_github('beng1290/mIFTO', force = T)``` in order to force an updated installation of the R package. 
+If this is a potential mistake it is then possible to use ```install_github('AstropathJHU/mIFTO', force = T)``` in order to force an updated installation of the R package. 
 
 A second installation may corrupt the package, in this case the following message will appear:
 
