@@ -43,7 +43,7 @@ FOP<-function(){
     #
     shiny::titlePanel(
       shinyWidgets::setBackgroundImage(
-        "https://raw.githubusercontent.com/beng1290/mIFTO/master/R/www/Splash.png"),
+        "https://raw.githubusercontent.com/AstropathJHU/mIFTO/master/R/www/Splash.png"),
       title = shiny::div(
         shiny::strong(
           "(mIFTO) Multiplex Immunofluorescence Titration Optimization"
