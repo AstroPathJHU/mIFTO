@@ -30,7 +30,7 @@ ui.map <- function (){
     #
     shiny::titlePanel(
       shinyWidgets::setBackgroundImage(
-        "https://raw.githubusercontent.com/AstropathJHU/mIFTO/master/R/www/Splash.png"),
+        "https://raw.githubusercontent.com/AstroPathJHU/mIFTO/master/R/www/Splash.png"),
       title = shiny::div(
         shiny::strong(
           "(mIFTO) Multiplex Immunofluorescence Titration Optimization"
@@ -70,7 +70,7 @@ ui.map <- function (){
               shiny::actionLink(
                 "pdf", "Help", onclick =
                   paste0("window.open('https://github.com",
-                         "/beng1290/mIFTO/blob/master/README.md')"
+                         "/AstroPathJHU/mIFTO/blob/master/README.md')"
                          )
                 ,style="color: #f0f6ee;", align = 'right'
               )
