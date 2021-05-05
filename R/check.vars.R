@@ -213,7 +213,7 @@ check.vars <- function(out) {
     paths<-sapply(1:length(Concentration),function(x){
       str = paste0(
         titration.type.name,'_1to',Concentration[x],'$|',
-        titration.type.name,'_1to',Concentration[x],'[^0]')
+        titration.type.name,'_1to',Concentration[x],'_')
       pp[grepl(str,pp)]
     })
   }else{
