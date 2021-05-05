@@ -244,7 +244,7 @@ For cell-by-cell analysis, export the cell segmented for each HPF.  For pixel-by
 4. Sometimes it may be necessary to resize the window manually to get the UI to line up appropriately.
 
 
-# 5. Credits
+## ***Section 5. Credits***
 
 #### <div align="center">Created by: Benjamin Green & Charles Roberts</div>
 #### <div align="center">Based on code orginally written by Dr. Nicolas Giraldo-Castillo</div>
