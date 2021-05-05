@@ -32,7 +32,19 @@ When the ```install_github('AstroPathJHU/mIFTO')``` command is used, R will outp
 ![Figure 1 Image](R/www/Fig1.PNG)
 
 It advisable to check the circled region above to make sure that the correct version of the package is installed. 
-#### ***Section 2.2: Updating the Package***
+
+#### ***Section 2.2: Running Package***
+
+The installation calls and ```devtool``` library call will only be needed the first time the ```mIFTO``` package is used, unless additional updates to the package have been posted (see section 2.2). 
+
+Once installed once for a user profile, the user can run the apps one of two ways: 
+
+1.	load a library into the current ‘workspace’ by using ```library(current_package)``` replacing ```‘current_package’``` for whichever library is needed. To load the ```mIFTO``` R package type: ```library(mIFTO)```. Afterward the call the apps using ```FOP()``` and ```mIFTOapp()```.
+2.	Explicitly call the package and the functions simultaneously without loading the package into memory. In this case use the syntax ```package_name::function_name```. For the main apps described in this document use ```mIFTO::FOP()``` and ```mIFTO::mIFTOapp()```.
+
+Code performance is reliant on the local systems connection to the images as well as the computational resources of the local system. Since the image data for these images can be very large, it is advisable that either the images are kept local to the machine the software is run on or that they can be accessed by a high speed network connection. 
+
+#### ***Section 2.3: Updating the Package***
 When an update for the package is available on github, it is advisable that, if the user already had an R session open with an old version running, the user clear their R history, completely close their current R session or window, and open a new session. 
 
 To clear the R history, go to the ‘history’ tab on the top right of the R user interface and select the broom icon, as shown below:
@@ -62,17 +74,6 @@ Once ‘OK’ is clicked, the following lines will be printed into the console (
 ![Figure 5 Image](R/www/Fig5.PNG)
 
 To fix this error, close the current R sessions completely, open a new session, and reinstall the package.
-
-#### ***Section 2.3: Running Package***
-
-The installation calls and ```devtool``` library call will only be needed the first time the ```mIFTO``` package is used, unless additional updates to the package have been posted (see section 2.2). 
-
-Once installed once for a user profile, the user can run the apps one of two ways: 
-
-1.	load a library into the current ‘workspace’ by using ```library(current_package)``` replacing ```‘current_package’``` for whichever library is needed. To load the ```mIFTO``` R package type: ```library(mIFTO)```. Afterward the call the apps using ```FOP()``` and ```mIFTOapp()```.
-2.	Explicitly call the package and the functions simultaneously without loading the package into memory. In this case use the syntax ```package_name::function_name```. For the main apps described in this document use ```mIFTO::FOP()``` and ```mIFTO::mIFTOapp()```.
-
-Code performance is reliant on the local systems connection to the images as well as the computational resources of the local system. Since the image data for these images can be very large, it is advisable that either the images are kept local to the machine the software is run on or that they can be accessed by a high speed network connection. 
 
 ## ***Section 3: FOP***
 #### ***Section 3.1: Description***
