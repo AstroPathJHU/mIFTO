@@ -93,6 +93,7 @@ b.	For **pixel-by-pixel**:
   
 c.	For **tissue segmentation**:
   -	use the tissue segmented module in inForm and export the tissue segmentation data. Name the categories ‘Tumor’ and ‘Non Tumor’ in inForm.
+  -	change the Coordinate Unites in the Tissue Secmentation Data within the View Editor from 'microns' to 'pixels'.
 
 For all exports, do not name the opals in the ‘prepare’ tab of inForm, the code will not be able to find the correct columns. Note that the code will generate statistics for all slides in the selected folder (see below for more details in step 5).
 
