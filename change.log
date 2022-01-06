@@ -1,0 +1,15 @@
+- two primary apps: 
+	- FOP()
+		- positive pixel data on slides
+	- mIFTOapp()
+		- full analysis
+- comestic fixes for the graphs and the GUIs as we see fit
+- Convert the file to a 
+- mITFOapp: 
+	- Needs to run titrations for the polymer
+	- Refactor the code so that it ran for phenotype, pixel, and tissue segmentation (IP)
+	- Produce bleedthrough or crosstalk graphs on the data
+	- remove extra boxplots from the analysis (5% and all were boxplots to keep)
+- FOP: 
+	- also build graphs for postive pixels
+	- also do the boxplots for counts data
