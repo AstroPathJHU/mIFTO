@@ -4,7 +4,7 @@
 	- mIFTOapp()
 		- full analysis
 - comestic fixes for the graphs and the GUIs as we see fit
-- Convert the file to a 
+- Convert the file to a html 
 - mITFOapp: 
 	- Needs to run titrations for the polymer
 	- Refactor the code so that it ran for phenotype, pixel, and tissue segmentation (IP)
