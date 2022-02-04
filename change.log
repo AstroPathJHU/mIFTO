@@ -13,3 +13,36 @@
 - FOP: 
 	- also build graphs for postive pixels
 	- also do the boxplots for counts data
+02.04.2022 ----------------------------------------------------------
+Organize the GUI r scripts into a subfolder (UI)
+	- ui.map
+	- ui.formats
+	- server.side
+	- mIFTOapp
+	- FOP
+	
+Make sure it still launches the UI map. 
+
+Use to rebuild the app after installing:
+setwd('e:/working_code/R/mIFTO')
+devtools::document()
+setwd('..')
+devtools::install('mIFTO')
+mIFTO::mIFTOapp()
+
+Start changing references to Vars_pxp to Vars_pixels: used in ui.map, server.side. check.vars
+
+Change the references of Vars_cell to Vars_cells in ui.map and server.side
+
+See if the choice values for different checkboxgroups can be the same
+i.e.: Vars_pxp and Vars_cell
+	if the choice values can be the same remove the '.pixels' in choice values in ui.map, server.side, and check.vars
+
+R package 'testthat' to start building simple tests and use the debug tool on the current input 
+Add a debug line at 35, run known input to pixel by pixel. Save out and outchecked... physically write it out in the tests. Then use that as we workthrough the rest of pixelbypixel. Comment out the rest of pixelbypixel for now.
+
+If we can add check.vars to a subfolder and start breaking up the general input section from the other sections into smaller folders
+
+Stop using many variables and just pass the entire outchecked data structure to different functions.
+
+Feel free to change the names of different variables as you see fit.
