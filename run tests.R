@@ -1,0 +1,5 @@
+setwd('e:/working_code/R/mIFTO')
+devtools::document()
+setwd('..')
+devtools::install('mIFTO')
+mIFTO::mIFTOapp()
