@@ -7,9 +7,9 @@ This R package was developed to help organize and quantify the inForm Cell Analy
 #### ***Section 2.1: Initial Package Install***
 Open an Rstudio session to get started. Next, install the package from github using the following commands:
 ```
-install.packages(‘devtools’)
+install.packages("devtools")
 library(devtools)
-install_github('AstroPathJHU/mIFTO')
+install_github("AstroPathJHU/mIFTO")
 ```
 When the package begins to install a number of messages will appear in the console indicating the status of different events, especially during the initial install or just after R has been updated, this is normal. Some of the messages may be in red, this does not indicate an error. If there is an error during installation, usually the output message to the console will start with ```“Error:”``` or ```“Warning:”```, then describe the corresponding error. 
 
