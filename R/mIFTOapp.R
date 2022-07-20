@@ -55,6 +55,5 @@ mIFTOapp <- function(){
                   options = list(width = 1000, launch.browser = TRUE,
                                  host = ip, quiet = T))
     #
-  })
   #
 }
