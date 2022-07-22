@@ -91,11 +91,41 @@ populate.tables <- function(
       # start the parallel cluster separately for each loop to limit RAM
       # overhead, the startup time for the cluster is minimal ~2-3secs
       #
+
       time <- system.time({
         cl <- parallel::makeCluster(
           getOption("cl.cores", numcores), useXDR = FALSE, methods = FALSE);
         parallel::clusterEvalQ(cl, library(mIFTO));
         #
+        print("populate.tables")
+        print("Concentration")
+        print(Concentration)
+        print("x")
+        print(x)
+        print("y")
+        print(y)
+        print("Image.IDs")
+        print(Image.IDs)
+        print("Antibody_Opal")
+        print(Antibody_Opal)
+        print("titration.type.name")
+        print(titration.type.name)
+        print("Thresholds")
+        print(Thresholds)
+        print("paths")
+        print(paths)
+        print("connected.pixels")
+        print(connected.pixels)
+        print("flowout")
+        print(flowout)
+        print("Opal1")
+        print(Opal1)
+        print("decile.logical")
+        print(decile.logical)
+        print("threshold.logical")
+        print(threshold.logical)
+        print("cl")
+        print(cl)
         small.tables.byimage <- tryCatch({
           mIFTO::parallel.invoke.gpxp(
             Concentration, x, y, Image.IDs, Antibody_Opal,

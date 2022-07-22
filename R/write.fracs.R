@@ -151,11 +151,27 @@ write.fracs <- function (
     b = vector('list',length(Slide_Descript))
     #
     for (x in Slide_Descript){
+
       time <- system.time({
         cl <- parallel::makeCluster(
           getOption("cl.cores", numcores), useXDR = FALSE, methods = FALSE);
         parallel::clusterEvalQ(cl, library(mIFTO));
         #
+        print("write.fracs")
+        print("ihc.path")
+        print(ihc.path)
+        print("x")
+        print(x)
+        print("ihc.Image.IDs")
+        print(ihc.Image.IDs)
+        print("ihc.Thresholds")
+        print(ihc.Thresholds)
+        print("ihc.connected.pixels")
+        print(ihc.connected.pixels)
+        print("titration.type.name")
+        print(titration.type.name)
+        print("cl")
+        print(cl)
         ihc.small.tables.byimage <- tryCatch({
           mIFTO::ihc.parallel.invoke.gpxp(
             ihc.path, x, ihc.Image.IDs, ihc.Thresholds,

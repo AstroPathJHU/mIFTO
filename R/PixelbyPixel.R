@@ -69,6 +69,36 @@ pixelbypixel <- function(out,pb.Object) {
   #
   ###############################Reads in data##########################
   #
+  print("PixelbyPixel")
+  print("Slide_Descript")
+  print(Slide_Descript)
+  print("Concentration")
+  print(Concentration)
+  print("Antibody_Opal")
+  print(Antibody_Opal)
+  print("Thresholds")
+  print(Thresholds)
+  print("Opal1")
+  print(Opal1)
+  print("flowout")
+  print(flowout)
+  print("Protocol")
+  print(Protocol)
+  print("paths")
+  print(paths)
+  print("titration.type.name")
+  print(titration.type.name)
+  print("connected.pixels")
+  print(connected.pixels)
+  print("decile.logical")
+  print(decile.logical)
+  print("threshold.logical")
+  print(threshold.logical)
+  print("pb.count")
+  print(pb.count)
+  print("pb.Object")
+  print(pb.Object)
+
   time <- system.time(
     Tables <- mIFTO::populate.tables(
       Slide_Descript, Concentration, Antibody_Opal, Thresholds, Opal1,
