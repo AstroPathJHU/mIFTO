@@ -39,11 +39,13 @@ parallel.invoke.gpxp <- function (
   titration.type.name, Thresholds, paths,
   connected.pixels, flowout, Opal1,
   decile.logical, threshold.logical, cl){
+  print("00")
   #
   # define the environment for the cluster
   #
   my_env <- environment()
   parent.env(my_env) <- .GlobalEnv
+  print("01")
   #
   # for each image gather the stats and return the images
   # to reduce RAM usage the code does this one image at a time
@@ -57,6 +59,7 @@ parallel.invoke.gpxp <- function (
                      "connected.pixels","flowout","Opal1",
                      "decile.logical", "threshold.logical"),
     envir=my_env)
+  print("02")
   #
   ###### need to add a try catch, but also need to determine what happens
   ###### when I throw an error instead of the envir
@@ -67,4 +70,5 @@ parallel.invoke.gpxp <- function (
         connected.pixels, flowout, Opal1,
         decile.logical, threshold.logical))
   #
+  print("03")
 }
