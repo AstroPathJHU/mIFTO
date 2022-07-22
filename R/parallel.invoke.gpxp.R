@@ -68,8 +68,6 @@ parallel.invoke.gpxp <- function (
   print(x)
   print("y")
   print(y)
-  print("z")
-  print(z)
   print("Antibody_Opal")
   print(Antibody_Opal)
   print("titration.type.name")
