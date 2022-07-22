@@ -500,7 +500,6 @@ ui.map <- function (){
         )
       )
     ),
-    shinyalert::useShinyalert()
   )
 
 }

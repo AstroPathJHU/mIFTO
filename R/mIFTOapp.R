@@ -50,10 +50,21 @@ mIFTOapp <- function(){
     ip = "127.0.0.1"
   })
   #
-  options(browser = "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe")
+  tryCatch({
+    options(browser = "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe")
     shiny::shinyApp(ui = mIFTO::ui.map(), mIFTO::server.side,
                   options = list(width = 1000, launch.browser = TRUE,
                                  host = ip, quiet = T))
+  }, warning = function(cond) {
+    tryCatch({
+    options(browser = "C:/Program Files (x86)/Internet Explorer/iexplore.exe")
+    shiny::shinyApp(ui = mIFTO::ui.map(), mIFTO::server.side,
+                    options = list(width = 1000, launch.browser = TRUE,
+                                   host = ip, quiet = T))
+    },  warning = function(cond) {
+      stop('Error could not find supported web browser.')
+    })
     #
+  })
   #
 }

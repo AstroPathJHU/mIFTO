@@ -170,20 +170,45 @@ server.side <- function(input, output, session) {
     #
     #err.val <- mIFTO::pixelbypixel(input,pb)
     #
-    #
-    err.val <- mIFTO::pixelbypixel(input,pb)
-    #
-    on.exit(pb$close());
-    if (err.val == 0){
+    tryCatch({
+      #
+      err.val <- mIFTO::pixelbypixel(input,pb)
+      #
+      on.exit(pb$close());
+      if (err.val == 0){
+        modal_out <- shinyalert::shinyalert(
+          title = "Finished",
+          text = paste(
+            ""
+          ),
+          type = 'success',
+          showConfirmButton = TRUE
+        )
+      }
+      #
+    }, warning = function(cond){
+      on.exit(pb$close());
       modal_out <- shinyalert::shinyalert(
-        title = "Finished",
+        title = "Undefined error.",
         text = paste(
-          ""
+          "Please contact Benjamin Green at bgreen42@jh.edu for additional",
+          "assistance."
         ),
-        type = 'success',
+        type = 'error',
         showConfirmButton = TRUE
       )
-    }
+    }, error = function(cond){
+      on.exit(pb$close());
+      modal_out <- shinyalert::shinyalert(
+        title = "Undefined error.",
+        text = paste(
+          "Please contact Benjamin Green at bgreen42@jh.edu for additional",
+          "assistance."
+        ),
+        type = 'error',
+        showConfirmButton = TRUE
+      )
+    })
   })
   #
 }
