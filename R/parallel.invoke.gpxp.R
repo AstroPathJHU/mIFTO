@@ -99,11 +99,15 @@ parallel.invoke.gpxp <- function (
       connected.pixels, flowout, Opal1,
       decile.logical, threshold.logical)
   }
+  funny <- function(duet){
+    print(duet)
+  }
   print("or here")
   ###### need to add a try catch, but also need to determine what happens
   ###### when I throw an error instead of the envir
     small.tables.byimage<- parallel::parLapply(
-      cl,Image.IDs[[x]][[y]],fun)
+      cl,Image.IDs[[x]][[y]],print)
   #
+    print(small.tables.byimage)
   print("03")
 }
