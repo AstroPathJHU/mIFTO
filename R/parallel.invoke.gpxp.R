@@ -91,6 +91,8 @@ parallel.invoke.gpxp <- function (
   print("typeof(Image.IDs[[x]][[y]])")
   print(typeof(Image.IDs[[x]][[y]]))
   fun <- function(z) {
+    print("here")
+    print(z)
     mIFTO::generate.pxp.image.data(
       Concentration, x, y, z, Antibody_Opal,
       titration.type.name, Thresholds, paths,
