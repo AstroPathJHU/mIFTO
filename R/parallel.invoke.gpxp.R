@@ -109,9 +109,15 @@ parallel.invoke.gpxp <- function (
     cl,Image.IDs[[x]][[y]],print)
   #
   print(small.tables.byimage)
+  print("03")
   small.tables.byimag<- parallel::parLapply(
     cl,Image.IDs[[x]][[y]],funny)
   #
   print(small.tables.byimag)
-  print("03")
+  print("04")
+  small.tables.byimag<- parallel::parLapply(
+    cl,Image.IDs[[x]][[y]],fun)
+  #
+  print(small.tables.byimag)
+  print("05")
 }
