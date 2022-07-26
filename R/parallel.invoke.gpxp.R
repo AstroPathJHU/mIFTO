@@ -87,11 +87,11 @@ parallel.invoke.gpxp <- function (
   print("threshold.logical")
   print(threshold.logical)
   print("Image.IDs[[x]][[y]]")
-  print(Image.IDs[[x]][[y]])
+  print(Image.IDs[[x]])
   ###### need to add a try catch, but also need to determine what happens
   ###### when I throw an error instead of the envir
     small.tables.byimage<- parallel::parLapply(
-      cl,Image.IDs[[x]][[y]],function(z) z*10)
+      cl,Image.IDs[[x]],function(z) z*10)
   #mIFTO::generate.pxp.image.data(
 # Concentration, x, y, z, Antibody_Opal,
 # titration.type.name, Thresholds, paths,
