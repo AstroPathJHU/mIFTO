@@ -105,9 +105,13 @@ parallel.invoke.gpxp <- function (
   print("or here")
   ###### need to add a try catch, but also need to determine what happens
   ###### when I throw an error instead of the envir
-    small.tables.byimage<- parallel::parLapply(
-      cl,Image.IDs[[x]][[y]],print)
+  small.tables.byimage<- parallel::parLapply(
+    cl,Image.IDs[[x]][[y]],print)
   #
-    print(small.tables.byimage)
+  print(small.tables.byimage)
+  small.tables.byimag<- parallel::parLapply(
+    cl,Image.IDs[[x]][[y]],funny)
+  #
+  print(small.tables.byimag)
   print("03")
 }
