@@ -172,43 +172,12 @@ write.fracs <- function (
         print(titration.type.name)
         print("cl")
         print(cl)
-        ihc.small.tables.byimage <- tryCatch({
+        ihc.small.tables.byimage <-
           mIFTO::ihc.parallel.invoke.gpxp(
             ihc.path, x, ihc.Image.IDs, ihc.Thresholds,
             ihc.connected.pixels, cl
           )
-        }, warning = function(cond) {
-          modal_out <- shinyalert::shinyalert(
-            title = paste0('Error Reading Component Images for ',
-                           x, ' IHC'),
-            text = paste0('Please check the computer reasources, slide names, ',
-                          'image layers correspond to protocol type, ',
-                          'and that component data tiffs for ', x,
-                          ' IHC exist. Then contact ',
-                          'Benjamin Green at bgreen42jh.edu for assistance.'),
-            type = 'error',
-            showConfirmButton = TRUE
-          )
-          err.val <- 15
-          return(err.val)
-        }, error = function(cond) {
-          modal_out <- shinyalert::shinyalert(
-            title = paste0('Error Reading Component Images for ',
-                           x, ' IHC'),
-            text = paste0('Please check the computer reasources, slide names, ',
-                          'image layers correspond to protocol type, ',
-                          'and that component data tiffs for ', x,
-                          ' IHC exist. Then contact ',
-                          'Benjamin Green at bgreen42jh.edu for assistance.'),
-            type = 'error',
-            showConfirmButton = TRUE
-          )
-          err.val <- 15
-          return(err.val)
-        },
-        finally={
-          parallel::stopCluster(cl)
-        })
+
         #
         if (length(ihc.small.tables.byimage) == 1) {
           err.val <- 15

@@ -49,18 +49,14 @@ generate.pxp.image.data <- function(
   # read that image in
   #
   print("invoke01")
-  data.in <- tryCatch({
+  data.in <-
     data.in <- mIFTO::tiff.list(paths[[y]], pattern.in = str)
     err.val <- data.in$err.val
     if (!err.val == 0){
       return(-1)
     }
     data.in$data.out
-  }, error = function(cond){
-    return(-1)
-  }, warning = function(cond){
-    return(-1)
-  }, finally = {})
+
   #
   if(length(data.in[[1]]) == 1){
     stop('error in slide ', str)

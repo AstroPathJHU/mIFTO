@@ -1,5 +1,5 @@
 #################################GUI#####################################
-#'Main app to start analysis on a by image basis. 
+#'Main app to start analysis on a by image basis.
 #'Creates the gui and calls other functions within the package for processing
 #'
 #'RUNG
@@ -27,7 +27,7 @@
 #'
 mIFTOapp <- function(){
   #
-  if (!.Platform$OS.type == "windows") { 
+  if (!.Platform$OS.type == "windows") {
     warning(paste('Application has only been tested on windows machines.',
             'Other OSs are not yet supported'))
   }
@@ -38,33 +38,23 @@ mIFTOapp <- function(){
   #
   e = 0
   #
-  tryCatch({
+
     #
     ip <- system("ipconfig", intern=TRUE)
     ip <- ip[grep("IPv4", ip)]
     ip <- gsub(".*? ([[:digit:]])", "\\1", ip)
     ip <- ip[[1]]
     #
-  }, error = function(cond){
-    message('cannot find local IP, using shiny default. Performance may suffer.')
-    ip = "127.0.0.1"
-  })
+
   #
-  tryCatch({
+
+
     options(browser = "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe")
     shiny::shinyApp(ui = mIFTO::ui.map(), mIFTO::server.side,
                   options = list(width = 1000, launch.browser = TRUE,
                                  host = ip, quiet = T))
-  }, warning = function(cond) {
-    tryCatch({
-    options(browser = "C:/Program Files (x86)/Internet Explorer/iexplore.exe")
-    shiny::shinyApp(ui = mIFTO::ui.map(), mIFTO::server.side,
-                    options = list(width = 1000, launch.browser = TRUE,
-                                   host = ip, quiet = T))
-    },  warning = function(cond) {
-      stop('Error could not find supported web browser.')
-    })
-    #
-  })
+
+
+
   #
 }

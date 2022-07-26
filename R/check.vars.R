@@ -110,7 +110,7 @@ check.vars <- function(out) {
     Concentration <- out$Concentration
   }
   #
-  Concentration1 <- tryCatch({
+  Concentration1 <-
     Concentration1 <- as.numeric(
       unlist(
         strsplit(
@@ -118,28 +118,7 @@ check.vars <- function(out) {
         )
       )
     )
-  }, warning = function(cond) {
-    modal_out <- shinyalert::shinyalert(
-      title = "Error in concentration input.",
-      text = paste(
-        "Concentration input:", Concentration, "not valid. Please enter a list",
-        "of numeric values separated by commas."),
-      type = 'warning',
-      showConfirmButton = TRUE
-    )
-    return(-1)
-  }, error = function(cond) {
-    modal_out <- shinyalert::shinyalert(
-      title = "Error in concentration input.",
-      text = paste(
-        "Concentration input:", Concentration, "not valid. Please enter a list",
-        "of numeric values separated by commas."),
-      type = 'warning',
-      showConfirmButton = TRUE
-    )
-    return(-1)
-  }
-  )
+
   #
   if (length(Concentration1) == 1){
     if (Concentration1 == -1){
@@ -371,7 +350,7 @@ check.vars <- function(out) {
       #
       # try to convert to a valid string
       #
-      Thresholds1 <- tryCatch({
+      Thresholds1 <-
         as.numeric(
           unlist(
             strsplit(
@@ -379,31 +358,7 @@ check.vars <- function(out) {
             )
           )
         )
-      }, warning = function(cond) {
-        modal_out <- shinyalert::shinyalert(
-          title = "Error in threshold input.",
-          text = paste0(
-            "Could not parse threshold input:", Thresholds[[x]],
-            ". Please enter a valid list of numeric thresholds, separated by ",
-            "commas."
-          ),
-          type = 'error',
-          showConfirmButton = TRUE
-        )
-        return(-1)
-      }, error = function(cond) {
-        modal_out <- shinyalert::shinyalert(
-          title = "Error in threshold input.",
-          text = paste0(
-            "Could not parse threshold input:", Thresholds[[x]],
-            ". Please enter a valid list of numeric thresholds, separated by ",
-            "commas."
-          ),
-          type = 'error',
-          showConfirmButton = TRUE
-        )
-        return(-1)
-      })
+
       #
       if (length(Thresholds1) == 1){
         if (Thresholds1 == -1){
@@ -457,7 +412,7 @@ check.vars <- function(out) {
       #
       # try to convert to a valid string
       #
-      connected.pixels1 <- tryCatch({
+      connected.pixels1 <-
         as.numeric(
           unlist(
             strsplit(
@@ -465,32 +420,7 @@ check.vars <- function(out) {
             )
           )
         )
-      }, warning = function(cond) {
-        modal_out <- shinyalert::shinyalert(
-          title = "Error in connected pixel input.",
-          text = paste0(
-            "Could not parse connected pixel input:", Thresholds[[x]],
-            ". Please enter a valid list of numeric connected pixel values, ",
-            "separated by commas."
-          ),
-          type = 'error',
-          showConfirmButton = TRUE
-        )
-        return(-1)
-      }, error = function(cond) {
-        modal_out <- shinyalert::shinyalert(
-          title = "Error in connected pixel input.",
-          text = paste0(
-            "Could not parse connected pixel input:", Thresholds[[x]],
-            ". Please enter a valid list of numeric connected pixel values, ",
-            "separated by commas."
-          ),
-          type = 'error',
-          showConfirmButton = TRUE
-        )
-        return(-1)
-      }
-      )
+
       #
       if (length(connected.pixels1) == 1){
         if (connected.pixels1 == -1){
@@ -555,69 +485,9 @@ check.vars <- function(out) {
   a<-installed.packages()
   packages<-a[,1]
   if (!is.element("EBImage", packages)){
-    tryCatch({
+
       BiocManager::install("EBImage", ask=FALSE)
-    }, warning = function(cond) {
-      tryCatch({
-        install.packages(
-          'BiocManager', ask = FALSE, quiet = TRUE, verbose = FALSE)
-        BiocManager::install("EBImage", ask=FALSE)
-      }, warning = function(cond) {
-        modal_out <- shinyalert::shinyalert(
-          title = "Error installing EBImage from BiocManager.",
-          text = paste0(
-            "Please attempt to update\ install BiocManager separately using: ",
-            "install.packages('BiocManager'); then attempt to update\ install ",
-            "EBImage from the Bioc repo using: BiocManager::install('EBImage')."
-          ),
-          type = 'error',
-          showConfirmButton = TRUE
-        )
-        connected.pixels <- 'NA'
-      }, error = function(cond) {
-        modal_out <- shinyalert::shinyalert(
-          title = "Error installing EBImage from BiocManager.",
-          text = paste0(
-            "Please attempt to update\ install BiocManager separately using: ",
-            "install.packages('BiocManager'); then attempt to update\ install ",
-            "EBImage from the Bioc repo using: BiocManager::install('EBImage')."
-          ),
-          type = 'error',
-          showConfirmButton = TRUE
-        )
-        connected.pixels <- 'NA'
-      })
-    }, error = function(cond) {
-      tryCatch({
-        install.packages(
-          'BiocManager', ask = FALSE, quiet = TRUE, verbose = FALSE)
-        BiocManager::install("EBImage", ask=FALSE)
-      }, warning = function(cond) {
-        modal_out <- shinyalert::shinyalert(
-          title = "Error installing EBImage from BiocManager.",
-          text = paste0(
-            "Please attempt to update\ install BiocManager separately using: ",
-            "install.packages('BiocManager'); then attempt to update\ install ",
-            "EBImage from the Bioc repo using: BiocManager::install('EBImage')."
-          ),
-          type = 'error',
-          showConfirmButton = TRUE
-        )
-        connected.pixels <- 'NA'
-      }, error = function(cond) {
-        modal_out <- shinyalert::shinyalert(
-          title = "Error installing EBImage from BiocManager.",
-          text = paste0(
-            "Please attempt to update\ install BiocManager separately using: ",
-            "install.packages('BiocManager'); then attempt to update\ install ",
-            "EBImage from the Bioc repo using: BiocManager::install('EBImage')."
-          ),
-          type = 'error',
-          showConfirmButton = TRUE
-        )
-        connected.pixels <- 'NA'
-      })
-    })
+
   }
   #
   if (length(connected.pixels) == 1){
