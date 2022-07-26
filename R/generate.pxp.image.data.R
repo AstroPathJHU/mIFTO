@@ -40,6 +40,7 @@ generate.pxp.image.data <- function(
   #
   # this is the current image name
   #
+  print("invoke00")
   str = paste0(
     '.*', x, '.*',titration.type.name, '_1to', Concentration[y],
     '_.*\\[',q, '\\]'
@@ -47,6 +48,7 @@ generate.pxp.image.data <- function(
   #
   # read that image in
   #
+  print("invoke01")
   data.in <- tryCatch({
     data.in <- mIFTO::tiff.list(paths[[y]], pattern.in = str)
     err.val <- data.in$err.val
@@ -63,6 +65,7 @@ generate.pxp.image.data <- function(
   if(length(data.in[[1]]) == 1){
     stop('error in slide ', str)
   }
+  print("invoke02")
   data.in <- data.in[[1]]
   nn <- names(data.in)
   d.v <- grep(Opal1, nn, value = T)
@@ -74,6 +77,7 @@ generate.pxp.image.data <- function(
   #
   # create the flow output for this image
   #
+  print("invoke03")
   if (flowout == TRUE){
     data.in.write <- vector('list',length(data.in))
     for (i1 in 1:length(data.in)){
@@ -86,6 +90,7 @@ generate.pxp.image.data <- function(
 
     data.table::fwrite(data.in.write, file=str,sep=',')
   }
+  print("invoke04")
   #
   # select and store only the desired data
   #
@@ -93,6 +98,7 @@ generate.pxp.image.data <- function(
   #
   small.tables <- list()
   #
+  print("invoke05")
   if(decile.logical){
     #
     decile.positivity.data <- mIFTO::decile.define.image.positivity(
@@ -106,6 +112,7 @@ generate.pxp.image.data <- function(
     )
   }
   #
+  print("invoke06")
   if(threshold.logical){
     #
     # get the positvity data
@@ -138,6 +145,7 @@ generate.pxp.image.data <- function(
     )
   }
   #
+  print("invoke07")
   rm(data.in)
   return(small.tables)
   #rm(small.tables)
