@@ -42,8 +42,8 @@ generate.pxp.image.data <- function(
   #
   print("invoke00")
   str = paste0(
-    '.*', x, '.*',titration.type.name, '_1to', Concentration[y],
-    '_.*\\[',q, '\\]'
+    '.', x, '.',titration.type.name, '_1to', Concentration[y],
+    '_.\[',q, '\]'
   )
   #
   # read that image in
@@ -59,7 +59,9 @@ generate.pxp.image.data <- function(
 
   #
   if(length(data.in[[1]]) == 1){
-    stop('error in slide ', str)
+    print("data.in")
+    print(data.in)
+    #('error in slide ', str)
   }
   print("invoke02")
   data.in <- data.in[[1]]
