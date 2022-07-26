@@ -53,7 +53,8 @@ generate.pxp.image.data <- function(
     data.in <- mIFTO::tiff.list(paths[[y]], pattern.in = str)
     err.val <- data.in$err.val
     if (!err.val == 0){
-      return(-1)
+      print("err.val = 0")
+      #return(-1)
     }
     data.in$data.out
 
