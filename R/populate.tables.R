@@ -92,7 +92,7 @@ populate.tables <- function(
       # overhead, the startup time for the cluster is minimal ~2-3secs
       #
 
-      time <- system.time({
+
         cl <- parallel::makeCluster(
           getOption("cl.cores", numcores), useXDR = FALSE, methods = FALSE);
         parallel::clusterEvalQ(cl, library(mIFTO));
@@ -139,7 +139,7 @@ populate.tables <- function(
           err.val <- 14
           return(list(err.val = err.val))
         }
-      })
+
       #
       # progress bar
       #
