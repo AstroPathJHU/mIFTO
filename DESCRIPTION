@@ -1,6 +1,6 @@
 Package: mIFTO
 Title: mIFTO: Multiplex Immunoflourescence Titration Optimization 
-Version: 2.00.039
+Version: 2.00.040
 Authors@R: person("Benjamin", "Green", email = "bgreen42@jhu.edu",
                   role = c("aut", "cre"))
 Description: CHANGE DESCRIPTION
