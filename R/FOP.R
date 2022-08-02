@@ -237,6 +237,7 @@ FOP<-function(){
         )
       )
     ),
+    shinyalert::useShinyalert()
   )
   #
   #
