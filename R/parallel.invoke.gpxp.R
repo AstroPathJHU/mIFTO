@@ -39,13 +39,11 @@ parallel.invoke.gpxp <- function (
   titration.type.name, Thresholds, paths,
   connected.pixels, flowout, Opal1,
   decile.logical, threshold.logical, cl){
-  print("00")
   #
   # define the environment for the cluster
   #
   my_env <- environment()
   parent.env(my_env) <- .GlobalEnv
-  print("01")
   #
   # for each image gather the stats and return the images
   # to reduce RAM usage the code does this one image at a time
@@ -59,65 +57,14 @@ parallel.invoke.gpxp <- function (
                      "connected.pixels","flowout","Opal1",
                      "decile.logical", "threshold.logical"),
     envir=my_env)
-  print("02")
   #
-  print("parallel.invoke.gpxp")
-  print("Concentration")
-  print(Concentration)
-  print("x")
-  print(x)
-  print("y")
-  print(y)
-  print("Antibody_Opal")
-  print(Antibody_Opal)
-  print("titration.type.name")
-  print(titration.type.name)
-  print("Thresholds")
-  print(Thresholds)
-  print("paths")
-  print(paths)
-  print("connected.pixels")
-  print(connected.pixels)
-  print("flowout")
-  print(flowout)
-  print("Opal1")
-  print(Opal1)
-  print("decile.logical")
-  print(decile.logical)
-  print("threshold.logical")
-  print(threshold.logical)
-  print("Image.IDs[[x]][[y]]")
-  print(Image.IDs[[x]][[y]])
-  print("typeof(Image.IDs[[x]][[y]])")
-  print(typeof(Image.IDs[[x]][[y]]))
-  fun <- function(z) {
-    print("here")
-    print(z)
-    mIFTO::generate.pxp.image.data(
-      Concentration, x, y, z, Antibody_Opal,
-      titration.type.name, Thresholds, paths,
-      connected.pixels, flowout, Opal1,
-      decile.logical, threshold.logical)
-  }
-  funny <- function(duet){
-    print(duet)
-  }
-  print("or here")
   ###### need to add a try catch, but also need to determine what happens
   ###### when I throw an error instead of the envir
-  small.tables.byimage<- parallel::parLapply(
-    cl,Image.IDs[[x]][[y]],print)
+    small.tables.byimage<- parallel::parLapply(
+      cl,Image.IDs[[x]][[y]],function(z) mIFTO::generate.pxp.image.data(
+        Concentration, x, y, z, Antibody_Opal,
+        titration.type.name, Thresholds, paths,
+        connected.pixels, flowout, Opal1,
+        decile.logical, threshold.logical))
   #
-  print(small.tables.byimage)
-  print("03")
-  small.tables.byimag<- parallel::parLapply(
-    cl,Image.IDs[[x]][[y]],funny)
-  #
-  print(small.tables.byimag)
-  print("004")
-  small.tables.byimag<- parallel::parLapply(
-    cl,Image.IDs[[x]][[y]],fun)
-  #
-  print(small.tables.byimag)
-  print("05")
 }

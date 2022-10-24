@@ -487,7 +487,7 @@ FOP<-function(){
       #
       # run the code and catch any errors
       #
-      tryCatch({
+      # tryCatch({
         #
         err.val = 0
         my.vals$Slide_ID <- unlist(strsplit(input$Slide_ID,
@@ -500,29 +500,29 @@ FOP<-function(){
         my.vals$Positive.table <- runforpos(input, my.vals)
         shiny::showModal(another.ab.modal())
         #
-      }, warning = function(cond){
-        modal_out <- shinyalert::shinyalert(
-          title = "Undefined error.",
-          text = paste(
-            "Please check if input and output are valid. Then",
-            "contact Benjamin Green at bgreen42@jh.edu if you need additional",
-            "assistance."
-          ),
-          type = 'error',
-          showConfirmButton = TRUE
-        )
-      }, error = function(cond){
-        modal_out <- shinyalert::shinyalert(
-          title = "Undefined error.",
-          text = paste(
-            "Please check if input and output are valid. Then",
-            "contact Benjamin Green at bgreen42@jh.edu if you need additional",
-            "assistance."
-          ),
-          type = 'error',
-          showConfirmButton = TRUE
-        )
-      })
+      # }, warning = function(cond){
+      #   modal_out <- shinyalert::shinyalert(
+      #     title = "Undefined error.",
+      #     text = paste(
+      #       "Please check if input and output are valid. Then",
+      #       "contact Benjamin Green at bgreen42@jh.edu if you need additional",
+      #       "assistance."
+      #     ),
+      #     type = 'error',
+      #     showConfirmButton = TRUE
+      #   )
+      # }, error = function(cond){
+      #   modal_out <- shinyalert::shinyalert(
+      #     title = "Undefined error.",
+      #     text = paste(
+      #       "Please check if input and output are valid. Then",
+      #       "contact Benjamin Green at bgreen42@jh.edu if you need additional",
+      #       "assistance."
+      #     ),
+      #     type = 'error',
+      #     showConfirmButton = TRUE
+      #   )
+      # })
     })
     #
     # another dialog observe event launch
@@ -546,7 +546,7 @@ FOP<-function(){
       #
       # run with new inputs
       #
-      tryCatch({
+      # tryCatch({
         #
         err.val = 0
         my.vals$delin <- input$Concentration2
@@ -557,29 +557,29 @@ FOP<-function(){
                                            my.vals)
         shiny::showModal(another.ab.modal())
         #
-      }, warning = function(cond){
-        modal_out <- shinyalert::shinyalert(
-          title = "Undefined error.",
-          text = paste(
-            "Please check if input and output are valid. Then",
-            "contact Benjamin Green at bgreen42@jh.edu if you need additional",
-            "assistance."
-          ),
-          type = 'error',
-          showConfirmButton = TRUE
-        )
-      }, error = function(cond){
-        modal_out <- shinyalert::shinyalert(
-          title = "Undefined error.",
-          text = paste(
-            "Please check if input and output are valid. Then",
-            "contact Benjamin Green at bgreen42@jh.edu if you need additional",
-            "assistance."
-          ),
-          type = 'error',
-          showConfirmButton = TRUE
-        )
-      })
+      # }, warning = function(cond){
+      #   modal_out <- shinyalert::shinyalert(
+      #     title = "Undefined error.",
+      #     text = paste(
+      #       "Please check if input and output are valid. Then",
+      #       "contact Benjamin Green at bgreen42@jh.edu if you need additional",
+      #       "assistance."
+      #     ),
+      #     type = 'error',
+      #     showConfirmButton = TRUE
+      #   )
+      # }, error = function(cond){
+      #   modal_out <- shinyalert::shinyalert(
+      #     title = "Undefined error.",
+      #     text = paste(
+      #       "Please check if input and output are valid. Then",
+      #       "contact Benjamin Green at bgreen42@jh.edu if you need additional",
+      #       "assistance."
+      #     ),
+      #     type = 'error',
+      #     showConfirmButton = TRUE
+      #   )
+      # })
       #
     })
     #
@@ -589,7 +589,7 @@ FOP<-function(){
       #
       shiny::removeModal()
       wd<-choose.dir(my.vals$wd, caption = 'Output directory:')
-      tryCatch({
+      # tryCatch({
         write.table(my.vals$Positive.table,file=paste0(
           wd,'/ + ',input$fraction.type,'.csv'),
           sep=',', row.names=F )
@@ -602,24 +602,24 @@ FOP<-function(){
           type = 'success',
           showConfirmButton = TRUE
         )
-      }, warning = function(cond){
-        modal_out <- shinyalert::shinyalert(
-          title = "Failed to Save",
-          text = paste(
-            ""
-          ),
-          type = 'error',
-          showConfirmButton = TRUE
-        )}, error = function(cond){
-          modal_out <- shinyalert::shinyalert(
-            title = "Failed to Save",
-            text = paste(
-              ""
-            ),
-            type = 'error',
-            showConfirmButton = TRUE
-          )
-        })
+      # }, warning = function(cond){
+      #   modal_out <- shinyalert::shinyalert(
+      #     title = "Failed to Save",
+      #     text = paste(
+      #       ""
+      #     ),
+      #     type = 'error',
+      #     showConfirmButton = TRUE
+      #   )}, error = function(cond){
+      #     modal_out <- shinyalert::shinyalert(
+      #       title = "Failed to Save",
+      #       text = paste(
+      #         ""
+      #       ),
+      #       type = 'error',
+      #       showConfirmButton = TRUE
+      #     )
+      #   })
       #
     })
     #

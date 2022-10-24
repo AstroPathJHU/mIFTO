@@ -40,114 +40,105 @@ generate.pxp.image.data <- function(
   #
   # this is the current image name
   #
-  print("invoke00")
   str = paste0(
     '.*', x, '.*',titration.type.name, '_1to', Concentration[y],
     '_.*\\[',q, '\\]'
   )
-  print(str)
   #
   # read that image in
   #
-  print("invoke01")
-  data.in <-
+  data.in <- tryCatch({
     data.in <- mIFTO::tiff.list(paths[[y]], pattern.in = str)
     err.val <- data.in$err.val
     if (!err.val == 0){
-      print("err.val = 0")
-      #return(-1)
+      return(-1)
     }
-  #   data.in$data.out
+    data.in$data.out
+  }, error = function(cond){
+    return(-1)
+  }, warning = function(cond){
+    return(-1)
+  }, finally = {})
   #
-  # #
-  # if(length(data.in[[1]]) == 1){
-  #   print("data.in")
-  #   print(data.in)
-  #   #('error in slide ', str)
-  # }
-  # print("invoke02")
-  # data.in <- data.in[[1]]
-  # nn <- names(data.in)
-  # d.v <- grep(Opal1, nn, value = T)
-  # #
-  # # measure crosstalk between channels
-  # #
-  # #***************************************************************
+  if(length(data.in[[1]]) == 1){
+    stop('error in slide ', str)
+  }
+  data.in <- data.in[[1]]
+  nn <- names(data.in)
+  d.v <- grep(Opal1, nn, value = T)
   #
-  # #
-  # # create the flow output for this image
-  # #
-  # print("invoke03")
-  # if (flowout == TRUE){
-  #   data.in.write <- vector('list',length(data.in))
-  #   for (i1 in 1:length(data.in)){
-  #     data.in.write[[i1]]<-as.numeric(unlist(data.in[[i1]]))
-  #   }
-  #   names(data.in.write) <- names(data.in)
-  #   str = paste0(
-  #     wd,'/Results.pixels/data/raw/flow_like_tables/',Antibody_Opal,'_',x,'_1to',
-  #     Concentration[y],'_[',q,'].csv')
+  # measure crosstalk between channels
   #
-  #   data.table::fwrite(data.in.write, file=str,sep=',')
-  # }
-  # print("invoke04")
+  #***************************************************************
+
+  #
+  # create the flow output for this image
+  #
+  if (flowout == TRUE){
+    data.in.write <- vector('list',length(data.in))
+    for (i1 in 1:length(data.in)){
+      data.in.write[[i1]]<-as.numeric(unlist(data.in[[i1]]))
+    }
+    names(data.in.write) <- names(data.in)
+    str = paste0(
+      wd,'/Results.pixels/data/raw/flow_like_tables/',Antibody_Opal,'_',x,'_1to',
+      Concentration[y],'_[',q,'].csv')
+
+    data.table::fwrite(data.in.write, file=str,sep=',')
+  }
   #
   # select and store only the desired data
   #
-  ######## data.in <- data.in[[d.v]]
-  # #
-  # small.tables <- list()
-  # #
-  # print("invoke05")
-  # if(decile.logical){
-  #   #
-  #   decile.positivity.data <- mIFTO::decile.define.image.positivity(
-  #     data.in, 10)
-  #   small.tables<-c(small.tables,
-  #                   'decile.SN.Ratio' = list(mIFTO::sn.ratio.calculations(
-  #                     decile.positivity.data,Concentration[y],x,q)),
-  #                   'decile.T.Tests' = list(mIFTO::welch.t.test.calculations(
-  #                     decile.positivity.data,Concentration[y],x,q)),
-  #                   'decile.Image' = list(decile.positivity.data)
-  #   )
-  # }
-  # #
-  # print("invoke06")
-  # if(threshold.logical){
-  #   #
-  #   # get the positvity data
-  #   #
-  #   if ((length(connected.pixels) == 1) & (grepl('NA', connected.pixels))){
-  #     positivity.data <- mIFTO::define.image.positivity(
-  #       data.in,Thresholds[[x]][y],connected.pixels)
-  #   } else {
-  #     positivity.data <- mIFTO::define.image.positivity(
-  #       data.in,Thresholds[[x]][y],connected.pixels[[x]][y])
-  #   }
-  #   #
-  #   # do the calculations for each type of graph and store
-  #   #
-  #   small.tables<-c(small.tables,
-  #     'SN.Ratio' = list(mIFTO::sn.ratio.calculations(
-  #       positivity.data,Concentration[y],x,q)),
-  #     'T.Tests' = list(mIFTO::welch.t.test.calculations(
-  #       positivity.data,Concentration[y],x,q)),
-  #     'Image.ID' = paste0(
-  #       '[',q,']'),
-  #     'Image' = list(positivity.data)
-  #   )
-  #   #
-  #   rm(positivity.data)
-  # } else {
-  #   small.tables <- c(
-  #     small.tables,
-  #     'Image' = as.vector(data.in)
-  #   )
-  # }
-  # #
-  # print("invoke07")
-  # rm(data.in)
-  # return(small.tables)
-  return(data.in)
+  data.in <- data.in[[d.v]]
+  #
+  small.tables <- list()
+  #
+  if(decile.logical){
+    #
+    decile.positivity.data <- mIFTO::decile.define.image.positivity(
+      data.in, 10)
+    small.tables<-c(small.tables,
+                    'decile.SN.Ratio' = list(mIFTO::sn.ratio.calculations(
+                      decile.positivity.data,Concentration[y],x,q)),
+                    'decile.T.Tests' = list(mIFTO::welch.t.test.calculations(
+                      decile.positivity.data,Concentration[y],x,q)),
+                    'decile.Image' = list(decile.positivity.data)
+    )
+  }
+  #
+  if(threshold.logical){
+    #
+    # get the positvity data
+    #
+    if ((length(connected.pixels) == 1) & (grepl('NA', connected.pixels))){
+      positivity.data <- mIFTO::define.image.positivity(
+        data.in,Thresholds[[x]][y],connected.pixels)
+    } else {
+      positivity.data <- mIFTO::define.image.positivity(
+        data.in,Thresholds[[x]][y],connected.pixels[[x]][y])
+    }
+    #
+    # do the calculations for each type of graph and store
+    #
+    small.tables<-c(small.tables,
+      'SN.Ratio' = list(mIFTO::sn.ratio.calculations(
+        positivity.data,Concentration[y],x,q)),
+      'T.Tests' = list(mIFTO::welch.t.test.calculations(
+        positivity.data,Concentration[y],x,q)),
+      'Image.ID' = paste0(
+        '[',q,']'),
+      'Image' = list(positivity.data)
+    )
+    #
+    rm(positivity.data)
+  } else {
+    small.tables <- c(
+      small.tables,
+      'Image' = as.vector(data.in)
+    )
+  }
+  #
+  rm(data.in)
+  return(small.tables)
   #rm(small.tables)
 }

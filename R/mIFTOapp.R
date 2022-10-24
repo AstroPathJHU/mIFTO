@@ -26,35 +26,34 @@
 #' @export
 #'
 mIFTOapp <- function(){
-  print("local")
   #
   if (!.Platform$OS.type == "windows") {
     warning(paste('Application has only been tested on windows machines.',
             'Other OSs are not yet supported'))
   }
   #
-  # if (!curl::has_internet()) {
-  #   stop('No internet connection detected. Internet connection is required.')
-  # }
+  if (!curl::has_internet()) {
+    stop('No internet connection detected. Internet connection is required.')
+  }
   #
-  # e = 0
+  e = 0
   #
-
+  tryCatch({
+    #
+    ip <- system("ipconfig", intern=TRUE)
+    ip <- ip[grep("IPv4", ip)]
+    ip <- gsub(".*? ([[:digit:]])", "\\1", ip)
+    ip <- ip[[1]]
+    #
+  }, error = function(cond){
+    message('cannot find local IP, using shiny default. Performance may suffer.')
+    ip = "127.0.0.1"
+  })
   #
-  ip <- system("ipconfig", intern=TRUE)
-  ip <- ip[grep("IPv4", ip)]
-  ip <- gsub(".*? ([[:digit:]])", "\\1", ip)
-  ip <- ip[[1]]
-  #
-  source("C:/Users/ssotodi1/Documents/R/mIFTO/R/ui.map.R")
-  #
-
   options(browser = "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe")
-  shiny::shinyApp(ui = ui.map(), mIFTO::server.side,
+  shiny::shinyApp(ui = mIFTO::ui.map(), mIFTO::server.side,
                 options = list(width = 1000, launch.browser = TRUE,
                                host = ip, quiet = T))
-
-
-
+    #
   #
 }

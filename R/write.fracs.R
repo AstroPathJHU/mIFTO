@@ -151,33 +151,48 @@ write.fracs <- function (
     b = vector('list',length(Slide_Descript))
     #
     for (x in Slide_Descript){
-
       time <- system.time({
         cl <- parallel::makeCluster(
           getOption("cl.cores", numcores), useXDR = FALSE, methods = FALSE);
         parallel::clusterEvalQ(cl, library(mIFTO));
         #
-        print("write.fracs")
-        print("ihc.path")
-        print(ihc.path)
-        print("x")
-        print(x)
-        print("ihc.Image.IDs")
-        print(ihc.Image.IDs)
-        print("ihc.Thresholds")
-        print(ihc.Thresholds)
-        print("ihc.connected.pixels")
-        print(ihc.connected.pixels)
-        print("titration.type.name")
-        print(titration.type.name)
-        print("cl")
-        print(cl)
-        ihc.small.tables.byimage <-
+        ihc.small.tables.byimage <- tryCatch({
           mIFTO::ihc.parallel.invoke.gpxp(
             ihc.path, x, ihc.Image.IDs, ihc.Thresholds,
             ihc.connected.pixels, cl
           )
-
+        }, warning = function(cond) {
+          modal_out <- shinyalert::shinyalert(
+            title = paste0('Error Reading Component Images for ',
+                           x, ' IHC'),
+            text = paste0('Please check the computer reasources, slide names, ',
+                          'image layers correspond to protocol type, ',
+                          'and that component data tiffs for ', x,
+                          ' IHC exist. Then contact ',
+                          'Benjamin Green at bgreen42jh.edu for assistance.'),
+            type = 'error',
+            showConfirmButton = TRUE
+          )
+          err.val <- 15
+          return(err.val)
+        }, error = function(cond) {
+          modal_out <- shinyalert::shinyalert(
+            title = paste0('Error Reading Component Images for ',
+                           x, ' IHC'),
+            text = paste0('Please check the computer reasources, slide names, ',
+                          'image layers correspond to protocol type, ',
+                          'and that component data tiffs for ', x,
+                          ' IHC exist. Then contact ',
+                          'Benjamin Green at bgreen42jh.edu for assistance.'),
+            type = 'error',
+            showConfirmButton = TRUE
+          )
+          err.val <- 15
+          return(err.val)
+        },
+        finally={
+          parallel::stopCluster(cl)
+        })
         #
         if (length(ihc.small.tables.byimage) == 1) {
           err.val <- 15
