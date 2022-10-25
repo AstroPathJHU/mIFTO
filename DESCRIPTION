@@ -7,6 +7,7 @@ Description: CHANGE DESCRIPTION
 Depends: R (>= 4.0.2), 
 	ggplot2,
 	gridExtra
+biocViews:
 Imports:
     curl,
     dplyr,
@@ -22,7 +23,8 @@ Imports:
     shinydashboard,
     shiny,
     shinyalert,
-    ijtiff
+    ijtiff,
+    EBImage
 License: MIT License
 Encoding: UTF-8
 LazyData: true
