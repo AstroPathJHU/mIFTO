@@ -17,7 +17,6 @@ Imports:
     tiff,
     digest,
     parallel,
-    BiocManager,
     reshape2,
     shinyWidgets,
     shinydashboard,
