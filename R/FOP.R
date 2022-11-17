@@ -536,7 +536,7 @@ FOP<-function(){
             "IHC2", label = "Is this IHC?", value = FALSE
             ),
           shiny::checkboxInput(
-            "MiFtO2", label = "Is this MiFtO?", value = FALSE)
+            "MoTiF2", label = "Is this MoTiF?", value = FALSE)
         ),
         footer = tagList(
           shiny::actionButton("run.secondary", "Run"),
@@ -561,7 +561,7 @@ FOP<-function(){
         my.vals$Opal1 <- input$Opal1
         my.vals$AB <- input$Antibody
         my.vals$IHC <- input$IHC
-        my.vals$MiFtO <- input$MiFtO
+        my.vals$MoTiF <- input$MoTiF
         my.vals$wd <- ""
         my.vals$Positive.table <- runforpos(input, my.vals)
         shiny::showModal(another.ab.modal())
@@ -619,7 +619,7 @@ FOP<-function(){
         my.vals$Opal1 <- input$Opal2
         my.vals$AB <- input$Antibody2
         my.vals$IHC <- input$IHC2
-        my.vals$MiFtO <- input$MiFtO2
+        my.vals$MoTiF <- input$MoTiF2
         my.vals$Positive.table<-findposFOP(my.vals$Positive.table, input,
                                            my.vals)
         shiny::showModal(another.ab.modal())
