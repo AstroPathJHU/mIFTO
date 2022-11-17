@@ -201,13 +201,26 @@ FOP<-function(){
                 # IHC
                 #
                 shiny::column(
-                  4, align = "center", offset = 0,
+                  4, align = "left", offset = 0,
                   shiny::div(
                     class = "textB","Is this IHC?",
                     style = fm.object$commontextstyle
                   ),
                   shiny::checkboxInput(
                     "IHC", "", value = FALSE),
+                  style = fm.object$commoninputstyle
+                ),
+                #
+                # MoTiF
+                #
+                shiny::column(
+                  4, align = "right", offset = 0,
+                  shiny::div(
+                    class = "textB","Is this MoTiF?",
+                    style = fm.object$commontextstyle
+                  ),
+                  shiny::checkboxInput(
+                    "MoTiF", "", value = FALSE),
                   style = fm.object$commoninputstyle
                 ),
                 style = fm.object$commoninputstyle
@@ -218,7 +231,7 @@ FOP<-function(){
             ),
             shiny::fixedRow(
               shiny::column(
-                8, align = 'center',offset = 2,
+                4, align = 'center',offset = 0,
                 shiny::br(),
                 shiny::actionButton(
                   'FOP',
@@ -237,7 +250,6 @@ FOP<-function(){
         )
       )
     ),
-    shinyalert::useShinyalert()
   )
   #
   #
@@ -256,9 +268,13 @@ FOP<-function(){
   #
   findposFOP<-function(Positive.table, out, my.vals){
     AB <- my.vals$AB
+    print(my.vals)
     Opal1 <- my.vals$Opal1
     Concentration <- my.vals$delin
     IHC <- as.logical(my.vals$IHC)
+    print(IHC)
+    MoTiF <- as.logical(my.vals$MoTiF)
+    print(MoTiF)
     Slide_ID <- my.vals$Slide_ID
     fraction.type <- out$fraction.type
     #find working directory
@@ -372,7 +388,8 @@ FOP<-function(){
         )
       )
       Positive.table
-    }else if(fraction.type == 'Tissue'){
+    }else if(fraction.type == 'Tissue' & MoTiF == F){
+      print("Tissue not MoTiF")
       ##read data in and organize it
       CellSeg<-dplyr::mutate(
         reshape2::dcast(
@@ -411,6 +428,50 @@ FOP<-function(){
           ),
           Fraction=(Total.Tumor.Area/(Total.NonTumor.Area+Total.Tumor.Area))),
         Concentration~ `Sample Name`, value.var = 'Fraction'
+      )
+      )
+      Positive.table
+    }
+    else if(fraction.type == 'Tissue' & MoTiF == T){
+      print("Tissue and MoTiF")
+      ##read data in and organize it
+      CellSeg<-dplyr::mutate(
+        reshape2::dcast(
+          do.call(
+            rbind,lapply(
+              list.files(wd,
+                         pattern = '.*]_tissue_seg_data_summary.txt$',
+                         full.names=TRUE
+              ),
+              function(x) data.table::fread(
+                x, na.strings=c('NA', '#N/A'),
+                select = c(
+                  'Annotation ID','Tissue Category','Region Area (pixels)'),
+                data.table= FALSE)
+            )
+          ),
+          `Annotation ID`~`Tissue Category`, value.var = 'Region Area (pixels)'
+        ),
+        Concentration = Concentration
+      )
+      for(count3 in Slide_ID){
+        CellSeg$`Annotation ID`<-gsub(
+          paste0('.*', count3,'.*'),
+          count3, CellSeg$`Annotation ID`)}
+      ##find positive cells and generate output file
+      ##Positive_cells data.table can be added to for additional
+      # AB with the same SlideIDs.
+      Positive.table<-rbind(Positive.table,reshape2::dcast(
+        dplyr::mutate(
+          dplyr::summarise(
+            dplyr::group_by(
+              CellSeg, `Annotation ID`,Concentration
+            ),
+            Total.Tumor.Area = sum(`Tumor`),
+            Total.NonTumor.Area = sum(`Non Tumor`), .groups = 'drop'
+          ),
+          Fraction=(Total.Tumor.Area/(Total.NonTumor.Area+Total.Tumor.Area))),
+        Concentration~ `Annotation ID`, value.var = 'Fraction'
       )
       )
       Positive.table}}
@@ -472,7 +533,10 @@ FOP<-function(){
             value = my.vals$delin
           ),
           shiny::checkboxInput(
-            "IHC2", label = "Is this IHC?", value = FALSE)
+            "IHC2", label = "Is this IHC?", value = FALSE
+            ),
+          shiny::checkboxInput(
+            "MoTiF2", label = "Is this MoTiF?", value = FALSE)
         ),
         footer = tagList(
           shiny::actionButton("run.secondary", "Run"),
@@ -497,6 +561,7 @@ FOP<-function(){
         my.vals$Opal1 <- input$Opal1
         my.vals$AB <- input$Antibody
         my.vals$IHC <- input$IHC
+        my.vals$MoTiF <- input$MoTiF
         my.vals$wd <- ""
         my.vals$Positive.table <- runforpos(input, my.vals)
         shiny::showModal(another.ab.modal())
@@ -554,6 +619,7 @@ FOP<-function(){
         my.vals$Opal1 <- input$Opal2
         my.vals$AB <- input$Antibody2
         my.vals$IHC <- input$IHC2
+        my.vals$MoTiF <- input$MoTiF2
         my.vals$Positive.table<-findposFOP(my.vals$Positive.table, input,
                                            my.vals)
         shiny::showModal(another.ab.modal())
