@@ -201,7 +201,7 @@ FOP<-function(){
                 # IHC
                 #
                 shiny::column(
-                  4, align = "center", offset = 0,
+                  4, align = "left", offset = 0,
                   shiny::div(
                     class = "textB","Is this IHC?",
                     style = fm.object$commontextstyle
@@ -214,7 +214,7 @@ FOP<-function(){
                 # MOTIF
                 #
                 shiny::column(
-                  4, align = "center", offset = 1,
+                  4, align = "right", offset = 0,
                   shiny::div(
                     class = "textB","Is this MoTiF?",
                     style = fm.object$commontextstyle
