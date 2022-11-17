@@ -210,6 +210,19 @@ FOP<-function(){
                     "IHC", "", value = FALSE),
                   style = fm.object$commoninputstyle
                 ),
+                #
+                # MOTIF
+                #
+                shiny::column(
+                  2, align = "center", offset = 0,
+                  shiny::div(
+                    class = "textB","Is this MoTiF?",
+                    style = fm.object$commontextstyle
+                  ),
+                  shiny::checkboxInput(
+                    "MoTiF", "", value = FALSE),
+                  style = fm.object$commoninputstyle
+                ),
                 style = fm.object$commoninputstyle
               )
               #
@@ -258,6 +271,7 @@ FOP<-function(){
     Opal1 <- my.vals$Opal1
     Concentration <- my.vals$delin
     IHC <- as.logical(my.vals$IHC)
+    MoTiF <- as.logical(my.vals$MoTiF)
     Slide_ID <- my.vals$Slide_ID
     fraction.type <- out$fraction.type
     #find working directory
@@ -371,7 +385,7 @@ FOP<-function(){
         )
       )
       Positive.table
-    }else if(fraction.type == 'Tissue'){
+    }else if((fraction.type == 'Tissue') and MoTiF == F){
       ##read data in and organize it
       CellSeg<-dplyr::mutate(
         reshape2::dcast(
@@ -410,6 +424,49 @@ FOP<-function(){
           ),
           Fraction=(Total.Tumor.Area/(Total.NonTumor.Area+Total.Tumor.Area))),
         Concentration~ `Sample Name`, value.var = 'Fraction'
+      )
+      )
+      Positive.table
+    }
+    else if((fraction.type == 'Tissue') and MoTiF == T){
+      ##read data in and organize it
+      CellSeg<-dplyr::mutate(
+        reshape2::dcast(
+          do.call(
+            rbind,lapply(
+              list.files(wd,
+                         pattern = '.*]_tissue_seg_data_summary.txt$',
+                         full.names=TRUE
+              ),
+              function(x) data.table::fread(
+                x, na.strings=c('NA', '#N/A'),
+                select = c(
+                  'Annotation ID','Tissue Category','Region Area (pixels)'),
+                data.table= FALSE)
+            )
+          ),
+          `Annotation ID`~`Tissue Category`, value.var = 'Region Area (pixels)'
+        ),
+        Concentration = Concentration
+      )
+      for(count3 in Slide_ID){
+        CellSeg$`Annotation ID`<-gsub(
+          paste0('.*', count3,'.*'),
+          count3, CellSeg$`Annotation ID`)}
+      ##find positive cells and generate output file
+      ##Positive_cells data.table can be added to for additional
+      # AB with the same SlideIDs.
+      Positive.table<-rbind(Positive.table,reshape2::dcast(
+        dplyr::mutate(
+          dplyr::summarise(
+            dplyr::group_by(
+              CellSeg, `Annotation ID`,Concentration
+            ),
+            Total.Tumor.Area = sum(`Tumor`),
+            Total.NonTumor.Area = sum(`Non Tumor`), .groups = 'drop'
+          ),
+          Fraction=(Total.Tumor.Area/(Total.NonTumor.Area+Total.Tumor.Area))),
+        Concentration~ `Annotation ID`, value.var = 'Fraction'
       )
       )
       Positive.table}}
