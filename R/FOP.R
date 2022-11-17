@@ -210,6 +210,19 @@ FOP<-function(){
                     "IHC", "", value = FALSE),
                   style = fm.object$commoninputstyle
                 ),
+                #
+                # MoTiF
+                #
+                shiny::column(
+                  4, align = "right", offset = 0,
+                  shiny::div(
+                    class = "textB","Is this MoTiF?",
+                    style = fm.object$commontextstyle
+                  ),
+                  shiny::checkboxInput(
+                    "MoTiF", "", value = FALSE),
+                  style = fm.object$commoninputstyle
+                ),
                 style = fm.object$commoninputstyle
               )
               #
@@ -218,7 +231,7 @@ FOP<-function(){
             ),
             shiny::fixedRow(
               shiny::column(
-                6, align = 'center',offset = 0,
+                4, align = 'center',offset = 0,
                 shiny::br(),
                 shiny::actionButton(
                   'FOP',
@@ -227,20 +240,7 @@ FOP<-function(){
                     style = fm.object$buttontextstyle
                   )
                 )
-              ),
-              #
-              # MoTiF
-              #
-              shiny::column(
-                4, align = "right", offset = 0,
-                shiny::div(
-                  class = "textB","Is this MoTiF?",
-                  style = fm.object$commontextstyle
-                ),
-                shiny::checkboxInput(
-                  "MoTiF", "", value = FALSE),
-                style = fm.object$commoninputstyle
-              ),
+              )
             )#,
             #style = paste0(
             #  fm.object$child3inputstyle, "border-bottom: 2px solid lightgrey;
