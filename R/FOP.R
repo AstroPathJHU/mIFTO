@@ -268,6 +268,7 @@ FOP<-function(){
   #
   findposFOP<-function(Positive.table, out, my.vals){
     AB <- my.vals$AB
+    print(my.vals)
     Opal1 <- my.vals$Opal1
     Concentration <- my.vals$delin
     IHC <- as.logical(my.vals$IHC)
