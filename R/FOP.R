@@ -271,7 +271,9 @@ FOP<-function(){
     Opal1 <- my.vals$Opal1
     Concentration <- my.vals$delin
     IHC <- as.logical(my.vals$IHC)
+    print(IHC)
     MoTiF <- as.logical(my.vals$MoTiF)
+    print(MoTiF)
     Slide_ID <- my.vals$Slide_ID
     fraction.type <- out$fraction.type
     #find working directory
@@ -385,7 +387,8 @@ FOP<-function(){
         )
       )
       Positive.table
-    }else if((fraction.type == 'Tissue')&&(MoTiF == F)){
+    }else if(fraction.type == 'Tissue' & MoTiF == F){
+      print("Tissue not MoTiF")
       ##read data in and organize it
       CellSeg<-dplyr::mutate(
         reshape2::dcast(
@@ -428,7 +431,8 @@ FOP<-function(){
       )
       Positive.table
     }
-    else if((fraction.type == 'Tissue')&&(MoTiF == T)){
+    else if(fraction.type == 'Tissue' & MoTiF == T){
+      print("Tissue and MoTiF")
       ##read data in and organize it
       CellSeg<-dplyr::mutate(
         reshape2::dcast(
