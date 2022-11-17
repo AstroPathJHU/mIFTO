@@ -214,7 +214,7 @@ FOP<-function(){
                 # MOTIF
                 #
                 shiny::column(
-                  2, align = "center", offset = 0,
+                  4, align = "center", offset = 1,
                   shiny::div(
                     class = "textB","Is this MoTiF?",
                     style = fm.object$commontextstyle
