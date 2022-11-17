@@ -385,7 +385,7 @@ FOP<-function(){
         )
       )
       Positive.table
-    }else if((fraction.type == 'Tissue')&(MoTiF == F)){
+    }else if((fraction.type == 'Tissue')&&(MoTiF == F)){
       ##read data in and organize it
       CellSeg<-dplyr::mutate(
         reshape2::dcast(
@@ -428,7 +428,7 @@ FOP<-function(){
       )
       Positive.table
     }
-    else if((fraction.type == 'Tissue')&(MoTiF == T)){
+    else if((fraction.type == 'Tissue')&&(MoTiF == T)){
       ##read data in and organize it
       CellSeg<-dplyr::mutate(
         reshape2::dcast(
