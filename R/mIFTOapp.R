@@ -38,17 +38,17 @@ mIFTOapp <- function(){
   #
   e = 0
   #
-  # tryCatch({
+  tryCatch({
     #
     ip <- system("ipconfig", intern=TRUE)
     ip <- ip[grep("IPv4", ip)]
     ip <- gsub(".*? ([[:digit:]])", "\\1", ip)
     ip <- ip[[1]]
     #
-  # }, error = function(cond){
-  #   message('cannot find local IP, using shiny default. Performance may suffer.')
-  #   ip = "127.0.0.1"
-  # })
+  }, error = function(cond){
+    message('cannot find local IP, using shiny default. Performance may suffer.')
+    ip = "127.0.0.1"
+  })
   #
   options(browser = "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe")
   shiny::shinyApp(ui = mIFTO::ui.map(), mIFTO::server.side,
