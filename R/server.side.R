@@ -170,7 +170,7 @@ server.side <- function(input, output, session) {
     #
     #err.val <- mIFTO::pixelbypixel(input,pb)
     #
-    tryCatch({
+    # tryCatch({
       #
       err.val <- mIFTO::pixelbypixel(input,pb)
       #
@@ -186,29 +186,29 @@ server.side <- function(input, output, session) {
         )
       }
       #
-    }, warning = function(cond){
-      on.exit(pb$close());
-      modal_out <- shinyalert::shinyalert(
-        title = "Undefined error.",
-        text = paste(
-          "Please contact Benjamin Green at bgreen42@jh.edu for additional",
-          "assistance."
-        ),
-        type = 'error',
-        showConfirmButton = TRUE
-      )
-    }, error = function(cond){
-      on.exit(pb$close());
-      modal_out <- shinyalert::shinyalert(
-        title = "Undefined error.",
-        text = paste(
-          "Please contact Benjamin Green at bgreen42@jh.edu for additional",
-          "assistance."
-        ),
-        type = 'error',
-        showConfirmButton = TRUE
-      )
-    })
+    # }, warning = function(cond){
+    #   on.exit(pb$close());
+    #   modal_out <- shinyalert::shinyalert(
+    #     title = "Undefined error.",
+    #     text = paste(
+    #       "Please contact Benjamin Green at bgreen42@jh.edu for additional",
+    #       "assistance."
+    #     ),
+    #     type = 'error',
+    #     showConfirmButton = TRUE
+    #   )
+    # }, error = function(cond){
+    #   on.exit(pb$close());
+    #   modal_out <- shinyalert::shinyalert(
+    #     title = "Undefined error.",
+    #     text = paste(
+    #       "Please contact Benjamin Green at bgreen42@jh.edu for additional",
+    #       "assistance."
+    #     ),
+    #     type = 'error',
+    #     showConfirmButton = TRUE
+    #   )
+    # })
   })
   #
 }
