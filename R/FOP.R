@@ -569,7 +569,7 @@ FOP<-function(){
       }, warning = function(cond){
         modal_out <- shinyalert::shinyalert(
           title = "Input Warning.",
-          text = writeLines(
+          text = cat(
             "Please check if input and output are valid and that the ",
             "correct directory was selected. Then",
             "contact Sigfredo Soto at ssotodi1@jh.edu if you need additional",
