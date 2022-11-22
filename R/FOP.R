@@ -573,7 +573,7 @@ FOP<-function(){
             "Please check if input and output are valid and that the ",
             "correct directory was selected. Then",
             "contact Sigfredo Soto at ssotodi1@jh.edu if you need additional",
-            "assistance.",cat("\n"),
+            "assistance.\r\n",
             cond
           ),
           type = 'error',
