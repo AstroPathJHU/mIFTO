@@ -571,9 +571,10 @@ FOP<-function(){
           title = "Input Warning.",
           text = cat(
             "Please check if input and output are valid and that the ",
-            "correct directory was selected. Then",
-            "contact Sigfredo Soto at ssotodi1@jh.edu if you need additional",
-            "assistance.\n",
+            "correct directory was selected.",
+            "Then contact Sigfredo Soto at",
+            "ssotodi1@jh.edu should you need any additional",
+            "assistance.",
             cond
           ),
           type = 'error',
@@ -586,7 +587,7 @@ FOP<-function(){
             "Please check if input and output are valid and that the ",
             "correct directory was selected.",
             "Then contact Sigfredo Soto at",
-            "ssotodi1@jh.edu should you need additional",
+            "ssotodi1@jh.edu should you need any additional",
             "assistance.",
             cond
           ),
@@ -634,9 +635,10 @@ FOP<-function(){
           title = "Second Window Input Warning.",
           text = paste(
             "Please check if input and output are valid and that the ",
-            "correct directory was selected. Then",
-            "contact Sigfredo Soto at ssotodi1@jh.edu if you need additional",
-            "assistance.",cat("\n"),
+            "correct directory was selected.",
+            "Then contact Sigfredo Soto at",
+            "ssotodi1@jh.edu should you need any additional",
+            "assistance.",
             cond
           ),
           type = 'error',
@@ -647,9 +649,10 @@ FOP<-function(){
           title = "Second Window Input Error.",
           text = paste(
             "Please check if input and output are valid and that the ",
-            "correct directory was selected. Then",
-            "contact Sigfredo Soto at ssotodi1@jh.edu if you need additional",
-            "assistance.",cat("\n"),
+            "correct directory was selected.",
+            "Then contact Sigfredo Soto at",
+            "ssotodi1@jh.edu should you need any additional",
+            "assistance.",
             cond
           ),
           type = 'error',
