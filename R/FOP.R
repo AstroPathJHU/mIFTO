@@ -585,8 +585,9 @@ FOP<-function(){
           text = paste(
             "Please check if input and output are valid and that the ",
             "correct directory was selected. Then",
-            "contact Sigfredo Soto at ssotodi1@jh.edu if you need additional",
-            "assistance.",cat("\n"),
+            "contact Sigfredo Soto at",
+            "    ssotodi1@jh.edu if you need additional",
+            "assistance.    ",
             cond
           ),
           type = 'error',
