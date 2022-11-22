@@ -568,8 +568,12 @@ FOP<-function(){
         #
       }, warning = function(cond){
         modal_out <- shinyalert::shinyalert(
-          title = "Undefined error.",
+          title = "Input Warning.",
           text = paste(
+            "Please check if input and output are valid and that the ",
+            "correct directory was selected. Then",
+            "contact Sigfredo Soto at ssotodi1@jh.edu if you need additional",
+            "assistance.",
             cond
           ),
           type = 'error',
@@ -577,8 +581,12 @@ FOP<-function(){
         )
       }, error = function(cond){
         modal_out <- shinyalert::shinyalert(
-          title = "Undefined error.",
+          title = "Input Error.",
           text = paste(
+            "Please check if input and output are valid and that the ",
+            "correct directory was selected. Then",
+            "contact Sigfredo Soto at ssotodi1@jh.edu if you need additional",
+            "assistance.",
             cond
           ),
           type = 'error',
@@ -622,8 +630,12 @@ FOP<-function(){
         #
       }, warning = function(cond){
         modal_out <- shinyalert::shinyalert(
-          title = "Undefined error.",
+          title = "Second Window Input Warning.",
           text = paste(
+            "Please check if input and output are valid and that the ",
+            "correct directory was selected. Then",
+            "contact Sigfredo Soto at ssotodi1@jh.edu if you need additional",
+            "assistance.",
             cond
           ),
           type = 'error',
@@ -631,8 +643,12 @@ FOP<-function(){
         )
       }, error = function(cond){
         modal_out <- shinyalert::shinyalert(
-          title = "Undefined error.",
+          title = "Second Window Input Error.",
           text = paste(
+            "Please check if input and output are valid and that the ",
+            "correct directory was selected. Then",
+            "contact Sigfredo Soto at ssotodi1@jh.edu if you need additional",
+            "assistance.",
             cond
           ),
           type = 'error',
