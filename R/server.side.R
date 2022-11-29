@@ -174,6 +174,7 @@ server.side <- function(input, output, session) {
       #
       err.val <- purrr::quietly(purrr::safely(mIFTO::pixelbypixel(input,pb)))
       #
+      print("here")
       on.exit(pb$close());
       if (err.val == 0){
         modal_out <- shinyalert::shinyalert(
@@ -184,6 +185,9 @@ server.side <- function(input, output, session) {
           type = 'success',
           showConfirmButton = TRUE
         )
+      } else{
+        print("error")
+        err.val
       }
       #
     }, warning = function(cond){
