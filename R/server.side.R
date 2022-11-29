@@ -189,8 +189,9 @@ server.side <- function(input, output, session) {
     }, warning = function(cond){
       on.exit(pb$close());
       modal_out <- shinyalert::shinyalert(
-        title = "Undefined error.",
+        title = "Undefined Warining",
         text = paste(
+          "Please email ssotodi1@jh.edu with the following Error Message - ",
           cond
         ),
         type = 'error',
@@ -199,8 +200,9 @@ server.side <- function(input, output, session) {
     }, error = function(cond){
       on.exit(pb$close());
       modal_out <- shinyalert::shinyalert(
-        title = "Undefined error.",
+        title = "Undefined Error",
         text = paste(
+          "Please email ssotodi1@jh.edu with the following Error Message - ",
           cond
         ),
         type = 'error',
