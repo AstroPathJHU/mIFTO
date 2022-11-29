@@ -175,7 +175,7 @@ server.side <- function(input, output, session) {
       err.val <- purrr::quietly(purrr::safely(mIFTO::pixelbypixel(input,pb)))
       #
       print("here")
-      on.exit(pb$close());
+      # on.exit(pb$close());
       if (err.val == 0){
         modal_out <- shinyalert::shinyalert(
           title = "Finished",
