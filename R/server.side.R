@@ -174,11 +174,9 @@ server.side <- function(input, output, session) {
       #
       err.val <- mIFTO::pixelbypixel(input,pb)
       #
-      print("here")
-      err.val
-      # on.exit(pb$close());
+      print(err.val)
+      on.exit(pb$close());
       if (err.val == 0){
-        on.exit(pb$close());
         modal_out <- shinyalert::shinyalert(
           title = "Finished",
           text = paste(
@@ -189,7 +187,7 @@ server.side <- function(input, output, session) {
         )
       } else {
         print("error")
-        err.val
+        print(err.val)
       }
       #
     }, warning = function(cond){

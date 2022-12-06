@@ -251,7 +251,7 @@ check.vars <- function(out) {
           title =  paste('Search failed for', x, titration.type.name,
                          'IHC images'),
           text = paste0(
-            'Please check slide names and that component data tiffs for ',
+            'Please check Slide Identifiers, Primary Antibody, and that component data tiffs for ',
             x, ' IHC exist. For data separated in folders by dilution, put IHC ',
             'data in an "IHC" or "',Antibody, '_IHC" folder'),
           type = 'error',
@@ -283,8 +283,9 @@ check.vars <- function(out) {
         title = "Error could not find paths.",
         text = paste(
           "The number of paths for each concentration does not equal 1.",
-          "Please check the status of the naming convention on folders and that",
-          "all folders exist."
+          "Please check the status of the naming convention on folders, ",
+          "that the Concentrations entered are correct, that the correct ",
+          "Titration is selected, and that all folders exist."
         ),
         type = 'error',
         showConfirmButton = TRUE
@@ -425,11 +426,22 @@ check.vars <- function(out) {
       # == the number of concentrations
       #
       if (length(Concentration) != length(Thresholds[[x]])){
+        if (ihc.logical){
+          ihc.message <- "Check to make sure IHC threshold values are included"
+        } else{
+          ihc.message <- ""
+        }
+        if (threshold.logical){
+          thrsh.message <- "One or more slide(s) might be missing threshold values."
+        } else{
+          thrsh.message <- ""
+        }
         modal_out <- shinyalert::shinyalert(
           title = "Error in threshold input.",
           text = paste(
             "The length of concentration list does",
-            "not equal the length of threshold list"
+            "not equal the length of threshold list. ",
+            thrsh.message, ihc.message
           ),
           type = 'error',
           showConfirmButton = TRUE
@@ -522,11 +534,22 @@ check.vars <- function(out) {
       # == the number of concentrations
       #
       if (length(Concentration) != length(connected.pixels[[x]])){
+        if (ihc.logical){
+          ihc.message <- "Check to make sure IHC connected pixel values are included"
+        } else{
+          ihc.message <- ""
+        }
+        if (threshold.logical){
+          thrsh.message <- "One or more slide(s) might be missing connected pixel values."
+        } else{
+          thrsh.message <- ""
+        }
         modal_out <- shinyalert::shinyalert(
           title = "Error in connected pixels input.",
           text = paste(
             "The length of concentration list does",
-            "not equal the length of connected pixels list"
+            "not equal the length of connected pixels list. ",
+            thrsh.message, ihc.message
           ),
           type = 'error',
           showConfirmButton = TRUE
