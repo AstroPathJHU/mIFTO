@@ -54,10 +54,24 @@ generate.pxp.image.data <- function(
       return(-1)
     }
     data.in$data.out
-  }, error = function(cond){
-    return(-1)
-  }, warning = function(cond){
-    return(-1)
+  }, error = function(cond) {
+          modal_out <- shinyalert::shinyalert(
+            title = paste0('Error in generate.pxp.image.data data.in'),
+            text = paste0(cond),
+            type = 'error',
+            showConfirmButton = TRUE
+          )
+          err.val <- 14
+          return(err.val)
+  },warning = function(cond) {
+          modal_out <- shinyalert::shinyalert(
+            title = paste0('Warining in generate.pxp.image.data data.in'),
+            text = paste0(cond),
+            type = 'error',
+            showConfirmButton = TRUE
+          )
+          err.val <- 14
+          return(err.val)
   }, finally = {})
   #
   if(length(data.in[[1]]) == 1){
@@ -97,13 +111,33 @@ generate.pxp.image.data <- function(
     #
     decile.positivity.data <- mIFTO::decile.define.image.positivity(
       data.in, 10)
-    small.tables<-c(small.tables,
+    small.tables<- tryCatch({
+                    c(small.tables,
                     'decile.SN.Ratio' = list(mIFTO::sn.ratio.calculations(
                       decile.positivity.data,Concentration[y],x,q)),
                     'decile.T.Tests' = list(mIFTO::welch.t.test.calculations(
                       decile.positivity.data,Concentration[y],x,q)),
                     'decile.Image' = list(decile.positivity.data)
     )
+    }, error = function(cond) {
+          modal_out <- shinyalert::shinyalert(
+            title = paste0('Error in generate.pxp.image.data decile positivity data'),
+            text = paste0(cond),
+            type = 'error',
+            showConfirmButton = TRUE
+          )
+          err.val <- 14
+          return(err.val)
+  },warning = function(cond) {
+          modal_out <- shinyalert::shinyalert(
+            title = paste0('Warining in generate.pxp.image.data decile positivity data'),
+            text = paste0(cond),
+            type = 'error',
+            showConfirmButton = TRUE
+          )
+          err.val <- 14
+          return(err.val)
+  }, finally = {})
   }
   #
   if(threshold.logical){
