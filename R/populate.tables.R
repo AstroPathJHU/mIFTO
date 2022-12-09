@@ -46,7 +46,7 @@ populate.tables <- function(
   table.names.byimage <-c('SN.Ratio','T.Tests','Histograms')
   table.names.wholeslide<-c('SN.Ratio','T.Tests','Histograms','BoxPlots')
   #
-  tables.out <- mIFTO::MIFTO.preallocate.tables(
+  tables.out <- mIFTO::preallocate.tables(
     Slide_Descript, Concentration, titration.type.name,
     table.names.wholeslide, paths, Protocol,decile.logical, threshold.logical)
   err.val <- tables.out$err.val
@@ -82,7 +82,7 @@ populate.tables <- function(
       #
       str1 = paste0("Processing ", x, ' 1:',Concentration[[y]])
       pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-      mIFTO::MIFTO.doupdate.pgbar(pb.count2, pb.Object, paste0(
+      mIFTO::doupdate.pgbar(pb.count2, pb.Object, paste0(
         str1,' - Reading Tiffs and Generating Image Statistics - ',
         length(Image.IDs[[x]][[y]])))
       #
@@ -97,7 +97,7 @@ populate.tables <- function(
         parallel::clusterEvalQ(cl, library(mIFTO));
         #
         small.tables.byimage <- tryCatch({
-          mIFTO::MIFTO.parallel.invoke.gpxp(
+          mIFTO::parallel.invoke.gpxp(
             Concentration, x, y, Image.IDs, Antibody_Opal,
             titration.type.name, Thresholds, paths,
             connected.pixels, flowout, Opal1,
@@ -127,7 +127,7 @@ populate.tables <- function(
                           'and that component data tiffs for ', x,
                           ' 1to',Concentration[[y]],' exist. Then contact ',
                           'Sigfredo Soto at ssotodi1@jh.edu for assistance.'),
-            cond
+            cond,
             type = 'error',
             showConfirmButton = TRUE
           )
@@ -147,7 +147,7 @@ populate.tables <- function(
       # progress bar
       #
       time <- round(time[['elapsed']], digits = 0)
-      mIFTO::MIFTO.doupdate.pgbar(pb.count2, pb.Object, paste0(
+      mIFTO::doupdate.pgbar(pb.count2, pb.Object, paste0(
         str1,' - Elapsed Time: ', time,' secs'))
       #
       # reorganize to small table format to fit into the main 'Tables' list
@@ -189,7 +189,7 @@ populate.tables <- function(
       rm(small.tables.byimage)
       #
       pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-      mIFTO::MIFTO.doupdate.pgbar(pb.count2, pb.Object, paste0(
+      mIFTO::doupdate.pgbar(pb.count2, pb.Object, paste0(
         str1,' - Generating Whole Slide Statistics'))
       #
       #############do whole image stats###################
@@ -239,7 +239,7 @@ populate.tables <- function(
       })
       #
       time <- round(time[['elapsed']], digits = 0)
-      mIFTO::MIFTO.doupdate.pgbar(pb.count2, pb.Object, paste0(
+      mIFTO::doupdate.pgbar(pb.count2, pb.Object, paste0(
         str1,' - Elapsed Time: ', time,' secs'))
       Sys.sleep(0.5)
       #
