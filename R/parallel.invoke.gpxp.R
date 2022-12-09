@@ -60,11 +60,32 @@ parallel.invoke.gpxp <- function (
   #
   ###### need to add a try catch, but also need to determine what happens
   ###### when I throw an error instead of the envir
-    small.tables.byimage<- parallel::parLapply(
+    small.tables.byimage<- tryCatch({
+      parallel::parLapply(
       cl,Image.IDs[[x]][[y]],function(z) mIFTO::generate.pxp.image.data(
         Concentration, x, y, z, Antibody_Opal,
         titration.type.name, Thresholds, paths,
         connected.pixels, flowout, Opal1,
         decile.logical, threshold.logical))
+        }, warning = function(cond) {
+          modal_out <- shinyalert::shinyalert(
+            title = paste0('Warning in parallel.invoke.gpxp'),
+            text = paste0(cond),
+            type = 'error',
+            showConfirmButton = TRUE
+          )
+          err.val <- 14
+          return(err.val)
+        }, error = function(cond) {
+          modal_out <- shinyalert::shinyalert(
+            title = paste0('Error in parallel.invoke.gpxp'),
+            text = paste0(cond),
+            type = 'error',
+            showConfirmButton = TRUE
+          )
+          err.val <- 14
+          return(err.val)
+        })
+        
   #
 }
