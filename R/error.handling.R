@@ -10,13 +10,9 @@
 #'@export
 #'
 error.handling <- function(traceback) {
-  checker <- grep('Thresholds[[x]][[length(Thresholds[[x]])]]', str)
+  checker <- grep('err.val == 0', str)
   if (!(identical(checker, integer(0)))){
-    err.msg <- ""
-  }
-  checker <- grep('connected.pixels[[x]][[length(connected.pixels[[x]])]]', str)
-  if (!(identical(checker, integer(0)))){
-    print("True")
-  }
+       print("True")
+   }
 
 }
