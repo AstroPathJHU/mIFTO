@@ -111,7 +111,8 @@ populate.tables <- function(
                           'image layers correspond to protocol type, ',
                           'and that component data tiffs for ', x,
                           ' 1to',Concentration[[y]],' exist. Then contact ',
-                          'Sigfredo Soto at ssotodi1@jh.edu for assistance.', cond),
+                          'Sigfredo Soto at ssotodi1@jh.edu for assistance.'),
+            cond,
             type = 'error',
             showConfirmButton = TRUE
           )
@@ -125,7 +126,8 @@ populate.tables <- function(
                           'image layers correspond to protocol type, ',
                           'and that component data tiffs for ', x,
                           ' 1to',Concentration[[y]],' exist. Then contact ',
-                          'Sigfredo Soto at ssotodi1@jh.edu for assistance.',cond),
+                          'Sigfredo Soto at ssotodi1@jh.edu for assistance.'),
+            cond,
             type = 'error',
             showConfirmButton = TRUE
           )
