@@ -30,7 +30,7 @@ tiff.list <- function(wd, pattern.in) {
     full.names = T,
     ignore.case = T
   )
-  if (length(image_names) < 1){
+  if (length(image_names) > 1){
     err.val <- 1
     return(list(err.val = err.val))
   }
