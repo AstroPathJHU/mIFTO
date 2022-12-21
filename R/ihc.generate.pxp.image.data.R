@@ -44,9 +44,11 @@ ihc.generate.pxp.image.data <- function (
   }, warning = function(cond){
     return(-1)
   }, finally = {})
+  print(data.in)
   #
   if(length(data.in[[1]]) == 1){
-    stop('error in slide ', str)
+    print(data.in)
+    # stop('error in slide ', data.in)
   }
   data.in <- data.in[[1]]
   #
