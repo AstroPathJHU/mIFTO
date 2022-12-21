@@ -60,11 +60,46 @@ parallel.invoke.gpxp <- function (
   #
   ###### need to add a try catch, but also need to determine what happens
   ###### when I throw an error instead of the envir
-    small.tables.byimage<- parallel::parLapply(
+    small.tables.byimage<- tryCatch({
+      parallel::parLapply(
       cl,Image.IDs[[x]][[y]],function(z) mIFTO::generate.pxp.image.data(
         Concentration, x, y, z, Antibody_Opal,
         titration.type.name, Thresholds, paths,
         connected.pixels, flowout, Opal1,
         decile.logical, threshold.logical))
+    }, warning = function(cond) {
+      modal_out <- shinyalert::shinyalert(
+        title = paste0('Warning in parallel invoke Reading Component Images for ',
+                       x, ' 1to', Concentration[y]),
+        text = paste0('Please check the computer resources, slide names, ',
+                      'image layers correspond to protocol type, ',
+                      'and that component data tiffs for ', x,
+                      ' 1to',Concentration[[y]],' exist. Then contact ',
+                      'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
+                      cond),
+        type = 'error',
+        showConfirmButton = TRUE
+      )
+      err.val <- 14
+      return(err.val)
+    }, error = function(cond) {
+      modal_out <- shinyalert::shinyalert(
+        title = paste0('Error in parallel invoke Reading Component Images for ',
+                       x, ' 1to', Concentration[y]),
+        text = paste0('Please check the computer resources, slide names, ',
+                      'image layers correspond to protocol type, ',
+                      'and that component data tiffs for ', x,
+                      ' 1to',Concentration[[y]],' exist. Then contact ',
+                      'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
+                      cond),
+        type = 'error',
+        showConfirmButton = TRUE
+      )
+      err.val <- 14
+      return(err.val)
+    },
+    finally={
+      parallel::stopCluster(cl)
+    })
   #
 }

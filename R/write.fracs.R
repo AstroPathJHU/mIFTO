@@ -165,7 +165,7 @@ write.fracs <- function (
           modal_out <- shinyalert::shinyalert(
             title = paste0('Warning Reading Component Images for ',
                            x, ' IHC'),
-            text = paste0('Please check the computer reasources, slide names, ',
+            text = paste0('Please check the computer resources, slide names, ',
                           'image layers correspond to protocol type, ',
                           'and that component data tiffs for ', x,
                           ' IHC exist. Then contact ',
@@ -180,7 +180,7 @@ write.fracs <- function (
           modal_out <- shinyalert::shinyalert(
             title = paste0('Error Reading Component Images for ',
                            x, ' IHC'),
-            text = paste0('Please check the computer reasources, slide names, ',
+            text = paste0('Please check the computer resources, slide names, ',
                           'image layers correspond to protocol type, ',
                           'and that component data tiffs for ', x,
                           ' IHC exist. Then contact ',
