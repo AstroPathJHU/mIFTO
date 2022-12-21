@@ -110,7 +110,7 @@ check.vars <- function(out) {
     Concentration <- out$Concentration
   }
   #
-  Concentration1 <-
+  Concentration1 <- tryCatch({
     Concentration1 <- as.numeric(
       unlist(
         strsplit(
@@ -118,6 +118,28 @@ check.vars <- function(out) {
         )
       )
     )
+  }, warning = function(cond) {
+    modal_out <- shinyalert::shinyalert(
+      title = "Error in concentration input.",
+      text = paste(
+        "Concentration input:", Concentration, "not valid. Please enter a list",
+        "of numeric values separated by commas."),
+      type = 'warning',
+      showConfirmButton = TRUE
+    )
+    return(-1)
+  }, error = function(cond) {
+    modal_out <- shinyalert::shinyalert(
+      title = "Error in concentration input.",
+      text = paste(
+        "Concentration input:", Concentration, "not valid. Please enter a list",
+        "of numeric values separated by commas."),
+      type = 'warning',
+      showConfirmButton = TRUE
+    )
+    return(-1)
+  }
+  )
   #
   if (length(Concentration1) == 1){
     if (Concentration1 == -1){
@@ -350,7 +372,7 @@ check.vars <- function(out) {
       #
       # try to convert to a valid string
       #
-      Thresholds1 <-
+      Thresholds1 <- tryCatch({
         as.numeric(
           unlist(
             strsplit(
@@ -358,7 +380,31 @@ check.vars <- function(out) {
             )
           )
         )
-
+      }, warning = function(cond) {
+        modal_out <- shinyalert::shinyalert(
+          title = "Error in threshold input.",
+          text = paste0(
+            "Could not parse threshold input:", Thresholds[[x]],
+            ". Please enter a valid list of numeric thresholds, separated by ",
+            "commas."
+          ),
+          type = 'error',
+          showConfirmButton = TRUE
+        )
+        return(-1)
+      }, error = function(cond) {
+        modal_out <- shinyalert::shinyalert(
+          title = "Error in threshold input.",
+          text = paste0(
+            "Could not parse threshold input:", Thresholds[[x]],
+            ". Please enter a valid list of numeric thresholds, separated by ",
+            "commas."
+          ),
+          type = 'error',
+          showConfirmButton = TRUE
+        )
+        return(-1)
+      })
       #
       if (length(Thresholds1) == 1){
         if (Thresholds1 == -1){
@@ -423,7 +469,7 @@ check.vars <- function(out) {
       #
       # try to convert to a valid string
       #
-      connected.pixels1 <-
+      connected.pixels1 <- tryCatch({
         as.numeric(
           unlist(
             strsplit(
@@ -431,7 +477,32 @@ check.vars <- function(out) {
             )
           )
         )
-
+      }, warning = function(cond) {
+        modal_out <- shinyalert::shinyalert(
+          title = "Error in connected pixel input.",
+          text = paste0(
+            "Could not parse connected pixel input:", Thresholds[[x]],
+            ". Please enter a valid list of numeric connected pixel values, ",
+            "separated by commas."
+          ),
+          type = 'error',
+          showConfirmButton = TRUE
+        )
+        return(-1)
+      }, error = function(cond) {
+        modal_out <- shinyalert::shinyalert(
+          title = "Error in connected pixel input.",
+          text = paste0(
+            "Could not parse connected pixel input:", Thresholds[[x]],
+            ". Please enter a valid list of numeric connected pixel values, ",
+            "separated by commas."
+          ),
+          type = 'error',
+          showConfirmButton = TRUE
+        )
+        return(-1)
+      }
+      )
       #
       if (length(connected.pixels1) == 1){
         if (connected.pixels1 == -1){

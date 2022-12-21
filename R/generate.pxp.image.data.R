@@ -48,13 +48,47 @@ generate.pxp.image.data <- function(
   # read that image in
   #
   print(str)
-  data.in <-
+  data.in <- tryCatch({
     data.in <- mIFTO::tiff.list(paths[[y]], pattern.in = str)
     err.val <- data.in$err.val
     if (!err.val == 0){
       return(-1)
     }
     data.in$data.out
+  }, warning = function(cond) {
+    modal_out <- shinyalert::shinyalert(
+      title = paste0('Warning in generate.pxp tiff.list Reading Component Images for ',
+                     x, ' 1to', Concentration[y]),
+      text = paste0('Please check the computer resources, slide names, ',
+                    'image layers correspond to protocol type, ',
+                    'and that component data tiffs for ', x,
+                    ' 1to',Concentration[[y]],' exist. Then contact ',
+                    'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
+                    cond),
+      type = 'error',
+      showConfirmButton = TRUE
+    )
+    err.val <- 14
+    return(-1)
+  }, error = function(cond) {
+    modal_out <- shinyalert::shinyalert(
+      title = paste0('Error in generate.pxp tiff.list Reading Component Images for ',
+                     x, ' 1to', Concentration[y]),
+      text = paste0('Please check the computer resources, slide names, ',
+                    'image layers correspond to protocol type, ',
+                    'and that component data tiffs for ', x,
+                    ' 1to',Concentration[[y]],' exist. Then contact ',
+                    'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
+                    cond),
+      type = 'error',
+      showConfirmButton = TRUE
+    )
+    err.val <- 14
+    return(-1)
+  },
+  finally={
+    parallel::stopCluster(cl)
+  })
   print(data.in)
   #
   if(length(data.in[[1]]) == 1){
@@ -71,6 +105,7 @@ generate.pxp.image.data <- function(
   #
   # create the flow output for this image
   #
+  tryCatch({
     if (flowout == TRUE){
       data.in.write <- vector('list',length(data.in))
       for (i1 in 1:length(data.in)){
@@ -83,7 +118,40 @@ generate.pxp.image.data <- function(
 
       data.table::fwrite(data.in.write, file=str,sep=',')
     }
-
+  }, warning = function(cond) {
+    modal_out <- shinyalert::shinyalert(
+      title = paste0('Warning in generate.pxp if(flowout) Reading Component Images for ',
+                     x, ' 1to', Concentration[y]),
+      text = paste0('Please check the computer resources, slide names, ',
+                    'image layers correspond to protocol type, ',
+                    'and that component data tiffs for ', x,
+                    ' 1to',Concentration[[y]],' exist. Then contact ',
+                    'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
+                    cond),
+      type = 'error',
+      showConfirmButton = TRUE
+    )
+    err.val <- 14
+    return(err.val)
+  }, error = function(cond) {
+    modal_out <- shinyalert::shinyalert(
+      title = paste0('Error in generate.pxp if(flowout) Reading Component Images for ',
+                     x, ' 1to', Concentration[y]),
+      text = paste0('Please check the computer resources, slide names, ',
+                    'image layers correspond to protocol type, ',
+                    'and that component data tiffs for ', x,
+                    ' 1to',Concentration[[y]],' exist. Then contact ',
+                    'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
+                    cond),
+      type = 'error',
+      showConfirmButton = TRUE
+    )
+    err.val <- 14
+    return(err.val)
+  },
+  finally={
+    parallel::stopCluster(cl)
+  })
   #
   # select and store only the desired data
   #
@@ -91,6 +159,7 @@ generate.pxp.image.data <- function(
   #
   small.tables <- list()
   #
+  tryCatch({
     if(decile.logical){
       #
       decile.positivity.data <- mIFTO::decile.define.image.positivity(
@@ -103,8 +172,42 @@ generate.pxp.image.data <- function(
                       'decile.Image' = list(decile.positivity.data)
       )
     }
-
+  }, warning = function(cond) {
+    modal_out <- shinyalert::shinyalert(
+      title = paste0('Warning in generate.pxp if(decile.logical) Reading Component Images for ',
+                     x, ' 1to', Concentration[y]),
+      text = paste0('Please check the computer resources, slide names, ',
+                    'image layers correspond to protocol type, ',
+                    'and that component data tiffs for ', x,
+                    ' 1to',Concentration[[y]],' exist. Then contact ',
+                    'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
+                    cond),
+      type = 'error',
+      showConfirmButton = TRUE
+    )
+    err.val <- 14
+    return(err.val)
+  }, error = function(cond) {
+    modal_out <- shinyalert::shinyalert(
+      title = paste0('Error in generate.pxp if(decile.logical) Reading Component Images for ',
+                     x, ' 1to', Concentration[y]),
+      text = paste0('Please check the computer resources, slide names, ',
+                    'image layers correspond to protocol type, ',
+                    'and that component data tiffs for ', x,
+                    ' 1to',Concentration[[y]],' exist. Then contact ',
+                    'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
+                    cond),
+      type = 'error',
+      showConfirmButton = TRUE
+    )
+    err.val <- 14
+    return(err.val)
+  },
+  finally={
+    parallel::stopCluster(cl)
+  })
   #
+  tryCatch({
     if(threshold.logical){
       #
       # get the positvity data
@@ -136,6 +239,40 @@ generate.pxp.image.data <- function(
         'Image' = as.vector(data.in)
       )
     }
+  }, warning = function(cond) {
+    modal_out <- shinyalert::shinyalert(
+      title = paste0('Warning in generate.pxp if(thresh.logical) Reading Component Images for ',
+                     x, ' 1to', Concentration[y]),
+      text = paste0('Please check the computer resources, slide names, ',
+                    'image layers correspond to protocol type, ',
+                    'and that component data tiffs for ', x,
+                    ' 1to',Concentration[[y]],' exist. Then contact ',
+                    'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
+                    cond),
+      type = 'error',
+      showConfirmButton = TRUE
+    )
+    err.val <- 14
+    return(err.val)
+  }, error = function(cond) {
+    modal_out <- shinyalert::shinyalert(
+      title = paste0('Error in generate.pxp if(thresh.logical) Reading Component Images for ',
+                     x, ' 1to', Concentration[y]),
+      text = paste0('Please check the computer resources, slide names, ',
+                    'image layers correspond to protocol type, ',
+                    'and that component data tiffs for ', x,
+                    ' 1to',Concentration[[y]],' exist. Then contact ',
+                    'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
+                    cond),
+      type = 'error',
+      showConfirmButton = TRUE
+    )
+    err.val <- 14
+    return(err.val)
+  },
+  finally={
+    parallel::stopCluster(cl)
+  })
   #
   rm(data.in)
   return(small.tables)
