@@ -58,7 +58,8 @@ generate.pxp.image.data <- function(
   print(data.in)
   #
   if(length(data.in[[1]]) == 1){
-    stop('error in slide ', str)
+    print(data.in)
+    # stop('error in slide ', data.in)
   }
   data.in <- data.in[[1]]
   nn <- names(data.in)
