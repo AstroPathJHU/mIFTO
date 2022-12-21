@@ -47,6 +47,7 @@ generate.pxp.image.data <- function(
   #
   # read that image in
   #
+  print(str)
   data.in <- tryCatch({
     data.in <- mIFTO::tiff.list(paths[[y]], pattern.in = str)
     err.val <- data.in$err.val
@@ -88,6 +89,7 @@ generate.pxp.image.data <- function(
   finally={
     parallel::stopCluster(cl)
   })
+  print(data.in)
   #
   if(length(data.in[[1]]) == 1){
     stop('error in slide ', str)
