@@ -4,9 +4,9 @@
 #'Created By: Benjamin Green, Charles Roberts
 #'Last Edited 11/12/2018
 #'
-#'Takes in a list of values as a data.frame and outputs a 
+#'Takes in a list of values as a data.frame and outputs a
 #'histogram caculated based of the Freedman-Diaconis' choice for
-#'bin number if that calculation fails it creates a histogram 
+#'bin number if that calculation fails it creates a histogram
 #'based off the bin.estimate value
 #'
 #' @param data.in is a vector of the data of interest
@@ -16,9 +16,9 @@
 #' @export
 #'
 create.histo <- function(data.in, bin.estimate) {
-  possiblerror<- tryCatch(
+  possiblerror<-
     round(diff(range(data.in)) /
-            (2 * IQR(data.in) / length(data.in) ^ (1 /3))))
+            (2 * IQR(data.in) / length(data.in) ^ (1 /3)))
 
   if(inherits(possiblerror, "error")|IQR(data.in)==0){
 

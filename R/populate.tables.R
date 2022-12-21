@@ -96,47 +96,14 @@ populate.tables <- function(
           getOption("cl.cores", numcores), useXDR = FALSE, methods = FALSE);
         parallel::clusterEvalQ(cl, library(mIFTO));
         #
-        small.tables.byimage <- tryCatch({
+        small.tables.byimage <-
           mIFTO::parallel.invoke.gpxp(
             Concentration, x, y, Image.IDs, Antibody_Opal,
             titration.type.name, Thresholds, paths,
             connected.pixels, flowout, Opal1,
             decile.logical, threshold.logical, cl
           )
-        }, warning = function(cond) {
-          modal_out <- shinyalert::shinyalert(
-            title = paste0('Warning Reading Component Images for ',
-                           x, ' 1to', Concentration[y]),
-            text = paste0('Please check the computer resources, slide names, ',
-                          'image layers correspond to protocol type, ',
-                          'and that component data tiffs for ', x,
-                          ' 1to',Concentration[[y]],' exist. Then contact ',
-                          'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
-                          cond),
-            type = 'error',
-            showConfirmButton = TRUE
-          )
-          err.val <- 14
-          return(err.val)
-        }, error = function(cond) {
-          modal_out <- shinyalert::shinyalert(
-            title = paste0('Error Reading Component Images for ',
-                           x, ' 1to', Concentration[y]),
-            text = paste0('Please check the computer resources, slide names, ',
-                          'image layers correspond to protocol type, ',
-                          'and that component data tiffs for ', x,
-                          ' 1to',Concentration[[y]],' exist. Then contact ',
-                          'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
-                          cond),
-            type = 'error',
-            showConfirmButton = TRUE
-          )
-          err.val <- 14
-          return(err.val)
-        },
-        finally={
-          parallel::stopCluster(cl)
-        })
+
         #
         if (length(small.tables.byimage) == 1) {
           err.val <- 14

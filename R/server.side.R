@@ -170,7 +170,6 @@ server.side <- function(input, output, session) {
     #
     #err.val <- mIFTO::pixelbypixel(input,pb)
     #
-    tryCatch({
       #
       err.val <- mIFTO::pixelbypixel(input,pb)
       #
@@ -190,29 +189,7 @@ server.side <- function(input, output, session) {
         print(err.val)
       }
       #
-    }, warning = function(cond){
-      on.exit(pb$close());
-      modal_out <- shinyalert::shinyalert(
-        title = "Undefined Warining",
-        text = paste(
-          "Please email ssotodi1@jh.edu with the following Error Message - ",
-          cond
-        ),
-        type = 'error',
-        showConfirmButton = TRUE
-      )
-    }, error = function(cond){
-      on.exit(pb$close());
-      modal_out <- shinyalert::shinyalert(
-        title = "Undefined Error",
-        text = paste(
-          "Please email ssotodi1@jh.edu with the following Error Message - ",
-          cond
-        ),
-        type = 'error',
-        showConfirmButton = TRUE
-      )
-    })
+
   })
   #
 }
