@@ -105,13 +105,14 @@ populate.tables <- function(
           )
         }, warning = function(cond) {
           modal_out <- shinyalert::shinyalert(
-            title = paste0('Error Reading Component Images for ',
+            title = paste0('Warning Reading Component Images for ',
                            x, ' 1to', Concentration[y]),
             text = paste0('Please check the computer reasources, slide names, ',
                           'image layers correspond to protocol type, ',
                           'and that component data tiffs for ', x,
                           ' 1to',Concentration[[y]],' exist. Then contact ',
-                          'Benjamin Green at bgreen42jh.edu for assistance.'),
+                          'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
+                          cond),
             type = 'error',
             showConfirmButton = TRUE
           )
@@ -125,7 +126,8 @@ populate.tables <- function(
                           'image layers correspond to protocol type, ',
                           'and that component data tiffs for ', x,
                           ' 1to',Concentration[[y]],' exist. Then contact ',
-                          'Benjamin Green at bgreen42jh.edu for assistance.'),
+                          'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
+                          cond),
             type = 'error',
             showConfirmButton = TRUE
           )
