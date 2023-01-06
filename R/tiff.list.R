@@ -30,6 +30,7 @@ tiff.list <- function(wd, pattern.in) {
     full.names = T,
     ignore.case = T
   )
+  # more than one image of the same name
   if (length(image_names) > 1){
     err.val <- 1
     return(list(err.val = err.val))

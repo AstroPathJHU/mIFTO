@@ -1,6 +1,6 @@
 #########################decile.define.image.positivity#########################
 #
-#'Used by analysis functions to calculate to define image positivity using the 
+#'Used by analysis functions to calculate to define image positivity using the
 #'thresholds and connected pixel value
 #'
 #'define.image.positivity;
@@ -32,6 +32,7 @@ decile.define.image.positivity <- function(data.in, step.value){
   neg <- v * neg.mask
   #
   out <- list(pos = pos, neg = neg, pos.mask = pos.mask, neg.mask = neg.mask)
+  # decile.positivity.data <- list(pos = pos, neg = neg, pos.mask = pos.mask, neg.mask = neg.mask)
   return(out)
   #
 }
