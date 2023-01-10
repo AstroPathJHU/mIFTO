@@ -88,6 +88,11 @@ parallel.invoke.gpxp <- function (
     }
     if (vexpr$visible) vexpr$value else invisible(vexpr$value)
   }
+  export_var <- function(v1) {
+    deparse(substitute(v1))
+    filename = paste0("C:\\Users\\Public\\Documents\\", deparse(substitute(v1)), ".csv")
+    write.csv(v1, filename, row.names=FALSE)
+  }
   #
   # define the environment for the cluster
   #
@@ -160,7 +165,20 @@ parallel.invoke.gpxp <- function (
         withJavaLogging({
           print(cl)
           print(showConnections())
-          write.csv(cl, "C:\\Users\\Public\\Documents\\cl.csv", row.names=FALSE)
+          ls()
+          export_var(Concentration)
+          export_var(x)
+          export_var(y)
+          export_var(z)
+          export_var(Antibody_Opal)
+          export_var(titration.type.name)
+          export_var(Thresholds)
+          export_var(paths)
+          export_var(connected.pixels)
+          export_var(flowout)
+          export_var(Opal1)
+          export_var(decile.logical)
+          export_var(threshold.logical)
           quit()
           parallel::clusterExport(
             cl=cl, varlist=c("Concentration", "x", "y", "Antibody_Opal",
