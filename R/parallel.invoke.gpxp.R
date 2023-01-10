@@ -89,7 +89,6 @@ parallel.invoke.gpxp <- function (
     if (vexpr$visible) vexpr$value else invisible(vexpr$value)
   }
   export_var <- function(v1) {
-    deparse(substitute(v1))
     filename = paste0("C:\\Users\\Public\\Documents\\", deparse(substitute(v1)), ".csv")
     write.csv(v1, filename, row.names=FALSE)
   }
@@ -182,14 +181,15 @@ parallel.invoke.gpxp <- function (
           export_var(threshold.logical)
           matched_x = match(x, Image.IDs[1])
           export_var(matched_x)
-          export_var(Image.IDs)
-          quit()
           parallel::clusterExport(
             cl=cl, varlist=c("Concentration", "x", "y", "Antibody_Opal",
                              "titration.type.name","Thresholds","paths",
                              "connected.pixels","flowout","Opal1",
                              "decile.logical", "threshold.logical"),
             envir=my_env)
+          if(exists("cl")){
+            print("cl exists")
+          }
         parallel::parLapply(
           cl,Image.IDs[[x]][[y]],function(z) mIFTO::generate.pxp.image.data(
             Concentration, x, y, z, Antibody_Opal,

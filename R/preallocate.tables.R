@@ -24,6 +24,11 @@
 preallocate.tables <- function(
   Slide_Descript,Concentration, titration.type.name, table.names, paths,
   Protocol, decile.logical, threshold.logical){
+  export_var <- function(v1) {
+    filename = paste0("C:\\Users\\Public\\Documents\\", deparse(substitute(v1)), ".csv")
+    write.csv(v1, filename, row.names=FALSE)
+  }
+  export_var(Slide_Descript)
   err.val <- 0
   #
   # preallocate tables with 4 sub tables for each type of graph/
@@ -94,6 +99,10 @@ preallocate.tables <- function(
     function(x) vector('list', length(Concentration))
     )
   names(Image.IDs)<-Slide_Descript
+  concentration_length = length(Concentration)
+  export_var(concentration_length)
+  slide_descript_length = length(Concentration)
+  export_var(slide_descript_length)
   #
   #get the image id for each slide and concentration
   #
@@ -104,6 +113,7 @@ preallocate.tables <- function(
     Protocol.layers <- 11
   }
   #
+  export_var(titration.type.name)
   for(x in Slide_Descript){
     names(Image.IDs[[x]])<- Concentration
     for(y in 1:length(Concentration)){
