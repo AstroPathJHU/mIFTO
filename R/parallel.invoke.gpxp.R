@@ -51,6 +51,13 @@ parallel.invoke.gpxp <- function (
   # to speed this up. Though the actual RAM usage is quite low
   # if I only carry the part of the image that is needed...
   #
+  if(exists("cl")){
+    print("cl exists")
+  } else{
+    print("cl doesn't exist")
+    cl <- parallel::makeCluster(
+      getOption("cl.cores", numcores), useXDR = FALSE, methods = FALSE)
+  }
   parallel::clusterExport(
     cl=cl, varlist=c("Concentration", "x", "y", "Antibody_Opal",
                      "titration.type.name","Thresholds","paths",
