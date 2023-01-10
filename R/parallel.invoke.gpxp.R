@@ -159,6 +159,7 @@ parallel.invoke.gpxp <- function (
       tryCatch({
         withJavaLogging({
           print(cl)
+          showConnections()
           parallel::clusterExport(
             cl=cl, varlist=c("Concentration", "x", "y", "Antibody_Opal",
                              "titration.type.name","Thresholds","paths",
