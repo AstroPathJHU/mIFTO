@@ -40,6 +40,7 @@ generate.pxp.image.data <- function(
   #
   # this is the current image name
   #
+  print("start")
   str = paste0(
     '.*', x, '.*',titration.type.name, '_1to', Concentration[y],
     '_.*\\[',q, '\\]'
