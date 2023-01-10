@@ -29,6 +29,7 @@ preallocate.tables <- function(
     write.csv(v1, filename, row.names=FALSE)
   }
   export_var(Slide_Descript)
+  export_var(table.names)
   err.val <- 0
   #
   # preallocate tables with 4 sub tables for each type of graph/
