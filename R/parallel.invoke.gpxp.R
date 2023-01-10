@@ -58,12 +58,49 @@ parallel.invoke.gpxp <- function (
     cl <- parallel::makeCluster(
       getOption("cl.cores", numcores), useXDR = FALSE, methods = FALSE)
   }
-  parallel::clusterExport(
+  tryCatch({
+    parallel::clusterExport(
     cl=cl, varlist=c("Concentration", "x", "y", "Antibody_Opal",
                      "titration.type.name","Thresholds","paths",
                      "connected.pixels","flowout","Opal1",
                      "decile.logical", "threshold.logical"),
     envir=my_env)
+    }, warning = function(cond) {
+      print("WARNING")
+      print(cond)
+      if(exists("cl")){
+        print("cl exists")
+      } else{
+        print("cl doesn't exist")
+        cl <- parallel::makeCluster(
+          getOption("cl.cores", numcores), useXDR = FALSE, methods = FALSE)
+      }
+      parallel::clusterExport(
+      cl=cl, varlist=c("Concentration", "x", "y", "Antibody_Opal",
+                       "titration.type.name","Thresholds","paths",
+                       "connected.pixels","flowout","Opal1",
+                       "decile.logical", "threshold.logical"),
+      envir=my_env)
+    }, error = function(cond) {
+      print("ERROR")
+      print(cond)
+      if(exists("cl")){
+        print("cl exists")
+      } else{
+        print("cl doesn't exist")
+        cl <- parallel::makeCluster(
+          getOption("cl.cores", numcores), useXDR = FALSE, methods = FALSE)
+      }
+      parallel::clusterExport(
+      cl=cl, varlist=c("Concentration", "x", "y", "Antibody_Opal",
+                       "titration.type.name","Thresholds","paths",
+                       "connected.pixels","flowout","Opal1",
+                       "decile.logical", "threshold.logical"),
+      envir=my_env)
+    }, finally={
+      print("FINALLY")
+    })
+
   #
   ###### need to add a try catch, but also need to determine what happens
   ###### when I throw an error instead of the envir
