@@ -160,6 +160,7 @@ parallel.invoke.gpxp <- function (
         withJavaLogging({
           print(cl)
           print(showConnections())
+          write.csv(cl, "C:\\Users\\Public\\Documents\\cl.csv", row.names=FALSE)
           quit()
           parallel::clusterExport(
             cl=cl, varlist=c("Concentration", "x", "y", "Antibody_Opal",
