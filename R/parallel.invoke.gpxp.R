@@ -158,6 +158,13 @@ parallel.invoke.gpxp <- function (
 
       tryCatch({
         withJavaLogging({
+          print(cl)
+          parallel::clusterExport(
+            cl=cl, varlist=c("Concentration", "x", "y", "Antibody_Opal",
+                             "titration.type.name","Thresholds","paths",
+                             "connected.pixels","flowout","Opal1",
+                             "decile.logical", "threshold.logical"),
+            envir=my_env)
         parallel::parLapply(
           cl,Image.IDs[[x]][[y]],function(z) mIFTO::generate.pxp.image.data(
             Concentration, x, y, z, Antibody_Opal,
@@ -176,6 +183,12 @@ parallel.invoke.gpxp <- function (
             getOption("cl.cores", numcores), useXDR = FALSE, methods = FALSE)
         }
         withJavaLogging({
+          parallel::clusterExport(
+            cl=cl, varlist=c("Concentration", "x", "y", "Antibody_Opal",
+                             "titration.type.name","Thresholds","paths",
+                             "connected.pixels","flowout","Opal1",
+                             "decile.logical", "threshold.logical"),
+            envir=my_env)
         parallel::parLapply(
           cl,Image.IDs[[x]][[y]],function(z) mIFTO::generate.pxp.image.data(
             Concentration, x, y, z, Antibody_Opal,
@@ -194,6 +207,12 @@ parallel.invoke.gpxp <- function (
             getOption("cl.cores", numcores), useXDR = FALSE, methods = FALSE)
         }
         withJavaLogging({
+          parallel::clusterExport(
+            cl=cl, varlist=c("Concentration", "x", "y", "Antibody_Opal",
+                             "titration.type.name","Thresholds","paths",
+                             "connected.pixels","flowout","Opal1",
+                             "decile.logical", "threshold.logical"),
+            envir=my_env)
         parallel::parLapply(
           cl,Image.IDs[[x]][[y]],function(z) mIFTO::generate.pxp.image.data(
             Concentration, x, y, z, Antibody_Opal,
