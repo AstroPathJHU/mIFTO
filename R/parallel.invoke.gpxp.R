@@ -166,10 +166,11 @@ parallel.invoke.gpxp <- function (
           print(cl)
           print(showConnections())
           ls()
+          export_var(Image.IDs)
           export_var(Concentration)
           export_var(x)
+
           export_var(y)
-          export_var(z)
           export_var(Antibody_Opal)
           export_var(titration.type.name)
           export_var(Thresholds)
@@ -179,6 +180,8 @@ parallel.invoke.gpxp <- function (
           export_var(Opal1)
           export_var(decile.logical)
           export_var(threshold.logical)
+          matched_x = match(x, Image.IDs[1])
+          export_var(matched_x)
           quit()
           parallel::clusterExport(
             cl=cl, varlist=c("Concentration", "x", "y", "Antibody_Opal",
