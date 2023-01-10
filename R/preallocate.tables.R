@@ -30,6 +30,7 @@ preallocate.tables <- function(
   }
   export_var(Slide_Descript)
   export_var(table.names)
+  print(table.names)
   err.val <- 0
   #
   # preallocate tables with 4 sub tables for each type of graph/

@@ -59,7 +59,6 @@ populate.tables <- function(
   Image.IDs <- tables.out$Image.IDs
   table.names.byimage <- tables.out$table.names.byimage
   table.names.wholeslide <- tables.out$table.names.wholeslide
-  print(Image.IDs)
   #
   rm(tables.out)
   #
