@@ -32,7 +32,13 @@ pixelbypixeldebug <- function(out,pb.Object) {
   }
   import_var <- function(v1) {
     filepath = paste0("C:\\Users\\Public\\Documents\\", deparse(substitute(v1)), ".csv")
-    return(read.csv(file = filepath, stringsAsFactors = TRUE, sep = ',')[[1]])
+    return(
+      gsub(
+      "\\s+", ",", gsub("^\\s+|\\s+$", "", read.csv(
+        file = filepath, stringsAsFactors = TRUE)[[1]]
+        )
+      )
+      )
   }
   # tryCatch({
   #   export_var(out)
