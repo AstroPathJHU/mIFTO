@@ -115,6 +115,12 @@ pixelbypixeldebug <- function(out,pb.Object) {
       threshold.logical = TRUE
     print(threshold.logical)
   }, error = function(cond) {
+    modal_out <- shinyalert::shinyalert(
+      title = paste0('Something went wrong'),
+      text = paste0(cond),
+      type = 'error',
+      showConfirmButton = TRUE
+    )
     err.val <- 14
     return(err.val)
   })
