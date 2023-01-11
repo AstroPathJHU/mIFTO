@@ -54,7 +54,7 @@ pixelbypixeldebug <- function(out,pb.Object) {
   # }
   tryCatch({
     wd <- import_var(wd)
-    Slide_Descript <- import_var(Slide_ID)
+    Slide_Descript <- import_var(Slide_Descript)
     Antibody <- import_var(Antibody)
     Opal1 <- import_var(Opal1)
     Antibody_Opal <- import_var(Antibody_Opal)
@@ -79,7 +79,7 @@ pixelbypixeldebug <- function(out,pb.Object) {
     return(err.val)
   })
   #
-  rm(outchecked, out)
+  # rm(outchecked, out)
   #
   ##############################create results folders##################
   #
