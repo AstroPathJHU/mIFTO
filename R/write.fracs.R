@@ -169,7 +169,8 @@ write.fracs <- function (
                           'image layers correspond to protocol type, ',
                           'and that component data tiffs for ', x,
                           ' IHC exist. Then contact ',
-                          'Benjamin Green at bgreen42jh.edu for assistance.'),
+                          'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
+                          cond),
             type = 'error',
             showConfirmButton = TRUE
           )
