@@ -80,6 +80,7 @@ pixelbypixel <- function(out,pb.Object) {
     export_var(Protocol)
     paths <- outchecked$paths
     export_var(paths)
+    print(paths)
     titration.type.name <- outchecked$titration.type.name
     export_var(titration.type.name)
     connected.pixels <- outchecked$connected.pixels

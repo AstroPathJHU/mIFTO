@@ -62,13 +62,11 @@ pixelbypixeldebug <- function(out,pb.Object) {
     Thresholds <- import_var(Thresholds)
     num.of.tiles <- import_var(num.of.tiles)
     flowout.str <- import_var(flowout)
-    print(flowout.str)
     if (flowout.str=="FALSE")
       flowout = FALSE
     else
       flowout = TRUE
     ihc.logical.str <- import_var(ihc.logical)
-    print(ihc.logical.str)
     if (ihc.logical.str=="FALSE")
       ihc.logical = FALSE
     else
@@ -80,16 +78,15 @@ pixelbypixeldebug <- function(out,pb.Object) {
     }
     Protocol <- import_var(Protocol)
     paths <- import_var(paths)
+    print(paths)
     titration.type.name <- import_var(titration.type.name)
     connected.pixels <- import_var(connected.pixels)
     decile.logical.str <- import_var(decile.logical)
-    print(decile.logical.str)
     if (decile.logical.str=="FALSE")
       decile.logical = FALSE
     else
       decile.logical = TRUE
     threshold.logical.str <- import_var(threshold.logical)
-    print(threshold.logical.str)
     if (threshold.logical.str=="FALSE")
       threshold.logical = FALSE
     else
