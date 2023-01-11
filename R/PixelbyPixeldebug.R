@@ -32,13 +32,7 @@ pixelbypixeldebug <- function(out,pb.Object) {
   }
   import_var <- function(v1) {
     filepath = paste0("C:\\Users\\Public\\Documents\\", deparse(substitute(v1)), ".csv")
-    return(
-      gsub(
-      "\\s+", ",", gsub("^\\s+|\\s+$", "", read.csv(
-        file = filepath, stringsAsFactors = TRUE)[[1]]
-        )
-      )
-      )
+    return(read.csv(file = filepath, stringsAsFactors = TRUE)[[1]])
   }
   # tryCatch({
   #   export_var(out)
@@ -58,10 +52,11 @@ pixelbypixeldebug <- function(out,pb.Object) {
   # if (err.val != 0) {
   #   return(err.val)
   # }
+  gsub("\\s+", ",", gsub("^\\s+|\\s+$", "", )
   tryCatch({
     wd <- import_var(wd)
     print(wd)
-    Slide_Descript <- import_var(Slide_Descript)
+    Slide_Descript <- gsub("\\s+", ",", gsub("^\\s+|\\s+$", "",import_var(Slide_Descript))
     print(Slide_Descript)
     Antibody <- import_var(Antibody)
     print(Antibody)
@@ -69,9 +64,9 @@ pixelbypixeldebug <- function(out,pb.Object) {
     print(Opal1)
     Antibody_Opal <- import_var(Antibody_Opal)
     print(Antibody_Opal)
-    Concentration <- import_var(Concentration)
+    Concentration <- gsub("\\s+", ",", gsub("^\\s+|\\s+$", "",import_var(Concentration))
     print(Concentration)
-    Thresholds <- import_var(Thresholds)
+    Thresholds <- gsub("\\s+", ",", gsub("^\\s+|\\s+$", "",import_var(Thresholds))
     print(Thresholds)
     num.of.tiles <- import_var(num.of.tiles)
     print(num.of.tiles)
@@ -92,18 +87,18 @@ pixelbypixeldebug <- function(out,pb.Object) {
     folders.px <- import_var(folders.px)
     print(folders.px)
     if (ihc.logical){
-      ihc.connected.pixels <- import_var(ihc.connected.pixels)
+      ihc.connected.pixels <- gsub("\\s+", ",", gsub("^\\s+|\\s+$", "",import_var(ihc.connected.pixels))
       print(ihc.connected.pixels)
-      ihc.Thresholds <- import_var(ihc.Thresholds)
+      ihc.Thresholds <- gsub("\\s+", ",", gsub("^\\s+|\\s+$", "",import_var(ihc.Thresholds))
       print(ihc.Thresholds)
     }
     Protocol <- import_var(Protocol)
     print(Protocol)
-    paths <- import_var(paths)
+    paths <- gsub("\\s+", ",", gsub("^\\s+|\\s+$", "",import_var(paths)
     print(paths)
     titration.type.name <- import_var(titration.type.name)
     print(titration.type.name)
-    connected.pixels <- import_var(connected.pixels)
+    connected.pixels <- gsub("\\s+", ",", gsub("^\\s+|\\s+$", "",import_var(connected.pixels))
     print(connected.pixels)
     decile.logical.str <- import_var(decile.logical)
     print(decile.logical.str)
