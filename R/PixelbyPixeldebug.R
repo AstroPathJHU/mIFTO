@@ -115,7 +115,7 @@ pixelbypixeldebug <- function(out,pb.Object) {
       threshold.logical = TRUE
     print(threshold.logical)
   }, error = function(cond) {
-    err.val <- 1
+    err.val <- 14
     return(err.val)
   })
   #
