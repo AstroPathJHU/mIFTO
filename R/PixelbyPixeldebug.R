@@ -93,7 +93,7 @@ pixelbypixeldebug <- function(out,pb.Object) {
     }
     Protocol <- import_var(Protocol)
     print(Protocol)
-    paths <- import_var(paths))
+    paths <- import_var(paths)
     print(paths)
     titration.type.name <- import_var(titration.type.name)
     print(titration.type.name)
