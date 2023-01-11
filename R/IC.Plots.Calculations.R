@@ -28,6 +28,10 @@
 #'
 ic.plots.calculations<-function(
   All.Images, Opal1, Concentration, x, y, m.opt, pb.count, pb.Object, pb.step, str1){
+  export_var <- function(v1, v2) {
+    filename = paste0("C:\\Users\\Public\\Documents\\", deparse(substitute(v1)), v2, ".csv")
+    write.csv(v1, filename, row.names=FALSE)
+  }
   pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
   pb.Object$set(paste0(str1,' - in ic.plots'), value = pb.count/100)
   Sys.sleep(0.5)
@@ -50,6 +54,9 @@ ic.plots.calculations<-function(
   pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
   pb.Object$set(paste0(str1,' - in SignalOnly'), value = pb.count/100)
   Sys.sleep(0.5)
+  export_var(SignalOnly, str1)
+  conY <- Concentration[y]
+  export_var(conY, str1)
   data[['Signal.only.Threshold.Data']] <- data.table::setnames(cbind.data.frame(
     SignalOnly,Concentration[y]), c('Antibody','Concentration'))
   pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
