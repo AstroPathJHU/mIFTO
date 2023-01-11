@@ -200,10 +200,13 @@ populate.tables <- function(
       #
       time <- system.time({
         if (threshold.logical){
+          #
           pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
           pb.Object$set(paste0(str1,' - in threshold logical'), value = pb.count/100)
+          #
           ic.plots <- mIFTO::ic.plots.calculations(
             All.Images, Opal1, Concentration, x, y, 1)
+          #
           pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
           pb.Object$set(paste0(str1,' - finished ic.plots'))
           #
@@ -217,33 +220,43 @@ populate.tables <- function(
             'BoxPlots_98' = ic.plots[['Boxplot.Calculations_98']],
             'BoxPlots_99' = ic.plots[['Boxplot.Calculations_99']]
           )
+          #
           pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
           pb.Object$set(paste0(str1,' - finished histogram calcs'))
+          #
         } else {
+          #
           pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
           pb.Object$set(paste0(str1,' - else threshold logical'))
+          #
           small.wholeslide.tables<-list(
             'Histograms' = mIFTO::histogram.calculations(
               All.Images, ## histo calc needs work
               Concentration[y],x,'All')
           )
+          #
           pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
           pb.Object$set(paste0(str1,' - finished histogram calcs'))
+          #
         }
         #
         if (decile.logical){
+          #
           pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
           pb.Object$set(paste0(str1,' - in decile logical'))
+          #
           ic.plots <- mIFTO::ic.plots.calculations(
             decile.All.Images, Opal1, Concentration, x, y, 1)
           #
           small.wholeslide.tables <- c(
             small.wholeslide.tables,
             'decile.BoxPlots' = ic.plots[['Boxplot.Calculations']])
+          #
         }
         #
         pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
         pb.Object$set(paste0(str1,' - for table wholeslide'))
+        a3
         for(i.1 in table.names.wholeslide){
           for(z in 1:length(Tables.wholeslide[[i.1]])){
             Tables.wholeslide[[i.1]][[z]][[x]][[y]] <-
@@ -264,17 +277,23 @@ populate.tables <- function(
       # essentially turning the list into a data table
       #
       tryCatch({
+        #
         pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
         pb.Object$set(paste0(str1,' - data.frame 1'))
+        #
         export_var(Tables.byimage, "1")
         export_var(table.names.byimage, "1")
+        #
         for(i.1 in table.names.byimage){
           for(i.2 in 1:length(Tables.byimage[[i.1]])){
             Tables.byimage[[i.1]][[i.2]][[x]][[y]]<-do.call(
               rbind.data.frame,Tables.byimage[[i.1]][[i.2]][[x]][[y]])
           }
         }
-      }, warning = function(cond) {
+        #
+      }, warning = function(cond) 
+        {
+        #
         modal_out <- shinyalert::shinyalert(
           title = paste0('Warning Creating Data Frame 1 for ',
                          x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
@@ -282,9 +301,13 @@ populate.tables <- function(
           type = 'error',
           showConfirmButton = TRUE
         )
+        #
         err.val <- 14
         return(err.val)
-      }, error = function(cond) {
+        #
+      }, error = function(cond)
+      {
+        #
         modal_out <- shinyalert::shinyalert(
           title = paste0('Error Creating Data Frame 1 Images for ',
                          x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
@@ -292,8 +315,10 @@ populate.tables <- function(
           type = 'error',
           showConfirmButton = TRUE
         )
+        #
         err.val <- 14
         return(err.val)
+        #
       },
       finally={})
     }
@@ -302,17 +327,22 @@ populate.tables <- function(
     # pair the data down into a data
     #
     tryCatch({
+      #
       pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
       pb.Object$set(paste0(str1,' - data.frame 2'))
+      #
       export_var(Tables.byimage, "2")
       export_var(table.names.byimage, "2")
+      #
       for(i.1 in table.names.byimage){
         for(w in 1:length(Tables.byimage[[i.1]])){
           Tables.byimage[[i.1]][[w]][[x]]<-do.call(
             rbind.data.frame,Tables.byimage[[i.1]][[w]][[x]])
         }
       }
+      #
     }, warning = function(cond) {
+      #
       modal_out <- shinyalert::shinyalert(
         title = paste0('Warning Creating Data Frame 2 for ',
                        x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
@@ -320,9 +350,12 @@ populate.tables <- function(
         type = 'error',
         showConfirmButton = TRUE
       )
+      #
       err.val <- 14
       return(err.val)
+      #
     }, error = function(cond) {
+      #
       modal_out <- shinyalert::shinyalert(
         title = paste0('Error Creating Data Frame 2 Images for ',
                        x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
@@ -330,23 +363,30 @@ populate.tables <- function(
         type = 'error',
         showConfirmButton = TRUE
       )
+      #
       err.val <- 14
       return(err.val)
+      #
     },
     finally={})
     #
     tryCatch({
+      #
       pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
       pb.Object$set(paste0(str1,' - data.frame 3'))
+      #
       export_var(Tables.byimage, "3")
       export_var(table.names.byimage, "3")
+      #
       for(i.1 in table.names.wholeslide){
         for(w in 1:length(Tables.wholeslide[[i.1]])){
           Tables.wholeslide[[i.1]][[w]][[x]]<-do.call(
             rbind.data.frame,Tables.wholeslide[[i.1]][[w]][[x]])
         }
       }
+      #
     }, warning = function(cond) {
+      #
       modal_out <- shinyalert::shinyalert(
         title = paste0('Warning Creating Data Frame 3 for ',
                        x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
@@ -354,9 +394,12 @@ populate.tables <- function(
         type = 'error',
         showConfirmButton = TRUE
       )
+      #
       err.val <- 14
       return(err.val)
+      #
     }, error = function(cond) {
+      #
       modal_out <- shinyalert::shinyalert(
         title = paste0('Error Creating Data Frame 3 Images for ',
                        x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
@@ -364,23 +407,31 @@ populate.tables <- function(
         type = 'error',
         showConfirmButton = TRUE
       )
+      #
       err.val <- 14
       return(err.val)
+      #
     },
   finally={})
+  }
     #
     tryCatch({
+      #
       pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
       pb.Object$set(paste0(str1,' - data.frame 4'))
+      #
       export_var(Tables.byimage, "4")
       export_var(table.names.byimage, "4")
+      #
       for(i.1 in table.names.byimage){
         for(w in 1:length(Tables.byimage[[i.1]])){
           Tables.byimage[[i.1]][[w]]<-do.call(
             rbind.data.frame,Tables.byimage[[i.1]][[w]])
         }
       }
+      #
     }, warning = function(cond) {
+      #
       modal_out <- shinyalert::shinyalert(
         title = paste0('Warning Creating Data Frame 4 for ',
                        x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
@@ -388,9 +439,12 @@ populate.tables <- function(
         type = 'error',
         showConfirmButton = TRUE
       )
+      #
       err.val <- 14
       return(err.val)
+      #
     }, error = function(cond) {
+      #
       modal_out <- shinyalert::shinyalert(
         title = paste0('Error Creating Data Frame 4 Images for ',
                        x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
@@ -398,23 +452,30 @@ populate.tables <- function(
         type = 'error',
         showConfirmButton = TRUE
       )
+      #
       err.val <- 14
       return(err.val)
+      #
     },
     finally={})
   #
   tryCatch({
+    #
     pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
     pb.Object$set(paste0(str1,' - data.frame 5'))
+    #
     export_var(Tables.byimage, "5")
     export_var(table.names.byimage, "5")
+    #
     for(i.1 in table.names.wholeslide){
       for(w in 1:length(Tables.wholeslide[[i.1]])){
         Tables.wholeslide[[i.1]][[w]]<-do.call(
           rbind.data.frame,Tables.wholeslide[[i.1]][[w]])
       }
     }
+    #
   }, warning = function(cond) {
+    #
     modal_out <- shinyalert::shinyalert(
       title = paste0('Warning Creating Data Frame 5 for ',
                      x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
@@ -422,9 +483,12 @@ populate.tables <- function(
       type = 'error',
       showConfirmButton = TRUE
     )
+    #
     err.val <- 14
     return(err.val)
+    #
   }, error = function(cond) {
+    #
     modal_out <- shinyalert::shinyalert(
       title = paste0('Error Creating Data Frame 5 Images for ',
                      x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
@@ -432,8 +496,10 @@ populate.tables <- function(
       type = 'error',
       showConfirmButton = TRUE
     )
+    #
     err.val <- 14
     return(err.val)
+    #
   },
   finally={})
   #
