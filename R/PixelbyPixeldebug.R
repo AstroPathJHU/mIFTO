@@ -61,8 +61,18 @@ pixelbypixeldebug <- function(out,pb.Object) {
     Concentration <- import_var(Concentration)
     Thresholds <- import_var(Thresholds)
     num.of.tiles <- import_var(num.of.tiles)
-    flowout <- import_var(flowout)
-    ihc.logical <- import_var(ihc.logical)
+    flowout.str <- import_var(flowout)
+    print(flowout.str)
+    if (flowout.str=="FALSE")
+      flowout = FALSE
+    else
+      flowout = TRUE
+    ihc.logical.str <- import_var(ihc.logical)
+    print(ihc.logical.str)
+    if (ihc.logical.str=="FALSE")
+      ihc.logical = FALSE
+    else
+      ihc.logical = TRUE
     folders.px <- import_var(folders.px)
     if (ihc.logical){
       ihc.connected.pixels <- import_var(ihc.connected.pixels)
@@ -72,8 +82,18 @@ pixelbypixeldebug <- function(out,pb.Object) {
     paths <- import_var(paths)
     titration.type.name <- import_var(titration.type.name)
     connected.pixels <- import_var(connected.pixels)
-    decile.logical <- import_var(decile.logical)
-    threshold.logical <- import_var(threshold.logical)
+    decile.logical.str <- import_var(decile.logical)
+    print(decile.logical.str)
+    if (decile.logical.str=="FALSE")
+      decile.logical = FALSE
+    else
+      decile.logical = TRUE
+    threshold.logical.str <- import_var(threshold.logical)
+    print(threshold.logical.str)
+    if (threshold.logical.str=="FALSE")
+      threshold.logical = FALSE
+    else
+      threshold.logical = TRUE
   }, error = function(cond) {
     err.val <- 1
     return(err.val)
