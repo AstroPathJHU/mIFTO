@@ -33,7 +33,8 @@ pixelbypixel <- function(out,pb.Object) {
   tryCatch({
     export_var(out)
     }, error = function(cond) {
-      print("out didn't work: ", cond)
+      err.val <- 1
+      return(err.val)
       })
   
   pb.count = 0; mIFTO::doupdate.pgbar(
@@ -48,28 +49,48 @@ pixelbypixel <- function(out,pb.Object) {
   }
   tryCatch({
     wd <- outchecked$wd
+    export_var(wd)
     Slide_Descript <- outchecked$Slide_ID
+    export_var(Slide_Descript)
     Antibody <- outchecked$Antibody
+    export_var(Antibody)
     Opal1 <- outchecked$Opal1
+    export_var(Opal1)
     Antibody_Opal <- outchecked$Antibody_Opal
+    export_var(Antibody_Opal)
     Concentration <- outchecked$Concentration
+    export_var(Concentration)
     Thresholds <- outchecked$Thresholds
+    export_var(Thresholds)
     num.of.tiles <- outchecked$num.of.tiles
+    export_var(num.of.tiles)
     flowout <- outchecked$flowout
+    export_var(flowout)
     ihc.logical <- outchecked$ihc.logical
+    export_var(ihc.logical)
     folders.px <- outchecked$folders.px
+    export_var(folders.px)
     if (ihc.logical){
       ihc.connected.pixels <- outchecked$ihc.connected.pixels
+      export_var(ihc.connected.pixels)
       ihc.Thresholds <- outchecked$ihc.Thresholds
+      export_var(ihc.Thresholds)
     }
     Protocol <- outchecked$Protocol
+    export_var(Protocol)
     paths <- outchecked$paths
+    export_var(paths)
     titration.type.name <- outchecked$titration.type.name
+    export_var(titration.type.name)
     connected.pixels <- outchecked$connected.pixels
+    export_var(connected.pixels)
     decile.logical <- outchecked$decile.logical
+    export_var(decile.logical)
     threshold.logical <- outchecked$threshold.logical
+    export_var(threshold.logical)
   }, error = function(cond) {
-    print("something didn't work: ", cond)
+    err.val <- 1
+    return(err.val)
   })
   #
   rm(outchecked, out)
