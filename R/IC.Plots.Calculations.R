@@ -30,19 +30,44 @@ ic.plots.calculations<-function(
   All.Images, Opal1, Concentration, x, y, m.opt, pb.count, pb.Object, pb.step, str1){
   pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
   pb.Object$set(paste0(str1,' - in ic.plots'), value = pb.count/100)
+  Sys.sleep(0.5)
   # @param colors is a vector of at least the length of the concentration vector
   #
   data<-vector('list',2)
+  pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
+  pb.Object$set(paste0(str1,' - in ic.plots'), value = pb.count/100)
+  Sys.sleep(0.5)
   names(data)<-c('Noise.only.Threshold.Data',
                  'Signal.only.Threshold.Data')
+  pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
+  pb.Object$set(paste0(str1,' - in pb.count'), value = pb.count/100)
+  Sys.sleep(0.5)
   Signal <- All.Images[['pos']]
+  pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
+  pb.Object$set(paste0(str1,' - in Signal'), value = pb.count/100)
+  Sys.sleep(0.5)
   SignalOnly <- Signal[All.Images[['pos.mask']] == 1]
+  pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
+  pb.Object$set(paste0(str1,' - in SignalOnly'), value = pb.count/100)
+  Sys.sleep(0.5)
   data[['Signal.only.Threshold.Data']] <- data.table::setnames(cbind.data.frame(
     SignalOnly,Concentration[y]), c('Antibody','Concentration'))
+  pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
+  pb.Object$set(paste0(str1,' - in data 1'), value = pb.count/100)
+  Sys.sleep(0.5)
   Noise <- All.Images[['neg']]
+  pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
+  pb.Object$set(paste0(str1,' - in Noise'), value = pb.count/100)
+  Sys.sleep(0.5)
   NoiseOnly <- Noise[All.Images[['neg.mask']] == 1]
+  pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
+  pb.Object$set(paste0(str1,' - in NoiseOnly'), value = pb.count/100)
+  Sys.sleep(0.5)
   data[['Noise.only.Threshold.Data']] <- data.table::setnames(cbind.data.frame(
     NoiseOnly,Concentration[y]), c('Antibody','Concentration'))
+  pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
+  pb.Object$set(paste0(str1,' - in data 2'), value = pb.count/100)
+  Sys.sleep(0.5)
   #
   #plot<-vector('list',1)
   #names(plot)<-c('Pixels')
@@ -56,6 +81,7 @@ ic.plots.calculations<-function(
   Values <- vector('list',length = 2)
   pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
   pb.Object$set(paste0(str1,' - startup ic done'), value = pb.count/100)
+  Sys.sleep(0.5)
   #
   for (z in 1:2) {
     Values[[z]] <- dplyr::mutate(data.table::setnames(cbind.data.frame(
@@ -71,6 +97,7 @@ ic.plots.calculations<-function(
   names(Values) <- c('Noise','Signal')
   pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
   pb.Object$set(paste0(str1,' - for z done'), value = pb.count/100)
+  Sys.sleep(0.5)
   if (m.opt == 1){
     pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
     pb.Object$set(paste0(str1,' - in m.opt==1'), value = pb.count/100)
@@ -86,6 +113,7 @@ ic.plots.calculations<-function(
     Values.tiles <- lapply(Values.tiles, function(x) vector('list', 2))
     pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
     pb.Object$set(paste0(str1,' - values.tiles created'), value = pb.count/100)
+    Sys.sleep(0.5)
     #
     for (tp in 1:length(n_pct)){
       for (z in 1:2){
@@ -101,6 +129,7 @@ ic.plots.calculations<-function(
         }
         pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
         pb.Object$set(paste0(str1,' - z==1 done. z = ', z, ' tp = ', tp), value = pb.count/100)
+        Sys.sleep(0.5)
         Values.tiles[[tp]][[z]]<- dplyr::mutate(
           data.table::setnames(
             cbind.data.frame(
