@@ -34,9 +34,9 @@
 #' @export
 #'
 populate.tables <- function(
-  Slide_Descript, Concentration, Antibody_Opal, Thresholds, Opal1,
-  flowout, Protocol, paths, titration.type.name, connected.pixels,
-  decile.logical, threshold.logical, pb.count, pb.Object){
+    Slide_Descript, Concentration, Antibody_Opal, Thresholds, Opal1,
+    flowout, Protocol, paths, titration.type.name, connected.pixels,
+    decile.logical, threshold.logical, pb.count, pb.Object){
   #
   #############pre-allocating tables to store results###################
   #
@@ -172,7 +172,7 @@ populate.tables <- function(
           )
         }else {
           All.Images[[1]] <- c(All.Images[[1]],
-            small.tables.byimage[[i.3]][['Image']]
+                               small.tables.byimage[[i.3]][['Image']]
           )
         }
         #

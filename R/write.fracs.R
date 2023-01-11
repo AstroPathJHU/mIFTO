@@ -31,10 +31,10 @@
 #' @export
 #'
 write.fracs <- function (
-  wd, Antibody_Opal, Antibody, Slide_Descript, Concentration, tables_in,
-  Thresholds, connected.pixels, ihc.logical, ihc.Thresholds,
-  ihc.connected.pixels, folders.px, theme1
-  ){
+    wd, Antibody_Opal, Antibody, Slide_Descript, Concentration, tables_in,
+    Thresholds, connected.pixels, ihc.logical, ihc.Thresholds,
+    ihc.connected.pixels, folders.px, theme1
+){
   #
   # pull fractions of positivity for IF
   #
@@ -163,14 +163,13 @@ write.fracs <- function (
           )
         }, warning = function(cond) {
           modal_out <- shinyalert::shinyalert(
-            title = paste0('Warning Reading Component Images for ',
+            title = paste0('Error Reading Component Images for ',
                            x, ' IHC'),
-            text = paste0('Please check the computer resources, slide names, ',
+            text = paste0('Please check the computer reasources, slide names, ',
                           'image layers correspond to protocol type, ',
                           'and that component data tiffs for ', x,
                           ' IHC exist. Then contact ',
-                          'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
-                          cond),
+                          'Benjamin Green at bgreen42jh.edu for assistance.'),
             type = 'error',
             showConfirmButton = TRUE
           )
@@ -180,7 +179,7 @@ write.fracs <- function (
           modal_out <- shinyalert::shinyalert(
             title = paste0('Error Reading Component Images for ',
                            x, ' IHC'),
-            text = paste0('Please check the computer resources, slide names, ',
+            text = paste0('Please check the computer reasources, slide names, ',
                           'image layers correspond to protocol type, ',
                           'and that component data tiffs for ', x,
                           ' IHC exist. Then contact ',
@@ -228,7 +227,7 @@ write.fracs <- function (
     tbl3 <- dplyr::mutate(tbl3, Concentration = b)
     tbl <- rbind(tbl,tbl3)
     b2 <- dplyr::mutate(b2, Concentration =
-      lapply(1:length(ihc.Image.ID.fullstrings), function(x) 'IHC')
+                          lapply(1:length(ihc.Image.ID.fullstrings), function(x) 'IHC')
     )
     tbl.long <- rbind(tbl.long, b2)
     #

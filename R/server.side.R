@@ -130,7 +130,7 @@ server.side <- function(input, output, session) {
         s_count <- 0
         #
         if (length(Slide_ID) > 1){
-            do.call(splitLayout, lay)
+          do.call(splitLayout, lay)
         } else {
           #
           lay
@@ -174,7 +174,6 @@ server.side <- function(input, output, session) {
       #
       err.val <- mIFTO::pixelbypixel(input,pb)
       #
-      print(err.val)
       on.exit(pb$close());
       if (err.val == 0){
         modal_out <- shinyalert::shinyalert(
@@ -185,15 +184,12 @@ server.side <- function(input, output, session) {
           type = 'success',
           showConfirmButton = TRUE
         )
-      } else {
-        print("error")
-        print(err.val)
       }
       #
     }, warning = function(cond){
       on.exit(pb$close());
       modal_out <- shinyalert::shinyalert(
-        title = "Undefined Warining",
+        title = "Undefined Warning.",
         text = paste(
           "Please email ssotodi1@jh.edu with the following Error Message - ",
           cond
@@ -204,7 +200,7 @@ server.side <- function(input, output, session) {
     }, error = function(cond){
       on.exit(pb$close());
       modal_out <- shinyalert::shinyalert(
-        title = "Undefined Error",
+        title = "Undefined Error.",
         text = paste(
           "Please email ssotodi1@jh.edu with the following Error Message - ",
           cond

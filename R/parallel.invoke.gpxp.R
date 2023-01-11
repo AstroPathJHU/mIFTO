@@ -35,63 +35,10 @@
 #'
 #'
 parallel.invoke.gpxp <- function (
-  Concentration, x, y, Image.IDs, Antibody_Opal,
-  titration.type.name, Thresholds, paths,
-  connected.pixels, flowout, Opal1,
-  decile.logical, threshold.logical, cl){
-  withJavaLogging <- function(expr, silentSuccess=FALSE, stopIsFatal=TRUE) {
-    hasFailed = FALSE
-    messages = list()
-    warnings = list()
-    logger = function(obj) {
-      # Change behaviour based on type of message
-      level = sapply(class(obj), switch, debug="DEBUG", message="INFO", warning="WARN", caughtError = "ERROR",
-                     error=if (stopIsFatal) "FATAL" else "ERROR", "")
-      level = c(level[level != ""], "ERROR")[1]
-      simpleMessage = switch(level, DEBUG=,INFO=TRUE, FALSE)
-      quashable = switch(level, DEBUG=,INFO=,WARN=TRUE, FALSE)
-
-      # Format message
-      time  = format(Sys.time(), "%Y-%m-%d %H:%M:%OS3")
-      txt   = conditionMessage(obj)
-      if (!simpleMessage) txt = paste(txt, "\n", sep="")
-      msg = paste(time, level, txt, sep=" ")
-      calls = sys.calls()
-      calls = calls[1:length(calls)-1]
-      trace = limitedLabels(c(calls, attr(obj, "calls")))
-      if (!simpleMessage && length(trace) > 0) {
-        trace = trace[length(trace):1]
-        msg = paste(msg, "  ", paste("at", trace, collapse="\n  "), "\n", sep="")
-      }
-
-      # Output message
-      if (silentSuccess && !hasFailed && quashable) {
-        messages <<- append(messages, msg)
-        if (level == "WARN") warnings <<- append(warnings, msg)
-      } else {
-        if (silentSuccess && !hasFailed) {
-          cat(paste(messages, collapse=""))
-          hasFailed <<- TRUE
-        }
-        cat(msg)
-      }
-
-      # Muffle any redundant output of the same message
-      optionalRestart = function(r) { res = findRestart(r); if (!is.null(res)) invokeRestart(res) }
-      optionalRestart("muffleMessage")
-      optionalRestart("muffleWarning")
-    }
-    vexpr = withCallingHandlers(withVisible(expr),
-                                debug=logger, message=logger, warning=logger, caughtError=logger, error=logger)
-    if (silentSuccess && !hasFailed) {
-      cat(paste(warnings, collapse=""))
-    }
-    if (vexpr$visible) vexpr$value else invisible(vexpr$value)
-  }
-  export_var <- function(v1) {
-    filename = paste0("C:\\Users\\Public\\Documents\\", deparse(substitute(v1)), ".csv")
-    write.csv(v1, filename, row.names=FALSE)
-  }
+    Concentration, x, y, Image.IDs, Antibody_Opal,
+    titration.type.name, Thresholds, paths,
+    connected.pixels, flowout, Opal1,
+    decile.logical, threshold.logical, cl){
   #
   # define the environment for the cluster
   #
@@ -104,191 +51,20 @@ parallel.invoke.gpxp <- function (
   # to speed this up. Though the actual RAM usage is quite low
   # if I only carry the part of the image that is needed...
   #
-  if(exists("cl")){
-    print("cl exists")
-  } else{
-    print("cl doesn't exist")
-    cl <- parallel::makeCluster(
-      getOption("cl.cores", numcores), useXDR = FALSE, methods = FALSE)
-  }
-  tryCatch({
-    parallel::clusterExport(
+  parallel::clusterExport(
     cl=cl, varlist=c("Concentration", "x", "y", "Antibody_Opal",
                      "titration.type.name","Thresholds","paths",
                      "connected.pixels","flowout","Opal1",
                      "decile.logical", "threshold.logical"),
     envir=my_env)
-    }, warning = function(cond) {
-      print("WARNING")
-      print(cond)
-      if(exists("cl")){
-        print("cl exists")
-      } else{
-        print("cl doesn't exist")
-        cl <- parallel::makeCluster(
-          getOption("cl.cores", numcores), useXDR = FALSE, methods = FALSE)
-      }
-      parallel::clusterExport(
-      cl=cl, varlist=c("Concentration", "x", "y", "Antibody_Opal",
-                       "titration.type.name","Thresholds","paths",
-                       "connected.pixels","flowout","Opal1",
-                       "decile.logical", "threshold.logical"),
-      envir=my_env)
-    }, error = function(cond) {
-      print("ERROR")
-      print(cond)
-      if(exists("cl")){
-        print("cl exists")
-      } else{
-        print("cl doesn't exist")
-        cl <- parallel::makeCluster(
-          getOption("cl.cores", numcores), useXDR = FALSE, methods = FALSE)
-      }
-      parallel::clusterExport(
-      cl=cl, varlist=c("Concentration", "x", "y", "Antibody_Opal",
-                       "titration.type.name","Thresholds","paths",
-                       "connected.pixels","flowout","Opal1",
-                       "decile.logical", "threshold.logical"),
-      envir=my_env)
-    }, finally={
-      print("FINALLY")
-    }
-  )
-
   #
   ###### need to add a try catch, but also need to determine what happens
   ###### when I throw an error instead of the envir
-    small.tables.byimage<- tryCatch({
-
-      tryCatch({
-        withJavaLogging({
-          print(cl)
-          print(showConnections())
-          ls()
-
-          export_var(Concentration)
-          export_var(x)
-
-          export_var(y)
-          export_var(Antibody_Opal)
-          export_var(titration.type.name)
-          export_var(Thresholds)
-          export_var(paths)
-          export_var(connected.pixels)
-          export_var(flowout)
-          export_var(Opal1)
-          export_var(decile.logical)
-          export_var(threshold.logical)
-          matched_x = match(x, Image.IDs[1])
-          export_var(matched_x)
-          parallel::clusterExport(
-            cl=cl, varlist=c("Concentration", "x", "y", "Antibody_Opal",
-                             "titration.type.name","Thresholds","paths",
-                             "connected.pixels","flowout","Opal1",
-                             "decile.logical", "threshold.logical"),
-            envir=my_env)
-          if(exists("cl")){
-            print("cl exists")
-          }
-        parallel::parLapply(
-          cl,Image.IDs[[x]][[y]],function(z) mIFTO::generate.pxp.image.data(
-            Concentration, x, y, z, Antibody_Opal,
-            titration.type.name, Thresholds, paths,
-            connected.pixels, flowout, Opal1,
-            decile.logical, threshold.logical))
-        }, stopIsFatal=FALSE)
-      }, warning = function(cond) {
-        print("WARNING")
-        print(cond)
-        if(exists("cl")){
-          print("cl exists")
-        } else{
-          print("cl doesn't exist")
-          cl <- parallel::makeCluster(
-            getOption("cl.cores", numcores), useXDR = FALSE, methods = FALSE)
-        }
-        withJavaLogging({
-          parallel::clusterExport(
-            cl=cl, varlist=c("Concentration", "x", "y", "Antibody_Opal",
-                             "titration.type.name","Thresholds","paths",
-                             "connected.pixels","flowout","Opal1",
-                             "decile.logical", "threshold.logical"),
-            envir=my_env)
-        parallel::parLapply(
-          cl,Image.IDs[[x]][[y]],function(z) mIFTO::generate.pxp.image.data(
-            Concentration, x, y, z, Antibody_Opal,
-            titration.type.name, Thresholds, paths,
-            connected.pixels, flowout, Opal1,
-            decile.logical, threshold.logical))
-        }, stopIsFatal=FALSE)
-      }, error = function(cond) {
-        print("ERROR")
-        print(cond)
-        if(exists("cl")){
-          print("cl exists")
-        } else{
-          print("cl doesn't exist")
-          cl <- parallel::makeCluster(
-            getOption("cl.cores", numcores), useXDR = FALSE, methods = FALSE)
-        }
-        withJavaLogging({
-          parallel::clusterExport(
-            cl=cl, varlist=c("Concentration", "x", "y", "Antibody_Opal",
-                             "titration.type.name","Thresholds","paths",
-                             "connected.pixels","flowout","Opal1",
-                             "decile.logical", "threshold.logical"),
-            envir=my_env)
-        parallel::parLapply(
-          cl,Image.IDs[[x]][[y]],function(z) mIFTO::generate.pxp.image.data(
-            Concentration, x, y, z, Antibody_Opal,
-            titration.type.name, Thresholds, paths,
-            connected.pixels, flowout, Opal1,
-            decile.logical, threshold.logical))
-        }, stopIsFatal=FALSE)
-      }, finally={
-        print("FINALLY")
-      }
-      )
-
-
-    }, warning = function(cond) {
-
-      print(cond)
-      modal_out <- shinyalert::shinyalert(
-        title = paste0('Warning in parallel invoke Reading Component Images for ',
-                       x, ' 1to', Concentration[y]),
-        text = paste0('Please check the computer resources, slide names, ',
-                      'image layers correspond to protocol type, ',
-                      'and that component data tiffs for ', x,
-                      ' 1to',Concentration[[y]],' exist. Then contact ',
-                      'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
-                      cond),
-        type = 'error',
-        showConfirmButton = TRUE
-      )
-      err.val <- 14
-      return(err.val)
-    }, error = function(cond) {
-      print(cond)
-      modal_out <- shinyalert::shinyalert(
-        title = paste0('Error in parallel invoke Reading Component Images for ',
-                       x, ' 1to', Concentration[y]),
-        text = paste0('Please check the computer resources, slide names, ',
-                      'image layers correspond to protocol type, ',
-                      'and that component data tiffs for ', x,
-                      ' 1to',Concentration[[y]],' exist. Then contact ',
-                      'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
-                      cond),
-        type = 'error',
-        showConfirmButton = TRUE
-      )
-      err.val <- 14
-      return(err.val)
-    },
-    finally={
-      parallel::stopCluster(cl)
-    })
+  small.tables.byimage<- parallel::parLapply(
+    cl,Image.IDs[[x]][[y]],function(z) mIFTO::generate.pxp.image.data(
+      Concentration, x, y, z, Antibody_Opal,
+      titration.type.name, Thresholds, paths,
+      connected.pixels, flowout, Opal1,
+      decile.logical, threshold.logical))
   #
-
 }
-

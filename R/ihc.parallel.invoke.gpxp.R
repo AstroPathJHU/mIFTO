@@ -26,8 +26,8 @@
 #'
 #'
 ihc.parallel.invoke.gpxp <- function (
-  ihc.path, x, ihc.Image.IDs, ihc.Thresholds,
-  ihc.connected.pixels, cl){
+    ihc.path, x, ihc.Image.IDs, ihc.Thresholds,
+    ihc.connected.pixels, cl){
   #
   # define the environment for the cluster
   #
@@ -40,13 +40,6 @@ ihc.parallel.invoke.gpxp <- function (
   # to speed this up. Though the actual RAM usage is quite low
   # if I only carry the part of the image that is needed...
   #
-  if(exists("cl")){
-    print("cl exists")
-  } else{
-    print("cl doesn't exist")
-    cl <- parallel::makeCluster(
-      getOption("cl.cores", numcores), useXDR = FALSE, methods = FALSE)
-  }
   parallel::clusterExport(
     cl=cl, varlist=c("ihc.path", "x", "ihc.Thresholds",
                      "ihc.connected.pixels"),

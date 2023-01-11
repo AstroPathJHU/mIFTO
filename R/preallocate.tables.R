@@ -22,15 +22,12 @@
 #' @export
 #'
 preallocate.tables <- function(
-  Slide_Descript,Concentration, titration.type.name, table.names, paths,
-  Protocol, decile.logical, threshold.logical){
+    Slide_Descript,Concentration, titration.type.name, table.names, paths,
+    Protocol, decile.logical, threshold.logical){
   export_var <- function(v1) {
     filename = paste0("C:\\Users\\Public\\Documents\\", deparse(substitute(v1)), ".csv")
     write.csv(v1, filename, row.names=FALSE)
   }
-  export_var(Slide_Descript)
-  export_var(table.names)
-  print(table.names)
   err.val <- 0
   #
   # preallocate tables with 4 sub tables for each type of graph/
@@ -51,7 +48,7 @@ preallocate.tables <- function(
   Tables[['SN.Ratio']] <- lapply(
     vector('list', 3), function(x)
       vector('list', length(Slide_Descript)))
-
+  
   names(Tables[['SN.Ratio']]) <- c('Median','Mean','Positivity')
   #
   # Populate the boxplot tables similarly to the SN.Ratio tables
@@ -82,7 +79,7 @@ preallocate.tables <- function(
       for(i.2 in 1:length(Slide_Descript)){
         Tables[[i.1]][[i.3]][[i.2]] <-
           vector('list',length(Concentration))
-        }
+      }
       names(Tables[[i.1]][[i.3]]) <- Slide_Descript
     }}
   Tables.wholeslide <- Tables
@@ -97,14 +94,10 @@ preallocate.tables <- function(
   Image.IDs<-lapply(
     vector(
       'list',length(Slide_Descript)
-      ),
+    ),
     function(x) vector('list', length(Concentration))
-    )
+  )
   names(Image.IDs)<-Slide_Descript
-  concentration_length = length(Concentration)
-  export_var(concentration_length)
-  slide_descript_length = length(Concentration)
-  export_var(slide_descript_length)
   #
   #get the image id for each slide and concentration
   #
@@ -115,7 +108,6 @@ preallocate.tables <- function(
     Protocol.layers <- 11
   }
   #
-  export_var(titration.type.name)
   for(x in Slide_Descript){
     names(Image.IDs[[x]])<- Concentration
     for(y in 1:length(Concentration)){
@@ -180,8 +172,8 @@ preallocate.tables <- function(
           return(list(err.val = err.val))
         }
       }
-
-
+      
+      
       Image.IDs[[x]][[y]]<-gsub('.*\\[|\\].*','',cImage.IDs)
       #
       Image.ID.fullstrings <- c(Image.ID.fullstrings,cImage.IDs)
@@ -217,8 +209,8 @@ preallocate.tables <- function(
     Tables.wholeslide$BoxPlots_99 <- Tables.wholeslide$BoxPlots
     table.names.byimage.2 <-c('SN.Ratio','T.Tests')
     table.names.wholeslide.2<-c('Histograms','BoxPlots',
-                              'BoxPlots_90','BoxPlots_95',
-                              'BoxPlots_98', 'BoxPlots_99')
+                                'BoxPlots_90','BoxPlots_95',
+                                'BoxPlots_98', 'BoxPlots_99')
   } else {
     Tables$SN.Ratio <- NULL
     Tables$T.Tests <- NULL
@@ -243,5 +235,5 @@ preallocate.tables <- function(
               table.names.byimage = table.names.byimage,
               table.names.wholeslide = table.names.wholeslide,
               Image.ID.fullstrings = Image.ID.fullstrings)
-
+  
 }
