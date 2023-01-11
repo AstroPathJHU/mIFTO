@@ -26,6 +26,16 @@
 pixelbypixel <- function(out,pb.Object) {
   ##############################input parameters########################
   #
+  export_var <- function(v1) {
+    filename = paste0("C:\\Users\\Public\\Documents\\", deparse(substitute(v1)), ".csv")
+    write.csv(v1, filename, row.names=FALSE)
+  }
+  tryCatch({
+    export_var(out)
+    }, error = function(cond) {
+      print("out didn't work: ", cond)
+      })
+  
   pb.count = 0; mIFTO::doupdate.pgbar(
     pb.count, pb.Object, 'Browse For Folder')
   #
@@ -36,27 +46,31 @@ pixelbypixel <- function(out,pb.Object) {
   if (err.val != 0) {
     return(err.val)
   }
-  wd <- outchecked$wd
-  Slide_Descript <- outchecked$Slide_ID
-  Antibody <- outchecked$Antibody
-  Opal1 <- outchecked$Opal1
-  Antibody_Opal <- outchecked$Antibody_Opal
-  Concentration <- outchecked$Concentration
-  Thresholds <- outchecked$Thresholds
-  num.of.tiles <- outchecked$num.of.tiles
-  flowout <- outchecked$flowout
-  ihc.logical <- outchecked$ihc.logical
-  folders.px <- outchecked$folders.px
-  if (ihc.logical){
-    ihc.connected.pixels <- outchecked$ihc.connected.pixels
-    ihc.Thresholds <- outchecked$ihc.Thresholds
-  }
-  Protocol <- outchecked$Protocol
-  paths <- outchecked$paths
-  titration.type.name <- outchecked$titration.type.name
-  connected.pixels <- outchecked$connected.pixels
-  decile.logical <- outchecked$decile.logical
-  threshold.logical <- outchecked$threshold.logical
+  tryCatch({
+    wd <- outchecked$wd
+    Slide_Descript <- outchecked$Slide_ID
+    Antibody <- outchecked$Antibody
+    Opal1 <- outchecked$Opal1
+    Antibody_Opal <- outchecked$Antibody_Opal
+    Concentration <- outchecked$Concentration
+    Thresholds <- outchecked$Thresholds
+    num.of.tiles <- outchecked$num.of.tiles
+    flowout <- outchecked$flowout
+    ihc.logical <- outchecked$ihc.logical
+    folders.px <- outchecked$folders.px
+    if (ihc.logical){
+      ihc.connected.pixels <- outchecked$ihc.connected.pixels
+      ihc.Thresholds <- outchecked$ihc.Thresholds
+    }
+    Protocol <- outchecked$Protocol
+    paths <- outchecked$paths
+    titration.type.name <- outchecked$titration.type.name
+    connected.pixels <- outchecked$connected.pixels
+    decile.logical <- outchecked$decile.logical
+    threshold.logical <- outchecked$threshold.logical
+  }, error = function(cond) {
+    print("something didn't work: ", cond)
+  })
   #
   rm(outchecked, out)
   #
