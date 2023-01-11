@@ -31,7 +31,8 @@ pixelbypixeldebug <- function(out,pb.Object) {
     write.csv(v1, filename, row.names=FALSE)
   }
   import_var <- function(v1) {
-    return(read.csv(file = "C:\\Users\\Public\\Documents\\", deparse(substitute(v1)), ".csv", stringsAsFactors = TRUE))
+    filepath = paste0("C:\\Users\\Public\\Documents\\", deparse(substitute(v1)), ".csv")
+    return(read.csv(file = filepath, stringsAsFactors = TRUE))
   }
   # tryCatch({
   #   export_var(out)
