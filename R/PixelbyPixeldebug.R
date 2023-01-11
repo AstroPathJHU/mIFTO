@@ -60,43 +60,65 @@ pixelbypixeldebug <- function(out,pb.Object) {
   # }
   tryCatch({
     wd <- import_var(wd)
+    print(wd)
     Slide_Descript <- import_var(Slide_Descript)
+    print(Slide_Descript)
     Antibody <- import_var(Antibody)
+    print(Antibody)
     Opal1 <- import_var(Opal1)
+    print(Opal1)
     Antibody_Opal <- import_var(Antibody_Opal)
+    print(Antibody_Opal)
     Concentration <- import_var(Concentration)
+    print(Concentration)
     Thresholds <- import_var(Thresholds)
+    print(Thresholds)
     num.of.tiles <- import_var(num.of.tiles)
+    print(num.of.tiles)
     flowout.str <- import_var(flowout)
+    print(flowout.str)
     if (flowout.str=="FALSE")
       flowout = FALSE
     else
       flowout = TRUE
+    print(flowout)
     ihc.logical.str <- import_var(ihc.logical)
+    print(patihc.logical.strhs)
     if (ihc.logical.str=="FALSE")
       ihc.logical = FALSE
     else
       ihc.logical = TRUE
+    print(ihc.logical)
     folders.px <- import_var(folders.px)
+    print(folders.px)
     if (ihc.logical){
       ihc.connected.pixels <- import_var(ihc.connected.pixels)
+      print(ihc.connected.pixels)
       ihc.Thresholds <- import_var(ihc.Thresholds)
+      print(ihc.Thresholds)
     }
     Protocol <- import_var(Protocol)
+    print(Protocol)
     paths <- import_var(paths)
     print(paths)
     titration.type.name <- import_var(titration.type.name)
+    print(titration.type.name)
     connected.pixels <- import_var(connected.pixels)
+    print(connected.pixels)
     decile.logical.str <- import_var(decile.logical)
+    print(decile.logical.str)
     if (decile.logical.str=="FALSE")
       decile.logical = FALSE
     else
       decile.logical = TRUE
+    print(decile.logical)
     threshold.logical.str <- import_var(threshold.logical)
+    print(threshold.logical.str)
     if (threshold.logical.str=="FALSE")
       threshold.logical = FALSE
     else
       threshold.logical = TRUE
+    print(threshold.logical)
   }, error = function(cond) {
     err.val <- 1
     return(err.val)
