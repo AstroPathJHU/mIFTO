@@ -271,7 +271,7 @@ populate.tables <- function(
       #
       time <- round(time[['elapsed']], digits = 0)
       pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-      pb.Object$set(paste0(str1,' - Elapsed Time: ', time,' secs'), value = pb.count/100))
+      pb.Object$set(paste0(str1,' - Elapsed Time: ', time,' secs'), value = pb.count/100)
       Sys.sleep(0.5)
       #
       # reorganize the data into a workable format for building graphs later
