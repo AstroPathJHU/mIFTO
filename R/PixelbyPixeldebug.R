@@ -32,7 +32,7 @@ pixelbypixeldebug <- function(out,pb.Object) {
   }
   import_var <- function(v1) {
     filepath = paste0("C:\\Users\\Public\\Documents\\", deparse(substitute(v1)), ".csv")
-    return(read.csv(file = filepath)[[1]])
+    return(read.csv(file = filepath))
   }
   # tryCatch({
   #   export_var(out)
@@ -53,37 +53,37 @@ pixelbypixeldebug <- function(out,pb.Object) {
   #   return(err.val)
   # }
   tryCatch({
-    wd <- import_var(wd)
+    wd <- import_var(wd)[[1]]
     print(wd)
-    Slide_Descript <- import_var(Slide_Descript)
+    Slide_Descript <- import_var(Slide_Descript)[[1]]
     print(Slide_Descript)
-    Antibody <- import_var(Antibody)
+    Antibody <- import_var(Antibody)[[1]]
     print(Antibody)
-    Opal1 <- import_var(Opal1)
+    Opal1 <- import_var(Opal1)[[1]]
     print(Opal1)
-    Antibody_Opal <- import_var(Antibody_Opal)
+    Antibody_Opal <- import_var(Antibody_Opal)[[1]]
     print(Antibody_Opal)
-    Concentration <- import_var(Concentration)
+    Concentration <- import_var(Concentration)[[1]]
     print(Concentration)
     Thresholds <- import_var(Thresholds)
     print(Thresholds)
-    num.of.tiles <- import_var(num.of.tiles)
+    num.of.tiles <- import_var(num.of.tiles)[[1]]
     print(num.of.tiles)
-    flowout.str <- import_var(flowout)
+    flowout.str <- import_var(flowout)[[1]]
     print(flowout.str)
     if (flowout.str=="FALSE")
       flowout = FALSE
     else
       flowout = TRUE
     print(flowout)
-    ihc.logical.str <- import_var(ihc.logical)
+    ihc.logical.str <- import_var(ihc.logical)[[1]]
     print(ihc.logical.str)
     if (ihc.logical.str=="FALSE")
       ihc.logical = FALSE
     else
       ihc.logical = TRUE
     print(ihc.logical)
-    folders.px <- import_var(folders.px)
+    folders.px <- import_var(folders.px)[[1]]
     print(folders.px)
     if (ihc.logical){
       ihc.connected.pixels <- import_var(ihc.connected.pixels)
@@ -91,22 +91,22 @@ pixelbypixeldebug <- function(out,pb.Object) {
       ihc.Thresholds <- import_var(ihc.Thresholds)
       print(ihc.Thresholds)
     }
-    Protocol <- import_var(Protocol)
+    Protocol <- import_var(Protocol)[[1]]
     print(Protocol)
-    paths <- import_var(paths)
+    paths <- import_var(paths)[[1]]
     print(paths)
-    titration.type.name <- import_var(titration.type.name)
+    titration.type.name <- import_var(titration.type.name)[[1]]
     print(titration.type.name)
     connected.pixels <- import_var(connected.pixels)
     print(connected.pixels)
-    decile.logical.str <- import_var(decile.logical)
+    decile.logical.str <- import_var(decile.logical)[[1]]
     print(decile.logical.str)
     if (decile.logical.str=="FALSE")
       decile.logical = FALSE
     else
       decile.logical = TRUE
     print(decile.logical)
-    threshold.logical.str <- import_var(threshold.logical)
+    threshold.logical.str <- import_var(threshold.logical)[[1]]
     print(threshold.logical.str)
     if (threshold.logical.str=="FALSE")
       threshold.logical = FALSE
