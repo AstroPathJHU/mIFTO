@@ -26,7 +26,7 @@
 #' @export
 #'
 ic.plots.calculations<-function(
-  All.Images, Opal1, Concentration, x, y, m.opt){
+  All.Images, Opal1, Concentration, x, y, m.opt, pb.count, pb.Object, pb.step){
   pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
   pb.Object$set(paste0(str1,' - in ic.plots'), value = pb.count/100)
   # @param colors is a vector of at least the length of the concentration vector
