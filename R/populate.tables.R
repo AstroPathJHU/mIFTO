@@ -202,7 +202,7 @@ populate.tables <- function(
         if (threshold.logical){
           #
           pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-          pb.Object$set(paste0(str1,' - in threshold logical'), value = pb.count/100)
+          pb.Object$set(paste0(str1,' - in threshold logical'))
           #
           ic.plots <- mIFTO::ic.plots.calculations(
             All.Images, Opal1, Concentration, x, y, 1)
