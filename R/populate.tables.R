@@ -208,7 +208,7 @@ populate.tables <- function(
             All.Images, Opal1, Concentration, x, y, 1)
           #
           pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-          pb.Object$set(paste0(str1,' - finished ic.plots'))
+          pb.Object$set(paste0(str1,' - finished ic.plots'), value = pb.count/100)
           #
           small.wholeslide.tables<-list(
             'Histograms' = mIFTO::histogram.calculations(
