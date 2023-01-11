@@ -54,7 +54,7 @@ ic.plots.calculations<-function(
   pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
   pb.Object$set(paste0(str1,' - in SignalOnly'), value = pb.count/100)
   Sys.sleep(0.5)
-  indicator <- paste0(x, concentration[y])
+  indicator <- paste0(x, Concentration[y])
   export_var(SignalOnly, indicator)
   conY <- Concentration[y]
   export_var(conY, indicator)
