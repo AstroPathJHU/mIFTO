@@ -200,8 +200,14 @@ populate.tables <- function(
       #
       time <- system.time({
         if (threshold.logical){
+          pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
+          mIFTO::doupdate.pgbar(pb.count2, pb.Object, paste0(
+            str1,' - in threshold logical'))
           ic.plots <- mIFTO::ic.plots.calculations(
             All.Images, Opal1, Concentration, x, y, 1)
+          pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
+          mIFTO::doupdate.pgbar(pb.count2, pb.Object, paste0(
+            str1,' - finished ic.plots'))
           #
           small.wholeslide.tables<-list(
             'Histograms' = mIFTO::histogram.calculations(
@@ -213,15 +219,27 @@ populate.tables <- function(
             'BoxPlots_98' = ic.plots[['Boxplot.Calculations_98']],
             'BoxPlots_99' = ic.plots[['Boxplot.Calculations_99']]
           )
+          pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
+          mIFTO::doupdate.pgbar(pb.count2, pb.Object, paste0(
+            str1,' - finished histogram calcs'))
         } else {
+          pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
+          mIFTO::doupdate.pgbar(pb.count2, pb.Object, paste0(
+            str1,' - else threshold logical'))
           small.wholeslide.tables<-list(
             'Histograms' = mIFTO::histogram.calculations(
               All.Images, ## histo calc needs work
               Concentration[y],x,'All')
           )
+          pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
+          mIFTO::doupdate.pgbar(pb.count2, pb.Object, paste0(
+            str1,' - finished histogram calcs'))
         }
         #
         if (decile.logical){
+          pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
+          mIFTO::doupdate.pgbar(pb.count2, pb.Object, paste0(
+            str1,' - in decile logical'))
           ic.plots <- mIFTO::ic.plots.calculations(
             decile.All.Images, Opal1, Concentration, x, y, 1)
           #
@@ -230,6 +248,9 @@ populate.tables <- function(
             'decile.BoxPlots' = ic.plots[['Boxplot.Calculations']])
         }
         #
+        pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
+        mIFTO::doupdate.pgbar(pb.count2, pb.Object, paste0(
+          str1,' - for table wholeslide'))
         for(i.1 in table.names.wholeslide){
           for(z in 1:length(Tables.wholeslide[[i.1]])){
             Tables.wholeslide[[i.1]][[z]][[x]][[y]] <-
