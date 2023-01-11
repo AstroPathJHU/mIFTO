@@ -55,7 +55,7 @@ pixelbypixeldebug <- function(out,pb.Object) {
   tryCatch({
     wd <- import_var(wd)
     print(wd)
-    Slide_Descript <- import_var(Slide_Descript))
+    Slide_Descript <- import_var(Slide_Descript)
     print(Slide_Descript)
     Antibody <- import_var(Antibody)
     print(Antibody)
