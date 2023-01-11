@@ -256,7 +256,7 @@ populate.tables <- function(
         #
         pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
         pb.Object$set(paste0(str1,' - for table wholeslide'), value = pb.count/100)
-        a3
+        #
         for(i.1 in table.names.wholeslide){
           for(z in 1:length(Tables.wholeslide[[i.1]])){
             Tables.wholeslide[[i.1]][[z]][[x]][[y]] <-
