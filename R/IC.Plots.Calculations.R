@@ -17,6 +17,9 @@
 #' @param y is the numeric value of the current concentration
 #' @param m.opt optionally export the percentile boxplots between 10% and 2%,
 #' always export the signal and noise boxplots
+#' @param pb.count current count for progress bar
+#' @param pb.step step size for progress bar
+#' @param pb.Object progress bar object
 #' @return explots a data.frame with the columns: Median, 1st
 #' (corresponds to 25th), 2nd (corresponds to 75th), top.inner.fence,
 #' bottom.inner.fence
@@ -24,6 +27,8 @@
 #'
 ic.plots.calculations<-function(
   All.Images, Opal1, Concentration, x, y, m.opt){
+  pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
+  pb.Object$set(paste0(str1,' - in ic.plots'), value = pb.count/100)
   # @param colors is a vector of at least the length of the concentration vector
   #
   data<-vector('list',2)
@@ -48,6 +53,8 @@ ic.plots.calculations<-function(
   # main box plots
   #
   Values <- vector('list',length = 2)
+  pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
+  pb.Object$set(paste0(str1,' - startup ic done'), value = pb.count/100)
   #
   for (z in 1:2) {
     Values[[z]] <- dplyr::mutate(data.table::setnames(cbind.data.frame(
@@ -61,7 +68,11 @@ ic.plots.calculations<-function(
       SlideID = x)
   }
   names(Values) <- c('Noise','Signal')
+  pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
+  pb.Object$set(paste0(str1,' - for z done'), value = pb.count/100)
   if (m.opt == 1){
+    pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
+    pb.Object$set(paste0(str1,' - in m.opt==1'), value = pb.count/100)
     #
     # box plots of %-tiles
     #
@@ -72,6 +83,8 @@ ic.plots.calculations<-function(
     n_pct[[4]] <- c(.01, .99)
     Values.tiles <- vector('list', length(n_pct))
     Values.tiles <- lapply(Values.tiles, function(x) vector('list', 2))
+    pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
+    pb.Object$set(paste0(str1,' - values.tiles created'), value = pb.count/100)
     #
     for (tp in 1:length(n_pct)){
       for (z in 1:2){
@@ -85,6 +98,8 @@ ic.plots.calculations<-function(
             data[[2]], Antibody >= v1
           )
         }
+        pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
+        pb.Object$set(paste0(str1,' - z==1 done. z = ', z, ' tp = ', tp), value = pb.count/100)
         Values.tiles[[tp]][[z]]<- dplyr::mutate(
           data.table::setnames(
             cbind.data.frame(
@@ -98,6 +113,8 @@ ic.plots.calculations<-function(
           `bottom.Inner.fence` = `1st` - (1.5*(`2nd` - `1st`)),
           SlideID = x
         )
+        pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
+        pb.Object$set(paste0(str1,' - values.tiles done. z = ', z, ' tp = ', tp), value = pb.count/100)
       }
       names(Values.tiles[[tp]]) <- c('Noise','Signal')
     }

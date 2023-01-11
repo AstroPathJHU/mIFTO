@@ -205,7 +205,7 @@ populate.tables <- function(
           pb.Object$set(paste0(str1,' - in threshold logical'), value = pb.count/100)
           #
           ic.plots <- mIFTO::ic.plots.calculations(
-            All.Images, Opal1, Concentration, x, y, 1)
+            All.Images, Opal1, Concentration, x, y, 1, pb.count, pb.Object, pb.step)
           #
           pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
           pb.Object$set(paste0(str1,' - finished ic.plots'), value = pb.count/100)
@@ -281,11 +281,6 @@ populate.tables <- function(
         #
         pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
         pb.Object$set(paste0(str1,' - data.frame 1'), value = pb.count/100)
-        #
-        print(Tables.byimage)
-        print(table.names.byimage)
-        # export_var(Tables.byimage, "1")
-        # export_var(table.names.byimage, "1")
         #
         for(i.1 in table.names.byimage){
           for(i.2 in 1:length(Tables.byimage[[i.1]])){
