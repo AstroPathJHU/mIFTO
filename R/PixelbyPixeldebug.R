@@ -78,7 +78,7 @@ pixelbypixeldebug <- function(out,pb.Object) {
       flowout = TRUE
     print(flowout)
     ihc.logical.str <- import_var(ihc.logical)
-    print(patihc.logical.str)
+    print(ihc.logical.str)
     if (ihc.logical.str=="FALSE")
       ihc.logical = FALSE
     else
