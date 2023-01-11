@@ -346,7 +346,7 @@ populate.tables <- function(
             rbind.data.frame,Tables.wholeslide[[i.1]][[w]][[x]])
         }
       }
-    }}, warning = function(cond) {
+    }, warning = function(cond) {
       modal_out <- shinyalert::shinyalert(
         title = paste0('Warning Creating Data Frame 3 for ',
                        x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
