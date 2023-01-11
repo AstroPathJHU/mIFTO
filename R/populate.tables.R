@@ -201,13 +201,11 @@ populate.tables <- function(
       time <- system.time({
         if (threshold.logical){
           #
-          pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
           pb.Object$set(paste0(str1,' - in threshold logical'))
           #
           ic.plots <- mIFTO::ic.plots.calculations(
             All.Images, Opal1, Concentration, x, y, 1)
           #
-          pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
           pb.Object$set(paste0(str1,' - finished ic.plots'))
           #
           small.wholeslide.tables<-list(
@@ -221,12 +219,10 @@ populate.tables <- function(
             'BoxPlots_99' = ic.plots[['Boxplot.Calculations_99']]
           )
           #
-          pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
           pb.Object$set(paste0(str1,' - finished histogram calcs'))
           #
         } else {
           #
-          pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
           pb.Object$set(paste0(str1,' - else threshold logical'))
           #
           small.wholeslide.tables<-list(
@@ -235,14 +231,12 @@ populate.tables <- function(
               Concentration[y],x,'All')
           )
           #
-          pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
           pb.Object$set(paste0(str1,' - finished histogram calcs'))
           #
         }
         #
         if (decile.logical){
           #
-          pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
           pb.Object$set(paste0(str1,' - in decile logical'))
           #
           ic.plots <- mIFTO::ic.plots.calculations(
@@ -254,7 +248,6 @@ populate.tables <- function(
           #
         }
         #
-        pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
         pb.Object$set(paste0(str1,' - for table wholeslide'))
         a3
         for(i.1 in table.names.wholeslide){
@@ -278,7 +271,6 @@ populate.tables <- function(
       #
       tryCatch({
         #
-        pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
         pb.Object$set(paste0(str1,' - data.frame 1'))
         #
         export_var(Tables.byimage, "1")
@@ -328,7 +320,6 @@ populate.tables <- function(
     #
     tryCatch({
       #
-      pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
       pb.Object$set(paste0(str1,' - data.frame 2'))
       #
       export_var(Tables.byimage, "2")
@@ -372,7 +363,6 @@ populate.tables <- function(
     #
     tryCatch({
       #
-      pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
       pb.Object$set(paste0(str1,' - data.frame 3'))
       #
       export_var(Tables.byimage, "3")
@@ -417,7 +407,6 @@ populate.tables <- function(
     #
     tryCatch({
       #
-      pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
       pb.Object$set(paste0(str1,' - data.frame 4'))
       #
       export_var(Tables.byimage, "4")
@@ -461,7 +450,6 @@ populate.tables <- function(
   #
   tryCatch({
     #
-    pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
     pb.Object$set(paste0(str1,' - data.frame 5'))
     #
     export_var(Tables.byimage, "5")
