@@ -49,65 +49,26 @@ pixelbypixel <- function(out,pb.Object) {
   }
   tryCatch({
     wd <- outchecked$wd
-    print(wd)
-    export_var(wd)
     Slide_Descript <- outchecked$Slide_ID
-    print(Slide_Descript)
-    export_var(Slide_Descript)
     Antibody <- outchecked$Antibody
-    print(Antibody)
-    export_var(Antibody)
     Opal1 <- outchecked$Opal1
-    print(Opal1)
-    export_var(Opal1)
     Antibody_Opal <- outchecked$Antibody_Opal
-    print(Antibody_Opal)
-    export_var(Antibody_Opal)
     Concentration <- outchecked$Concentration
-    print(Concentration)
-    export_var(Concentration)
     Thresholds <- outchecked$Thresholds
-    print(Thresholds)
-    export_var(Thresholds)
     num.of.tiles <- outchecked$num.of.tiles
-    print(num.of.tiles)
-    export_var(num.of.tiles)
     flowout <- outchecked$flowout
-    print(flowout)
-    export_var(flowout)
     ihc.logical <- outchecked$ihc.logical
-    print(ihc.logical)
-    export_var(ihc.logical)
     folders.px <- outchecked$folders.px
-    print(folders.px)
-    export_var(folders.px)
     if (ihc.logical){
       ihc.connected.pixels <- outchecked$ihc.connected.pixels
-      print(ihc.connected.pixels)
-      export_var(ihc.connected.pixels)
       ihc.Thresholds <- outchecked$ihc.Thresholds
-      print(ihc.Thresholds)
-      export_var(ihc.Thresholds)
     }
     Protocol <- outchecked$Protocol
-    print(Protocol)
-    export_var(Protocol)
     paths <- outchecked$paths
-    print(paths)
-    export_var(paths)
-    print(paths)
     titration.type.name <- outchecked$titration.type.name
-    print(titration.type.name)
-    export_var(titration.type.name)
     connected.pixels <- outchecked$connected.pixels
-    print(connected.pixels)
-    export_var(connected.pixels)
     decile.logical <- outchecked$decile.logical
-    print(decile.logical)
-    export_var(decile.logical)
     threshold.logical <- outchecked$threshold.logical
-    print(threshold.logical)
-    export_var(threshold.logical)
   }, error = function(cond) {
     err.val <- 1
     return(err.val)
