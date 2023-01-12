@@ -329,9 +329,6 @@ populate.tables <- function(
       pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
       pb.Object$set(paste0(str1,' - data.frame 2'), value = pb.count/100)
       #
-      export_var(Tables.byimage, "2")
-      export_var(table.names.byimage, "2")
-      #
       for(i.1 in table.names.byimage){
         for(w in 1:length(Tables.byimage[[i.1]])){
           Tables.byimage[[i.1]][[w]][[x]]<-do.call(
