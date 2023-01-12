@@ -373,9 +373,6 @@ populate.tables <- function(
       pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
       pb.Object$set(paste0(str1,' - data.frame 3'), value = pb.count/100)
       #
-      export_var(Tables.byimage, "3")
-      export_var(table.names.byimage, "3")
-      #
       for(i.1 in table.names.wholeslide){
         for(w in 1:length(Tables.wholeslide[[i.1]])){
           Tables.wholeslide[[i.1]][[w]][[x]]<-do.call(
@@ -418,9 +415,6 @@ populate.tables <- function(
       pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
       pb.Object$set(paste0(str1,' - data.frame 4'), value = pb.count/100)
       #
-      export_var(Tables.byimage, "4")
-      export_var(table.names.byimage, "4")
-      #
       for(i.1 in table.names.byimage){
         for(w in 1:length(Tables.byimage[[i.1]])){
           Tables.byimage[[i.1]][[w]]<-do.call(
@@ -461,9 +455,6 @@ populate.tables <- function(
     #
     pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
     pb.Object$set(paste0(str1,' - data.frame 5'), value = pb.count/100)
-    #
-    export_var(Tables.byimage, "5")
-    export_var(table.names.byimage, "5")
     #
     for(i.1 in table.names.wholeslide){
       for(w in 1:length(Tables.wholeslide[[i.1]])){
