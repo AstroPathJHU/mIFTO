@@ -48,7 +48,7 @@ preallocate.tables <- function(
   Tables[['SN.Ratio']] <- lapply(
     vector('list', 3), function(x)
       vector('list', length(Slide_Descript)))
-  
+
   names(Tables[['SN.Ratio']]) <- c('Median','Mean','Positivity')
   #
   # Populate the boxplot tables similarly to the SN.Ratio tables
@@ -133,7 +133,7 @@ preallocate.tables <- function(
             'computations. Please check image data\ clean up folders',
             'as this may not always the correct approach.'),
           type = 'warning')
-        #
+
         cImage.IDs <- cImage.IDs[-a]
       }
       #
@@ -172,8 +172,8 @@ preallocate.tables <- function(
           return(list(err.val = err.val))
         }
       }
-      
-      
+
+
       Image.IDs[[x]][[y]]<-gsub('.*\\[|\\].*','',cImage.IDs)
       #
       Image.ID.fullstrings <- c(Image.ID.fullstrings,cImage.IDs)
@@ -235,5 +235,5 @@ preallocate.tables <- function(
               table.names.byimage = table.names.byimage,
               table.names.wholeslide = table.names.wholeslide,
               Image.ID.fullstrings = Image.ID.fullstrings)
-  
+
 }

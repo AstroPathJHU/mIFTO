@@ -40,8 +40,8 @@ pixelbypixeldebug <- function(out,pb.Object) {
   err.val <- 0
   #
   # check input parameters and allocate some for eaiser indexing
-  # 
-  outchecked <- mIFTO::check.vars(out)
+  #
+  outchecked <- mIFTO::check.varsdebug(out)
   err.val <- outchecked$err.val
   if (err.val != 0) {
     import = TRUE
@@ -68,17 +68,19 @@ pixelbypixeldebug <- function(out,pb.Object) {
       print(num.of.tiles)
       flowout.str <- import_var(flowout)[[1]]
       print(flowout.str)
-      if (flowout.str=="FALSE")
+      if (flowout.str=="FALSE"){
         flowout = FALSE
-      else
+        } else {
         flowout = TRUE
+        }
       print(flowout)
       ihc.logical.str <- import_var(ihc.logical)[[1]]
       print(ihc.logical.str)
-      if (ihc.logical.str=="FALSE")
+      if (ihc.logical.str=="FALSE"){
         ihc.logical = FALSE
-      else
+        } else {
         ihc.logical = TRUE
+        }
       print(ihc.logical)
       folders.px <- import_var(folders.px)[[1]]
       print(folders.px)
@@ -98,17 +100,19 @@ pixelbypixeldebug <- function(out,pb.Object) {
       print(connected.pixels)
       decile.logical.str <- import_var(decile.logical)[[1]]
       print(decile.logical.str)
-      if (decile.logical.str=="FALSE")
+      if (decile.logical.str=="FALSE"){
         decile.logical = FALSE
-      else
+        } else {
         decile.logical = TRUE
+        }
       print(decile.logical)
       threshold.logical.str <- import_var(threshold.logical)[[1]]
       print(threshold.logical.str)
-      if (threshold.logical.str=="FALSE")
+      if (threshold.logical.str=="FALSE"){
         threshold.logical = FALSE
-      else
+        } else {
         threshold.logical = TRUE
+        }
       print(threshold.logical)
     }, error = function(cond) {
       modal_out <- shinyalert::shinyalert(

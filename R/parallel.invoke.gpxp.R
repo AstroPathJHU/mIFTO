@@ -60,11 +60,53 @@ parallel.invoke.gpxp <- function (
   #
   ###### need to add a try catch, but also need to determine what happens
   ###### when I throw an error instead of the envir
-  small.tables.byimage<- parallel::parLapply(
-    cl,Image.IDs[[x]][[y]],function(z) mIFTO::generate.pxp.image.data(
-      Concentration, x, y, z, Antibody_Opal,
-      titration.type.name, Thresholds, paths,
-      connected.pixels, flowout, Opal1,
-      decile.logical, threshold.logical))
+  tryCatch({
+    small.tables.byimage<- parallel::parLapply(
+      cl,Image.IDs[[x]][[y]],function(z) mIFTO::generate.pxp.image.data(
+        Concentration, x, y, z, Antibody_Opal,
+        titration.type.name, Thresholds, paths,
+        connected.pixels, flowout, Opal1,
+        decile.logical, threshold.logical))
+  }, warning = function(cond) {
+    modal_out <- shinyalert::shinyalert(
+      title = paste0('Warning generating tables for ',
+                     x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
+      text = paste0(cond),
+      type = 'error',
+      showConfirmButton = TRUE
+    )
+    err.val <- 20
+    return(err.val)
+  }, error = function(cond) {
+    tryCatch({
+    small.tables.byimage<- lapply(
+      Image.IDs[[x]][[y]],function(z) mIFTO::generate.pxp.image.data(
+        Concentration, x, y, z, Antibody_Opal,
+        titration.type.name, Thresholds, paths,
+        connected.pixels, flowout, Opal1,
+        decile.logical, threshold.logical))
+    }, warning = function(cond) {
+      modal_out <- shinyalert::shinyalert(
+        title = paste0('Warning generating tables second attempt for ',
+                       x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
+        text = paste0(cond),
+        type = 'error',
+        showConfirmButton = TRUE
+      )
+      err.val <- 20
+      return(err.val)
+    }, error = function(cond) {
+      traceback()
+      modal_out <- shinyalert::shinyalert(
+        title = paste0('Error generating tables second attempt for ',
+                       x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
+        text = paste0(cond),
+        type = 'error',
+        showConfirmButton = TRUE
+      )
+      err.val <- 20
+      return(err.val)
+      })
+  }, finally={})
   #
 }

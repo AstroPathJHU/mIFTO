@@ -198,6 +198,7 @@ server.sidedebug <- function(input, output, session) {
         showConfirmButton = TRUE
       )
     }, error = function(cond){
+      traceback()
       on.exit(pb$close());
       modal_out <- shinyalert::shinyalert(
         title = "Undefined Error.",

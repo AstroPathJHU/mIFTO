@@ -63,11 +63,11 @@ generate.pxp.image.data <- function(
   }, warning = function(cond) {
     modal_out <- shinyalert::shinyalert(
       title = paste0('Warning in generate.pxp tiff.list Reading Component Images for ',
-                     x, ' 1to', Concentration[y]),
+                     x, ' 1to', Concentration[y], '[', q, ']'),
       text = paste0('Please check the computer resources, slide names, ',
                     'image layers correspond to protocol type, ',
                     'and that component data tiffs for ', x,
-                    ' 1to',Concentration[[y]],' exist. Then contact ',
+                    ' 1to',Concentration[[y]], '[', q, ']',' exist. Then contact ',
                     'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
                     cond),
       type = 'error',
@@ -78,11 +78,11 @@ generate.pxp.image.data <- function(
   }, error = function(cond) {
     modal_out <- shinyalert::shinyalert(
       title = paste0('Error in generate.pxp tiff.list Reading Component Images for ',
-                     x, ' 1to', Concentration[y]),
+                     x, ' 1to', Concentration[y], '[', q, ']'),
       text = paste0('Please check the computer resources, slide names, ',
                     'image layers correspond to protocol type, ',
                     'and that component data tiffs for ', x,
-                    ' 1to',Concentration[[y]],' exist. Then contact ',
+                    ' 1to',Concentration[[y]], '[', q, ']',' exist. Then contact ',
                     'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
                     cond),
       type = 'error',
@@ -102,7 +102,7 @@ generate.pxp.image.data <- function(
   # measure crosstalk between channels
   #
   #***************************************************************
-  
+
   #
   # create the flow output for this image
   #
@@ -115,7 +115,7 @@ generate.pxp.image.data <- function(
     str = paste0(
       wd,'/Results.pixels/data/raw/flow_like_tables/',Antibody_Opal,'_',x,'_1to',
       Concentration[y],'_[',q,'].csv')
-    
+
     data.table::fwrite(data.in.write, file=str,sep=',')
   }
   #
@@ -142,25 +142,90 @@ generate.pxp.image.data <- function(
     #
     # get the positvity data
     #
-    if ((length(connected.pixels) == 1) & (grepl('NA', connected.pixels))){
+    if ((length(connected.pixels) == 1) & ('NA' %in% connected.pixels)){
       positivity.data <- mIFTO::define.image.positivity(
         data.in,Thresholds[[x]][y],connected.pixels)
     } else {
-      positivity.data <- mIFTO::define.image.positivity(
-        data.in,Thresholds[[x]][y],connected.pixels[[x]][y])
+      tryCatch({
+        positivity.data <- mIFTO::define.image.positivity(
+          data.in,Thresholds[[x]][y],connected.pixels[[x]][y])
+      }, warning = function(cond) {
+        modal_out <- shinyalert::shinyalert(
+          title = paste0('Warning in threshold logical for ',
+                         x, ' 1to', Concentration[y], '[', q, ']'),
+          text = paste0('Please check the computer resources, slide names, ',
+                        'image layers correspond to protocol type, ',
+                        'and that component data tiffs for ', x,
+                        ' 1to',Concentration[[y]], '[', q, ']',' exist. Then contact ',
+                        'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
+                        cond),
+          type = 'error',
+          showConfirmButton = TRUE
+        )
+        err.val <- 14
+        return(-1)
+      }, error = function(cond) {
+        modal_out <- shinyalert::shinyalert(
+          title = paste0('Error in threshold logical for ',
+                         x, ' 1to', Concentration[y], '[', q, ']'),
+          text = paste0('Please check the computer resources, slide names, ',
+                        'image layers correspond to protocol type, ',
+                        'and that component data tiffs for ', x,
+                        ' 1to',Concentration[[y]], '[', q, ']',' exist. Then contact ',
+                        'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
+                        cond),
+          type = 'error',
+          showConfirmButton = TRUE
+        )
+        err.val <- 14
+        return(-1)
+      }, finally = {})
     }
     #
     # do the calculations for each type of graph and store
     #
-    small.tables<-c(small.tables,
-                    'SN.Ratio' = list(mIFTO::sn.ratio.calculations(
-                      positivity.data,Concentration[y],x,q)),
-                    'T.Tests' = list(mIFTO::welch.t.test.calculations(
-                      positivity.data,Concentration[y],x,q)),
-                    'Image.ID' = paste0(
-                      '[',q,']'),
-                    'Image' = list(positivity.data)
-    )
+    tryCatch({
+      small.tables<-c(small.tables,
+                      'SN.Ratio' = list(mIFTO::sn.ratio.calculations(
+                        positivity.data,Concentration[y],x,q)),
+                      'T.Tests' = list(mIFTO::welch.t.test.calculations(
+                        positivity.data,Concentration[y],x,q)),
+                      'Image.ID' = paste0(
+                        '[',q,']'),
+                      'Image' = list(positivity.data))
+    }, warning = function(cond) {
+      modal_out <- shinyalert::shinyalert(
+        title = paste0('Warning in small.tables for ',
+                       x, ' 1to', Concentration[y], '[', q, ']'),
+        text = paste0('Please check the computer resources, slide names, ',
+                      'image layers correspond to protocol type, ',
+                      'and that component data tiffs for ', x,
+                      ' 1to',Concentration[[y]], '[', q, ']',' exist. Then contact ',
+                      'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
+                      cond),
+        type = 'error',
+        showConfirmButton = TRUE
+      )
+      err.val <- 14
+      return(-1)
+    }, error = function(cond) {
+      traceback()
+      print(cond)
+      modal_out <- shinyalert::shinyalert(
+        title = paste0('Error in small.tables for ',
+                       x, ' 1to', Concentration[y], '[', q, ']'),
+        text = paste0('Please check the computer resources, slide names, ',
+                      'image layers correspond to protocol type, ',
+                      'and that component data tiffs for ', x,
+                      ' 1to',Concentration[[y]], '[', q, ']',' exist. Then contact ',
+                      'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
+                      cond),
+        type = 'error',
+        showConfirmButton = TRUE
+      )
+      err.val <- 14
+      return(-1)
+    }, finally = {})
     #
     rm(positivity.data)
   } else {

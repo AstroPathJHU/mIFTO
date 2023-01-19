@@ -26,6 +26,7 @@
 #' @export
 #'
 mIFTOappDebug <- function(){
+  print("hello")
   #
   if (!.Platform$OS.type == "windows") {
     warning(paste('Application has only been tested on windows machines.',

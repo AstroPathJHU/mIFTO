@@ -108,33 +108,37 @@ populate.tables <- function(
             decile.logical, threshold.logical, cl
           )
         }, warning = function(cond) {
-          modal_out <- shinyalert::shinyalert(
-            title = paste0('Warning Reading Component Images for ',
-                           x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
-            text = paste0('Please check the computer resources, slide names, ',
-                          'image layers correspond to protocol type, ',
-                          'and that component data tiffs for ', x,
-                          ' 1to',Concentration[[y]],' exist. Then contact ',
-                          'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
-                          cond),
-            type = 'error',
-            showConfirmButton = TRUE
-          )
+          if(!small.tables.byimage$err.val==20) {
+            modal_out <- shinyalert::shinyalert(
+              title = paste0('Warning Reading Component Images for ',
+                             x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
+              text = paste0('Please check the computer resources, slide names, ',
+                            'image layers correspond to protocol type, ',
+                            'and that component data tiffs for ', x,
+                            ' 1to',Concentration[[y]],' exist. Then contact ',
+                            'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
+                            cond),
+              type = 'error',
+              showConfirmButton = TRUE
+            )
+          }
           err.val <- 14
           return(err.val)
         }, error = function(cond) {
-          modal_out <- shinyalert::shinyalert(
-            title = paste0('Error Reading Component Images for ',
-                           x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
-            text = paste0('Please check the computer resources, slide names, ',
-                          'image layers correspond to protocol type, ',
-                          'and that component data tiffs for ', x,
-                          ' 1to',Concentration[[y]],' exist. Then contact ',
-                          'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
-                          cond),
-            type = 'error',
-            showConfirmButton = TRUE
-          )
+            if(!small.tables.byimage$err.val==20) {
+              modal_out <- shinyalert::shinyalert(
+                title = paste0('Error Reading Component Images for ',
+                               x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
+                text = paste0('Please check the computer resources, slide names, ',
+                              'image layers correspond to protocol type, ',
+                              'and that component data tiffs for ', x,
+                              ' 1to',Concentration[[y]],' exist. Then contact ',
+                              'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
+                              cond),
+                type = 'error',
+                showConfirmButton = TRUE
+              )
+            }
           err.val <- 14
           return(err.val)
         },
@@ -289,7 +293,7 @@ populate.tables <- function(
           }
         }
         #
-      }, warning = function(cond) 
+      }, warning = function(cond)
         {
         #
         modal_out <- shinyalert::shinyalert(
