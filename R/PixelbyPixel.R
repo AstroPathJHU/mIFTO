@@ -27,7 +27,7 @@ pixelbypixel <- function(out,pb.Object = "", pb.count = "") {
   ##############################input parameters########################
   #
   export_var <- function(v1) {
-    filename = paste0("C:\\Users\\Public\\Documents\\", deparse(substitute(v1)), ".csv")
+    filename = paste0("C:\\Users\\Public\\Documents\\mIFTOdata\\", deparse(substitute(v1)), ".csv")
     write.csv(v1, filename, row.names=FALSE)
   }
   tryCatch({
@@ -41,7 +41,7 @@ pixelbypixel <- function(out,pb.Object = "", pb.count = "") {
       pb.count, pb.Object, 'Browse For Folder')
   }
   #
-  # check input parameters and allocate some for eaiser indexing
+  # check input parameters and allocate some for easier indexing
   #
   outchecked <- mIFTO::check.vars(out)
   err.val <- outchecked$err.val

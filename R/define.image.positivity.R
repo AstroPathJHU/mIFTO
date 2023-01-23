@@ -32,6 +32,7 @@ define.image.positivity <- function(
       mask[which(mask > 0)] <- 1
       #
       l<-EBImage::bwlabel(mask)
+      l_bind <- append(l_bind, l)
       m<-which(
         EBImage::computeFeatures.shape(l,v)[,'s.area']<connected.pixels.now)
       m_bind <- append(m_bind, m)
