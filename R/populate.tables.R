@@ -36,7 +36,7 @@
 populate.tables <- function(
     Slide_Descript, Concentration, Antibody_Opal, Thresholds, Opal1,
     flowout, Protocol, paths, titration.type.name, connected.pixels,
-    decile.logical, threshold.logical, pb.count, pb.Object){
+    decile.logical, threshold.logical, pb.count = "", pb.Object = ""){
   export_var <- function(v1, v2) {
     filename = paste0("C:\\Users\\Public\\Documents\\", deparse(substitute(v1)), v2, ".csv")
     write.csv(v1, filename, row.names=FALSE)
@@ -44,8 +44,10 @@ populate.tables <- function(
   #
   #############pre-allocating tables to store results###################
   #
-  pb.step<-round(89/(2*length(Slide_Descript)
-                     *length(Concentration)), digits=2)
+  if (pb.Object != ""){
+    pb.step<-round(89/(2*length(Slide_Descript)
+                       *length(Concentration)), digits=2)
+  }
   #
   table.names.byimage <-c('SN.Ratio','T.Tests','Histograms')
   table.names.wholeslide<-c('SN.Ratio','T.Tests','Histograms','BoxPlots')
@@ -76,19 +78,23 @@ populate.tables <- function(
   #
   #############reading images in and computing stats for all pairs##############
   #
-  mIFTO::doupdate.pgbar(pb.count, pb.Object, 'Reading in Images')
-  Sys.sleep(0.5)
+  if (pb.Object != ""){
+    mIFTO::doupdate.pgbar(pb.count, pb.Object, 'Reading in Images')
+    Sys.sleep(0.5)
+  }
   #
   for(x in Slide_Descript){
     for(y in 1:length(Concentration)){
       #
       # update the progress bar for new condition
       #
-      str1 = paste0("Processing ", x, ' 1:',Concentration[[y]])
-      pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-      mIFTO::doupdate.pgbar(pb.count2, pb.Object, paste0(
-        str1,' - Reading Tiffs and Generating Image Statistics - ',
-        length(Image.IDs[[x]][[y]])))
+      if (pb.Object != ""){
+        str1 = paste0("Processing ", x, ' 1:',Concentration[[y]])
+        pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
+        mIFTO::doupdate.pgbar(pb.count2, pb.Object, paste0(
+          str1,' - Reading Tiffs and Generating Image Statistics - ',
+          length(Image.IDs[[x]][[y]])))
+      }
       #
       #############read each image and do by image stats###################
       #
@@ -196,23 +202,19 @@ populate.tables <- function(
       names(All.Images) <- c('pos','neg','pos.mask','neg.mask')
       rm(small.tables.byimage)
       #
-      pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-      mIFTO::doupdate.pgbar(pb.count2, pb.Object, paste0(
-        str1,' - Generating Whole Slide Statistics'))
+      if (pb.Object != ""){
+        pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
+        mIFTO::doupdate.pgbar(pb.count2, pb.Object, paste0(
+          str1,' - Generating Whole Slide Statistics'))
+      }
       #
       #############do whole image stats###################
       #
       time <- system.time({
         if (threshold.logical){
           #
-          pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-          pb.Object$set(paste0(str1,' - in threshold logical'), value = pb.count/100)
-          #
           ic.plots <- mIFTO::ic.plots.calculations(
             All.Images, Opal1, Concentration, x, y, 1, pb.count, pb.Object, pb.step, str1)
-          #
-          pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-          pb.Object$set(paste0(str1,' - finished ic.plots'), value = pb.count/100)
           #
           small.wholeslide.tables<-list(
             'Histograms' = mIFTO::histogram.calculations(
@@ -225,13 +227,7 @@ populate.tables <- function(
             'BoxPlots_99' = ic.plots[['Boxplot.Calculations_99']]
           )
           #
-          pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-          pb.Object$set(paste0(str1,' - finished histogram calcs'), value = pb.count/100)
-          #
         } else {
-          #
-          pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-          pb.Object$set(paste0(str1,' - else threshold logical'), value = pb.count/100)
           #
           small.wholeslide.tables<-list(
             'Histograms' = mIFTO::histogram.calculations(
@@ -239,15 +235,9 @@ populate.tables <- function(
               Concentration[y],x,'All')
           )
           #
-          pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-          pb.Object$set(paste0(str1,' - finished histogram calcs'), value = pb.count/100)
-          #
         }
         #
         if (decile.logical){
-          #
-          pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-          pb.Object$set(paste0(str1,' - in decile logical'), value = pb.count/100)
           #
           ic.plots <- mIFTO::ic.plots.calculations(
             decile.All.Images, Opal1, Concentration, x, y, 1)
@@ -257,10 +247,7 @@ populate.tables <- function(
             'decile.BoxPlots' = ic.plots[['Boxplot.Calculations']])
           #
         }
-        #
-        pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-        pb.Object$set(paste0(str1,' - for table wholeslide'), value = pb.count/100)
-        #
+       #
         for(i.1 in table.names.wholeslide){
           for(z in 1:length(Tables.wholeslide[[i.1]])){
             Tables.wholeslide[[i.1]][[z]][[x]][[y]] <-
@@ -273,19 +260,18 @@ populate.tables <- function(
         #
       })
       #
-      time <- round(time[['elapsed']], digits = 0)
-      pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-      pb.Object$set(paste0(str1,' - Elapsed Time: ', time,' secs'), value = pb.count/100)
-      Sys.sleep(0.5)
+      if (pb.Object != ""){
+        time <- round(time[['elapsed']], digits = 0)
+        pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
+        pb.Object$set(paste0(str1,' - Elapsed Time: ', time,' secs'), value = pb.count/100)
+        Sys.sleep(0.5)
+      }
       #
       # reorganize the data into a workable format for building graphs later
       # essentially turning the list into a data table
       #
       tryCatch({
-        #
-        pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-        pb.Object$set(paste0(str1,' - data.frame 1'), value = pb.count/100)
-        #
+        ##
         for(i.1 in table.names.byimage){
           for(i.2 in 1:length(Tables.byimage[[i.1]])){
             Tables.byimage[[i.1]][[i.2]][[x]][[y]]<-do.call(
@@ -330,9 +316,6 @@ populate.tables <- function(
     #
     tryCatch({
       #
-      pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-      pb.Object$set(paste0(str1,' - data.frame 2'), value = pb.count/100)
-      #
       for(i.1 in table.names.byimage){
         for(w in 1:length(Tables.byimage[[i.1]])){
           Tables.byimage[[i.1]][[w]][[x]]<-do.call(
@@ -370,9 +353,6 @@ populate.tables <- function(
     finally={})
     #
     tryCatch({
-      #
-      pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-      pb.Object$set(paste0(str1,' - data.frame 3'), value = pb.count/100)
       #
       for(i.1 in table.names.wholeslide){
         for(w in 1:length(Tables.wholeslide[[i.1]])){
@@ -413,9 +393,6 @@ populate.tables <- function(
     #
     tryCatch({
       #
-      pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-      pb.Object$set(paste0(str1,' - data.frame 4'), value = pb.count/100)
-      #
       for(i.1 in table.names.byimage){
         for(w in 1:length(Tables.byimage[[i.1]])){
           Tables.byimage[[i.1]][[w]]<-do.call(
@@ -453,9 +430,6 @@ populate.tables <- function(
     finally={})
   #
   tryCatch({
-    #
-    pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-    pb.Object$set(paste0(str1,' - data.frame 5'), value = pb.count/100)
     #
     for(i.1 in table.names.wholeslide){
       for(w in 1:length(Tables.wholeslide[[i.1]])){

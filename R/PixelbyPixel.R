@@ -23,7 +23,7 @@
 #'  for images, positivity measures given thresholds
 #' @export
 #'
-pixelbypixel <- function(out,pb.Object) {
+pixelbypixel <- function(out,pb.Object = "", pb.count = "") {
   ##############################input parameters########################
   #
   export_var <- function(v1) {
@@ -36,9 +36,10 @@ pixelbypixel <- function(out,pb.Object) {
       err.val <- 1
       return(err.val)
       })
-  
-  pb.count = 0; mIFTO::doupdate.pgbar(
-    pb.count, pb.Object, 'Browse For Folder')
+  if (pb.Object != ""){
+    pb.count = 0; mIFTO::doupdate.pgbar(
+      pb.count, pb.Object, 'Browse For Folder')
+  }
   #
   # check input parameters and allocate some for eaiser indexing
   #
@@ -78,8 +79,10 @@ pixelbypixel <- function(out,pb.Object) {
   #
   ##############################create results folders##################
   #
-  pb.count = 1; mIFTO::doupdate.pgbar(
-    pb.count, pb.Object, 'Generating Folders')
+  if (pb.Object != ""){
+    pb.count = 1; mIFTO::doupdate.pgbar(
+      pb.count, pb.Object, 'Generating Folders')
+  }
   v <- mIFTO::create.dir(wd,'pixels', flowout)
   rm(v)
   #
@@ -107,10 +110,12 @@ pixelbypixel <- function(out,pb.Object) {
     secs = 60 + secs
   }
   #
-  mIFTO::doupdate.pgbar(90, pb.Object, paste0(
-    'Finished gathering image data - Elapsed Time: ',
-    mins, ' mins ', secs,' secs'))
-  Sys.sleep(0.5)
+  if (pb.Object != ""){
+    mIFTO::doupdate.pgbar(90, pb.Object, paste0(
+      'Finished gathering image data - Elapsed Time: ',
+      mins, ' mins ', secs,' secs'))
+    Sys.sleep(0.5)
+  }
   #
   ##################prepares some parameters for the graphs#############
   #
@@ -142,8 +147,10 @@ pixelbypixel <- function(out,pb.Object) {
   #
   ###############################Histogram Graphs ######################
   #
-  ii = 97;mIFTO::doupdate.pgbar(
-    ii, pb.Object, 'Generating Histogram Graphs')
+  if (pb.Object != ""){
+    ii = 97;mIFTO::doupdate.pgbar(
+      ii, pb.Object, 'Generating Histogram Graphs')
+  }
   #
   mIFTO::map.and.write.histograms(
     wd, Antibody_Opal, Slide_Descript,
@@ -151,7 +158,9 @@ pixelbypixel <- function(out,pb.Object) {
   #
   ############################### Finished #############################
   #
-  mIFTO::doupdate.pgbar(100, pb.Object, 'Fin')
+  if (pb.Object != ""){
+    mIFTO::doupdate.pgbar(100, pb.Object, 'Fin')
+  }
   #
   return(err.val)
 }

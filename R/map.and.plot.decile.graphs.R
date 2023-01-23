@@ -28,10 +28,12 @@
 map.and.plot.decile.graphs <- function(
   wd, Antibody_Opal, Antibody, Slide_Descript, Concentration, Tables,
   theme1, con_type, colors, Antibody_Opal.snratio, Antibody_Opal.ttest,
-  pb.Object){
+  pb.Object = ""){
   #
-  mIFTO::doupdate.pgbar(96, pb.Object,
-                        'Generating Decile Graphs')
+  if (pb.Object != ""){
+    mIFTO::doupdate.pgbar(96, pb.Object,
+                          'Generating Decile Graphs')
+  }
   #
   sn.plots <- mIFTO::map.snratio.plots(
     wd, Antibody_Opal, Slide_Descript,
