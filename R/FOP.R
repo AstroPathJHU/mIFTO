@@ -734,9 +734,9 @@ FOP<-function(){
           rbind(name, NA)
 
         }
-        write.table(my.vals$raw.data,file=paste0(
-          wd,'/ + ',input$fraction.type,'_raw_data.csv'),
-          sep=',', row.names=F )
+        # write.table(my.vals$raw.data,file=paste0(
+        #   wd,'/ + ',input$fraction.type,'_raw_data.csv'),
+        #   sep=',', row.names=F )
         write.table(name,file=paste0(
           wd,'/ + ',input$fraction.type,'_raw_data_ordered.csv'),
           sep=',', row.names=F )
@@ -805,7 +805,7 @@ FOP<-function(){
                                    host = ip, quiet = T))
   }, warning = function(cond) {
     tryCatch({
-      options(browser = "C:/Program Files (x86)/Internet Explorer/iexplore.exe")
+      options(browser = "C:/Program Files/Google/Chrome/Application/chrome.exe")
       shiny::shinyApp(ui = FOP.ui, FOP.server.side,
                       options = list(width = 1000, launch.browser = TRUE,
                                      host = ip, quiet = T))
@@ -817,7 +817,7 @@ FOP<-function(){
     #
   }, error = function(cond) {
     tryCatch({
-      options(browser = "C:/Program Files (x86)/Internet Explorer/iexplore.exe")
+      options(browser = "C:/Program Files/Google/Chrome/Application/chrome.exe")
       shiny::shinyApp(ui = FOP.ui, FOP.server.side,
                       options = list(width = 1000, launch.browser = TRUE,
                                      host = ip, quiet = T))
