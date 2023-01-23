@@ -22,6 +22,7 @@ define.image.positivity <- function(
   if (!connected.pixels.now == 'NA'){
     quarter.length <- length(data.in[1, ])/4
     m_bind <- c()
+    l_bind <- c()
     for(section in 1:4){
       split_data <-
         data.in[, ((quarter.length*(section-1))+1):(quarter.length*section)]
