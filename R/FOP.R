@@ -33,7 +33,7 @@
 #'concentration, one for each slide descriptors, and Antibody
 #'
 #' @export
-FOP<-function(){
+FOPdebug<-function(){
   fm.object <- mIFTO::ui.formats(1000, 1)
   #
   # create the UI tab  -------------------------------------
@@ -259,6 +259,7 @@ FOP<-function(){
     #
     fraction.type <-out$fraction.type
     Positive.table<-data.frame()
+    # raw.data <- data.frame()
     Positive.table<-findposFOP(Positive.table, out,  my.vals)
     Positive.table
     #
@@ -268,13 +269,10 @@ FOP<-function(){
   #
   findposFOP<-function(Positive.table, out, my.vals){
     AB <- my.vals$AB
-    print(my.vals)
     Opal1 <- my.vals$Opal1
     Concentration <- my.vals$delin
     IHC <- as.logical(my.vals$IHC)
-    print(IHC)
     MoTiF <- as.logical(my.vals$MoTiF)
-    print(MoTiF)
     Slide_ID <- my.vals$Slide_ID
     fraction.type <- out$fraction.type
     #find working directory
@@ -314,12 +312,14 @@ FOP<-function(){
       ##Antibody is the positive pixel count R does not read it in as a
       # numerical variable so we change it here
       CellSeg$Antibody<-as.numeric(CellSeg$Antibody)
-      ##these two loops help shorten variable descritions
+      ##these two loops help shorten variable descriptions
       for(count3 in Slide_ID){
         CellSeg$Slide.ID<-gsub(
           paste0('.*', count3,'.*'),
           count3, CellSeg$Slide.ID)
       }
+      fop <- (CellSeg$Antibody/CellSeg$Totals)
+      CellSeg<- cbind(CellSeg, fop)
       ##this is the part of the script that determines the % +-ivity and
       # organizes the output
       Pos<-dplyr::mutate(
@@ -343,8 +343,10 @@ FOP<-function(){
       )
       ##now we add it to a data data for export. This is the data table can be
       # added to for additional AB with the same SlideIDs.
+      my.vals$raw.data<-rbind(my.vals$raw.data,CellSeg)
       Positive.table<-rbind(Positive.table,Pos)
       Positive.table
+      rm(CellSeg)
     }else if(fraction.type =='Cells'){
       ##read data in and organize it
       CellSeg<-
@@ -355,8 +357,8 @@ FOP<-function(){
                 list.files(wd,
                            pattern = '.*]_cell_seg_data.txt$',full.names=TRUE),
                 function(x) data.table::fread(x, na.strings=c('NA', '#N/A'),
-                                  select=c('Slide ID','Phenotype'),
-                                  data.table = FALSE))),
+                                              select=c('Slide ID','Phenotype'),
+                                              data.table = FALSE))),
             c('Slide.ID','Phenotype')),
           Slide.ID)
       ##change AB to a single variable
@@ -389,7 +391,6 @@ FOP<-function(){
       )
       Positive.table
     }else if(fraction.type == 'Tissue' & MoTiF == F){
-      print("Tissue not MoTiF")
       ##read data in and organize it
       CellSeg<-dplyr::mutate(
         reshape2::dcast(
@@ -433,7 +434,6 @@ FOP<-function(){
       Positive.table
     }
     else if(fraction.type == 'Tissue' & MoTiF == T){
-      print("Tissue and MoTiF")
       ##read data in and organize it
       CellSeg<-dplyr::mutate(
         reshape2::dcast(
@@ -484,7 +484,7 @@ FOP<-function(){
     #
     my.vals <- reactiveValues(
       Slide_ID=NULL, wd=NULL, Positive.table=NULL, delin = NULL,
-      Opal1 = NULL, AB = NULL, IHC = NULL)
+      Opal1 = NULL, AB = NULL, IHC = NULL, raw.data=NULL, delins=NULL)
     #
     # another ab modal
     #
@@ -534,7 +534,7 @@ FOP<-function(){
           ),
           shiny::checkboxInput(
             "IHC2", label = "Is this IHC?", value = FALSE
-            ),
+          ),
           shiny::checkboxInput(
             "MoTiF2", label = "Is this MoTiF?", value = FALSE)
         ),
@@ -556,8 +556,9 @@ FOP<-function(){
         #
         err.val = 0
         my.vals$Slide_ID <- unlist(strsplit(input$Slide_ID,
-                                                  split = ','))
+                                            split = ','))
         my.vals$delin = input$Concentration
+        my.vals$delins <- cbind(my.vals$delins, input$Concentration)
         my.vals$Opal1 <- input$Opal1
         my.vals$AB <- input$Antibody
         my.vals$IHC <- input$IHC
@@ -567,6 +568,12 @@ FOP<-function(){
         shiny::showModal(another.ab.modal())
         #
       }, warning = function(cond){
+        my.vals$delins<-NULL
+        my.vals$raw.data<-NULL
+        name <- c()
+        ID.list <- c()
+        delin.list <- c()
+        max_num <- 0
         modal_out <- shinyalert::shinyalert(
           title = "Input Warning.",
           text = cat(
@@ -581,6 +588,12 @@ FOP<-function(){
           showConfirmButton = TRUE
         )
       }, error = function(cond){
+        my.vals$delins<-NULL
+        my.vals$raw.data<-NULL
+        name <- c()
+        ID.list <- c()
+        delin.list <- c()
+        max_num <- 0
         modal_out <- shinyalert::shinyalert(
           title = "Input Error.",
           text = paste(
@@ -622,6 +635,7 @@ FOP<-function(){
         #
         err.val = 0
         my.vals$delin <- input$Concentration2
+        my.vals$delins <- cbind(my.vals$delins, input$Concentration2)
         my.vals$Opal1 <- input$Opal2
         my.vals$AB <- input$Antibody2
         my.vals$IHC <- input$IHC2
@@ -631,6 +645,12 @@ FOP<-function(){
         shiny::showModal(another.ab.modal())
         #
       }, warning = function(cond){
+        my.vals$delins<-NULL
+        my.vals$raw.data<-NULL
+        name <- c()
+        ID.list <- c()
+        delin.list <- c()
+        max_num <- 0
         modal_out <- shinyalert::shinyalert(
           title = "Second Window Input Warning.",
           text = paste(
@@ -645,6 +665,12 @@ FOP<-function(){
           showConfirmButton = TRUE
         )
       }, error = function(cond){
+        my.vals$delins<-NULL
+        my.vals$raw.data<-NULL
+        name <- c()
+        ID.list <- c()
+        delin.list <- c()
+        max_num <- 0
         modal_out <- shinyalert::shinyalert(
           title = "Second Window Input Error.",
           text = paste(
@@ -672,6 +698,52 @@ FOP<-function(){
         write.table(my.vals$Positive.table,file=paste0(
           wd,'/ + ',input$fraction.type,'.csv'),
           sep=',', row.names=F )
+        #
+        name <- c()
+        ID.list <- c()
+        delin.list <- c()
+        max_num <- 0
+        for(del in 1:length(my.vals$delins)){
+          con_list <-
+            my.vals$raw.data[my.vals$raw.data$Concentration == my.vals$delins[[del]],]
+          for(id in my.vals$Slide_ID){
+            num = sum(con_list$Slide.ID == id)
+            if(num>max_num){
+              max_num = num
+            }
+          }
+        }
+        max_num <- max_num+2
+        for(del in my.vals$delins){
+          delin.list <-
+            my.vals$raw.data[my.vals$raw.data$Concentration == del,]
+          for(id in my.vals$Slide_ID){
+
+            ID.list <-
+              delin.list[delin.list$Slide.ID == id,]
+            ID.list <- t(dplyr::select(ID.list, fop))
+            ID.list <- c(id, del, ID.list)
+
+            Id.length <- length(ID.list)
+            # tryCatch({
+            if(Id.length<max_num){
+              ID.list <- c(ID.list, paste(integer(max_num-Id.length)))
+            }
+            name <- rbind(name, ID.list)
+          }
+          rbind(name, NA)
+
+        }
+        write.table(my.vals$raw.data,file=paste0(
+          wd,'/ + ',input$fraction.type,'_raw_data.csv'),
+          sep=',', row.names=F )
+        write.table(name,file=paste0(
+          wd,'/ + ',input$fraction.type,'_raw_data_ordered.csv'),
+          sep=',', row.names=F )
+
+        my.vals$raw.data=NULL
+        my.vals$delins=NULL
+
         #
         modal_out <- shinyalert::shinyalert(
           title = "Finished",
