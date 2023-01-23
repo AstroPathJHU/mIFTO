@@ -33,7 +33,7 @@
 #'concentration, one for each slide descriptors, and Antibody
 #'
 #' @export
-FOPdebug<-function(){
+FOP<-function(){
   fm.object <- mIFTO::ui.formats(1000, 1)
   #
   # create the UI tab  -------------------------------------
