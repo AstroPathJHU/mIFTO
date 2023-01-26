@@ -28,6 +28,7 @@ ic.plots.calculations<-function(
     filename = paste0("C:\\Users\\Public\\Documents\\", deparse(substitute(v1)), v2, ".csv")
     write.csv(v1, filename, row.names=FALSE)
   }
+  data<-vector('list',2)
   names(data)<-c('Noise.only.Threshold.Data',
                  'Signal.only.Threshold.Data')
   Signal <- All.Images[['pos']]

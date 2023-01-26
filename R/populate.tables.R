@@ -41,6 +41,7 @@ populate.tables <- function(
     filename = paste0("C:\\Users\\Public\\Documents\\", deparse(substitute(v1)), v2, ".csv")
     write.csv(v1, filename, row.names=FALSE)
   }
+  print("hello")
   #
   #############pre-allocating tables to store results###################
   #
@@ -131,6 +132,7 @@ populate.tables <- function(
           err.val <- 14
           return(err.val)
         }, error = function(cond) {
+          print(small.tables.byimage)
             if(!small.tables.byimage$err.val==20) {
               modal_out <- shinyalert::shinyalert(
                 title = paste0('Error Reading Component Images for ',
@@ -160,9 +162,11 @@ populate.tables <- function(
       #
       # progress bar
       #
-      time <- round(time[['elapsed']], digits = 0)
-      mIFTO::doupdate.pgbar(pb.count2, pb.Object, paste0(
-        str1,' - Elapsed Time: ', time,' secs'))
+      if(pb.Object != ""){
+        time <- round(time[['elapsed']], digits = 0)
+        mIFTO::doupdate.pgbar(pb.count2, pb.Object, paste0(
+          str1,' - Elapsed Time: ', time,' secs'))
+      }
       #
       # reorganize to small table format to fit into the main 'Tables' list
       #
@@ -214,7 +218,7 @@ populate.tables <- function(
         if (threshold.logical){
           #
           ic.plots <- mIFTO::ic.plots.calculations(
-            All.Images, Opal1, Concentration, x, y, 1, pb.count, pb.Object, pb.step, str1)
+            All.Images, Opal1, Concentration, x, y, 1)
           #
           small.wholeslide.tables<-list(
             'Histograms' = mIFTO::histogram.calculations(

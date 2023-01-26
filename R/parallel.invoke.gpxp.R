@@ -61,6 +61,7 @@ parallel.invoke.gpxp <- function (
   ###### need to add a try catch, but also need to determine what happens
   ###### when I throw an error instead of the envir
   tryCatch({
+    print("02")
     small.tables.byimage<- parallel::parLapply(
       cl,Image.IDs[[x]][[y]],function(z) mIFTO::generate.pxp.image.data(
         Concentration, x, y, z, Antibody_Opal,
@@ -79,6 +80,7 @@ parallel.invoke.gpxp <- function (
     return(err.val)
   }, error = function(cond) {
     tryCatch({
+      print("03")
     small.tables.byimage<- lapply(
       Image.IDs[[x]][[y]],function(z) mIFTO::generate.pxp.image.data(
         Concentration, x, y, z, Antibody_Opal,
