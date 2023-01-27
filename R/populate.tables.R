@@ -36,7 +36,7 @@
 populate.tables <- function(
     Slide_Descript, Concentration, Antibody_Opal, Thresholds, Opal1,
     flowout, Protocol, paths, titration.type.name, connected.pixels,
-    decile.logical, threshold.logical, pb.count, pb.Object){
+    decile.logical, threshold.logical, pb.count = "", pb.Object = ""){
   export_var <- function(v1, v2) {
     filename = paste0("C:\\Users\\Public\\Documents\\", deparse(substitute(v1)), v2, ".csv")
     write.csv(v1, filename, row.names=FALSE)
@@ -44,8 +44,10 @@ populate.tables <- function(
   #
   #############pre-allocating tables to store results###################
   #
-  pb.step<-round(89/(2*length(Slide_Descript)
-                     *length(Concentration)), digits=2)
+  if (typeof(pb.Object) != "character"){
+    pb.step<-round(89/(2*length(Slide_Descript)
+                       *length(Concentration)), digits=2)
+  }
   #
   table.names.byimage <-c('SN.Ratio','T.Tests','Histograms')
   table.names.wholeslide<-c('SN.Ratio','T.Tests','Histograms','BoxPlots')
@@ -76,19 +78,23 @@ populate.tables <- function(
   #
   #############reading images in and computing stats for all pairs##############
   #
-  mIFTO::doupdate.pgbar(pb.count, pb.Object, 'Reading in Images')
-  Sys.sleep(0.5)
+  if (typeof(pb.Object) != "character"){
+    mIFTO::doupdate.pgbar(pb.count, pb.Object, 'Reading in Images')
+    Sys.sleep(0.5)
+  }
   #
   for(x in Slide_Descript){
     for(y in 1:length(Concentration)){
       #
       # update the progress bar for new condition
       #
-      str1 = paste0("Processing ", x, ' 1:',Concentration[[y]])
-      pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-      mIFTO::doupdate.pgbar(pb.count2, pb.Object, paste0(
-        str1,' - Reading Tiffs and Generating Image Statistics - ',
-        length(Image.IDs[[x]][[y]])))
+      if (typeof(pb.Object) != "character"){
+        str1 = paste0("Processing ", x, ' 1:',Concentration[[y]])
+        pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
+        mIFTO::doupdate.pgbar(pb.count2, pb.Object, paste0(
+          str1,' - Reading Tiffs and Generating Image Statistics - ',
+          length(Image.IDs[[x]][[y]])))
+      }
       #
       #############read each image and do by image stats###################
       #
@@ -125,20 +131,20 @@ populate.tables <- function(
           err.val <- 14
           return(err.val)
         }, error = function(cond) {
-            if(!small.tables.byimage$err.val==20) {
-              modal_out <- shinyalert::shinyalert(
-                title = paste0('Error Reading Component Images for ',
-                               x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
-                text = paste0('Please check the computer resources, slide names, ',
-                              'image layers correspond to protocol type, ',
-                              'and that component data tiffs for ', x,
-                              ' 1to',Concentration[[y]],' exist. Then contact ',
-                              'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
-                              cond),
-                type = 'error',
-                showConfirmButton = TRUE
-              )
-            }
+          if(!small.tables.byimage$err.val==20) {
+            modal_out <- shinyalert::shinyalert(
+              title = paste0('Error Reading Component Images for ',
+                             x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
+              text = paste0('Please check the computer resources, slide names, ',
+                            'image layers correspond to protocol type, ',
+                            'and that component data tiffs for ', x,
+                            ' 1to',Concentration[[y]],' exist. Then contact ',
+                            'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
+                            cond),
+              type = 'error',
+              showConfirmButton = TRUE
+            )
+          }
           err.val <- 14
           return(err.val)
         },
@@ -154,9 +160,11 @@ populate.tables <- function(
       #
       # progress bar
       #
-      time <- round(time[['elapsed']], digits = 0)
-      mIFTO::doupdate.pgbar(pb.count2, pb.Object, paste0(
-        str1,' - Elapsed Time: ', time,' secs'))
+      if(typeof(pb.Object) != "character"){
+        time <- round(time[['elapsed']], digits = 0)
+        mIFTO::doupdate.pgbar(pb.count2, pb.Object, paste0(
+          str1,' - Elapsed Time: ', time,' secs'))
+      }
       #
       # reorganize to small table format to fit into the main 'Tables' list
       #
@@ -196,23 +204,19 @@ populate.tables <- function(
       names(All.Images) <- c('pos','neg','pos.mask','neg.mask')
       rm(small.tables.byimage)
       #
-      pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-      mIFTO::doupdate.pgbar(pb.count2, pb.Object, paste0(
-        str1,' - Generating Whole Slide Statistics'))
+      if (typeof(pb.Object) != "character"){
+        pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
+        mIFTO::doupdate.pgbar(pb.count2, pb.Object, paste0(
+          str1,' - Generating Whole Slide Statistics'))
+      }
       #
       #############do whole image stats###################
       #
       time <- system.time({
         if (threshold.logical){
           #
-          pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-          pb.Object$set(paste0(str1,' - in threshold logical'), value = pb.count/100)
-          #
           ic.plots <- mIFTO::ic.plots.calculations(
-            All.Images, Opal1, Concentration, x, y, 1, pb.count, pb.Object, pb.step, str1)
-          #
-          pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-          pb.Object$set(paste0(str1,' - finished ic.plots'), value = pb.count/100)
+            All.Images, Opal1, Concentration, x, y, 1)
           #
           small.wholeslide.tables<-list(
             'Histograms' = mIFTO::histogram.calculations(
@@ -225,13 +229,7 @@ populate.tables <- function(
             'BoxPlots_99' = ic.plots[['Boxplot.Calculations_99']]
           )
           #
-          pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-          pb.Object$set(paste0(str1,' - finished histogram calcs'), value = pb.count/100)
-          #
         } else {
-          #
-          pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-          pb.Object$set(paste0(str1,' - else threshold logical'), value = pb.count/100)
           #
           small.wholeslide.tables<-list(
             'Histograms' = mIFTO::histogram.calculations(
@@ -239,15 +237,9 @@ populate.tables <- function(
               Concentration[y],x,'All')
           )
           #
-          pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-          pb.Object$set(paste0(str1,' - finished histogram calcs'), value = pb.count/100)
-          #
         }
         #
         if (decile.logical){
-          #
-          pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-          pb.Object$set(paste0(str1,' - in decile logical'), value = pb.count/100)
           #
           ic.plots <- mIFTO::ic.plots.calculations(
             decile.All.Images, Opal1, Concentration, x, y, 1)
@@ -257,9 +249,6 @@ populate.tables <- function(
             'decile.BoxPlots' = ic.plots[['Boxplot.Calculations']])
           #
         }
-        #
-        pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-        pb.Object$set(paste0(str1,' - for table wholeslide'), value = pb.count/100)
         #
         for(i.1 in table.names.wholeslide){
           for(z in 1:length(Tables.wholeslide[[i.1]])){
@@ -273,19 +262,18 @@ populate.tables <- function(
         #
       })
       #
-      time <- round(time[['elapsed']], digits = 0)
-      pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-      pb.Object$set(paste0(str1,' - Elapsed Time: ', time,' secs'), value = pb.count/100)
-      Sys.sleep(0.5)
+      if (typeof(pb.Object) != "character"){
+        time <- round(time[['elapsed']], digits = 0)
+        pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
+        pb.Object$set(paste0(str1,' - Elapsed Time: ', time,' secs'), value = pb.count/100)
+        Sys.sleep(0.5)
+      }
       #
       # reorganize the data into a workable format for building graphs later
       # essentially turning the list into a data table
       #
       tryCatch({
-        #
-        pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-        pb.Object$set(paste0(str1,' - data.frame 1'), value = pb.count/100)
-        #
+        ##
         for(i.1 in table.names.byimage){
           for(i.2 in 1:length(Tables.byimage[[i.1]])){
             Tables.byimage[[i.1]][[i.2]][[x]][[y]]<-do.call(
@@ -294,7 +282,7 @@ populate.tables <- function(
         }
         #
       }, warning = function(cond)
-        {
+      {
         #
         modal_out <- shinyalert::shinyalert(
           title = paste0('Warning Creating Data Frame 1 for ',
@@ -329,9 +317,6 @@ populate.tables <- function(
     # pair the data down into a data
     #
     tryCatch({
-      #
-      pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-      pb.Object$set(paste0(str1,' - data.frame 2'), value = pb.count/100)
       #
       for(i.1 in table.names.byimage){
         for(w in 1:length(Tables.byimage[[i.1]])){
@@ -371,9 +356,6 @@ populate.tables <- function(
     #
     tryCatch({
       #
-      pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-      pb.Object$set(paste0(str1,' - data.frame 3'), value = pb.count/100)
-      #
       for(i.1 in table.names.wholeslide){
         for(w in 1:length(Tables.wholeslide[[i.1]])){
           Tables.wholeslide[[i.1]][[w]][[x]]<-do.call(
@@ -408,54 +390,48 @@ populate.tables <- function(
       return(err.val)
       #
     },
-  finally={})
-  }
-    #
-    tryCatch({
-      #
-      pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-      pb.Object$set(paste0(str1,' - data.frame 4'), value = pb.count/100)
-      #
-      for(i.1 in table.names.byimage){
-        for(w in 1:length(Tables.byimage[[i.1]])){
-          Tables.byimage[[i.1]][[w]]<-do.call(
-            rbind.data.frame,Tables.byimage[[i.1]][[w]])
-        }
-      }
-      #
-    }, warning = function(cond) {
-      #
-      modal_out <- shinyalert::shinyalert(
-        title = paste0('Warning Creating Data Frame 4 for ',
-                       x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
-        text = paste0(cond),
-        type = 'error',
-        showConfirmButton = TRUE
-      )
-      #
-      err.val <- 14
-      return(err.val)
-      #
-    }, error = function(cond) {
-      #
-      modal_out <- shinyalert::shinyalert(
-        title = paste0('Error Creating Data Frame 4 Images for ',
-                       x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
-        text = paste0(cond),
-        type = 'error',
-        showConfirmButton = TRUE
-      )
-      #
-      err.val <- 14
-      return(err.val)
-      #
-    },
     finally={})
+  }
   #
   tryCatch({
     #
-    pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-    pb.Object$set(paste0(str1,' - data.frame 5'), value = pb.count/100)
+    for(i.1 in table.names.byimage){
+      for(w in 1:length(Tables.byimage[[i.1]])){
+        Tables.byimage[[i.1]][[w]]<-do.call(
+          rbind.data.frame,Tables.byimage[[i.1]][[w]])
+      }
+    }
+    #
+  }, warning = function(cond) {
+    #
+    modal_out <- shinyalert::shinyalert(
+      title = paste0('Warning Creating Data Frame 4 for ',
+                     x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
+      text = paste0(cond),
+      type = 'error',
+      showConfirmButton = TRUE
+    )
+    #
+    err.val <- 14
+    return(err.val)
+    #
+  }, error = function(cond) {
+    #
+    modal_out <- shinyalert::shinyalert(
+      title = paste0('Error Creating Data Frame 4 Images for ',
+                     x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
+      text = paste0(cond),
+      type = 'error',
+      showConfirmButton = TRUE
+    )
+    #
+    err.val <- 14
+    return(err.val)
+    #
+  },
+  finally={})
+  #
+  tryCatch({
     #
     for(i.1 in table.names.wholeslide){
       for(w in 1:length(Tables.wholeslide[[i.1]])){

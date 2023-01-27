@@ -79,12 +79,12 @@ parallel.invoke.gpxp <- function (
     return(err.val)
   }, error = function(cond) {
     tryCatch({
-    small.tables.byimage<- lapply(
-      Image.IDs[[x]][[y]],function(z) mIFTO::generate.pxp.image.data(
-        Concentration, x, y, z, Antibody_Opal,
-        titration.type.name, Thresholds, paths,
-        connected.pixels, flowout, Opal1,
-        decile.logical, threshold.logical))
+      small.tables.byimage<- lapply(
+        Image.IDs[[x]][[y]],function(z) mIFTO::generate.pxp.image.data(
+          Concentration, x, y, z, Antibody_Opal,
+          titration.type.name, Thresholds, paths,
+          connected.pixels, flowout, Opal1,
+          decile.logical, threshold.logical))
     }, warning = function(cond) {
       modal_out <- shinyalert::shinyalert(
         title = paste0('Warning generating tables second attempt for ',
@@ -106,7 +106,7 @@ parallel.invoke.gpxp <- function (
       )
       err.val <- 20
       return(err.val)
-      })
+    })
   }, finally={})
   #
 }

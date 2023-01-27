@@ -17,65 +17,32 @@
 #' @param y is the numeric value of the current concentration
 #' @param m.opt optionally export the percentile boxplots between 10% and 2%,
 #' always export the signal and noise boxplots
-#' @param pb.count current count for progress bar
-#' @param pb.step step size for progress bar
-#' @param pb.Object progress bar object
-#' @param str1 current slide
 #' @return explots a data.frame with the columns: Median, 1st
 #' (corresponds to 25th), 2nd (corresponds to 75th), top.inner.fence,
 #' bottom.inner.fence
 #' @export
 #'
 ic.plots.calculations<-function(
-  All.Images, Opal1, Concentration, x, y, m.opt, pb.count, pb.Object, pb.step, str1){
+    All.Images, Opal1, Concentration, x, y, m.opt){
   export_var <- function(v1, v2) {
     filename = paste0("C:\\Users\\Public\\Documents\\", deparse(substitute(v1)), v2, ".csv")
     write.csv(v1, filename, row.names=FALSE)
   }
-  pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-  pb.Object$set(paste0(str1,' - in ic.plots'), value = pb.count/100)
-  Sys.sleep(0.5)
-  # @param colors is a vector of at least the length of the concentration vector
-  #
   data<-vector('list',2)
-  pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-  pb.Object$set(paste0(str1,' - in ic.plots'), value = pb.count/100)
-  Sys.sleep(0.5)
   names(data)<-c('Noise.only.Threshold.Data',
                  'Signal.only.Threshold.Data')
-  pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-  pb.Object$set(paste0(str1,' - in pb.count'), value = pb.count/100)
-  Sys.sleep(0.5)
   Signal <- All.Images[['pos']]
-  pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-  pb.Object$set(paste0(str1,' - in Signal'), value = pb.count/100)
-  Sys.sleep(0.5)
   SignalOnly <- Signal[All.Images[['pos.mask']] == 1]
-  pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-  pb.Object$set(paste0(str1,' - in SignalOnly'), value = pb.count/100)
-  Sys.sleep(0.5)
   indicator <- paste0(x, Concentration[y])
   export_var(SignalOnly, indicator)
   conY <- Concentration[y]
   export_var(conY, indicator)
   data[['Signal.only.Threshold.Data']] <- data.table::setnames(cbind.data.frame(
     SignalOnly,Concentration[y]), c('Antibody','Concentration'))
-  pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-  pb.Object$set(paste0(str1,' - in data 1'), value = pb.count/100)
-  Sys.sleep(0.5)
   Noise <- All.Images[['neg']]
-  pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-  pb.Object$set(paste0(str1,' - in Noise'), value = pb.count/100)
-  Sys.sleep(0.5)
   NoiseOnly <- Noise[All.Images[['neg.mask']] == 1]
-  pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-  pb.Object$set(paste0(str1,' - in NoiseOnly'), value = pb.count/100)
-  Sys.sleep(0.5)
   data[['Noise.only.Threshold.Data']] <- data.table::setnames(cbind.data.frame(
     NoiseOnly,Concentration[y]), c('Antibody','Concentration'))
-  pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-  pb.Object$set(paste0(str1,' - in data 2'), value = pb.count/100)
-  Sys.sleep(0.5)
   #
   #plot<-vector('list',1)
   #names(plot)<-c('Pixels')
@@ -87,9 +54,6 @@ ic.plots.calculations<-function(
   # main box plots
   #
   Values <- vector('list',length = 2)
-  pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-  pb.Object$set(paste0(str1,' - startup ic done'), value = pb.count/100)
-  Sys.sleep(0.5)
   #
   for (z in 1:2) {
     Values[[z]] <- dplyr::mutate(data.table::setnames(cbind.data.frame(
@@ -103,12 +67,7 @@ ic.plots.calculations<-function(
       SlideID = x)
   }
   names(Values) <- c('Noise','Signal')
-  pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-  pb.Object$set(paste0(str1,' - for z done'), value = pb.count/100)
-  Sys.sleep(0.5)
   if (m.opt == 1){
-    pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-    pb.Object$set(paste0(str1,' - in m.opt==1'), value = pb.count/100)
     #
     # box plots of %-tiles
     #
@@ -119,9 +78,6 @@ ic.plots.calculations<-function(
     n_pct[[4]] <- c(.01, .99)
     Values.tiles <- vector('list', length(n_pct))
     Values.tiles <- lapply(Values.tiles, function(x) vector('list', 2))
-    pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-    pb.Object$set(paste0(str1,' - values.tiles created'), value = pb.count/100)
-    Sys.sleep(0.5)
     #
     for (tp in 1:length(n_pct)){
       for (z in 1:2){
@@ -135,9 +91,6 @@ ic.plots.calculations<-function(
             data[[2]], Antibody >= v1
           )
         }
-        pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-        pb.Object$set(paste0(str1,' - z==1 done. z = ', z, ' tp = ', tp), value = pb.count/100)
-        Sys.sleep(0.5)
         Values.tiles[[tp]][[z]]<- dplyr::mutate(
           data.table::setnames(
             cbind.data.frame(
@@ -151,8 +104,6 @@ ic.plots.calculations<-function(
           `bottom.Inner.fence` = `1st` - (1.5*(`2nd` - `1st`)),
           SlideID = x
         )
-        pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-        pb.Object$set(paste0(str1,' - values.tiles done. z = ', z, ' tp = ', tp), value = pb.count/100)
       }
       names(Values.tiles[[tp]]) <- c('Noise','Signal')
     }

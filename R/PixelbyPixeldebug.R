@@ -23,7 +23,7 @@
 #'  for images, positivity measures given thresholds
 #' @export
 #'
-pixelbypixeldebug <- function(out,pb.Object) {
+pixelbypixeldebug <- function(out,pb.Object="") {
   ##############################input parameters########################
   #
   export_var <- function(v1) {

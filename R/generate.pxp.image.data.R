@@ -76,6 +76,7 @@ generate.pxp.image.data <- function(
     err.val <- 14
     return(-1)
   }, error = function(cond) {
+    print(cond)
     modal_out <- shinyalert::shinyalert(
       title = paste0('Error in generate.pxp tiff.list Reading Component Images for ',
                      x, ' 1to', Concentration[y], '[', q, ']'),
@@ -147,6 +148,7 @@ generate.pxp.image.data <- function(
         data.in,Thresholds[[x]][y],connected.pixels)
     } else {
       tryCatch({
+        print("10")
         positivity.data <- mIFTO::define.image.positivity(
           data.in,Thresholds[[x]][y],connected.pixels[[x]][y])
       }, warning = function(cond) {
@@ -165,6 +167,7 @@ generate.pxp.image.data <- function(
         err.val <- 14
         return(-1)
       }, error = function(cond) {
+        print(cond)
         modal_out <- shinyalert::shinyalert(
           title = paste0('Error in threshold logical for ',
                          x, ' 1to', Concentration[y], '[', q, ']'),
