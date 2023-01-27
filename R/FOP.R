@@ -346,7 +346,6 @@ FOP<-function(){
       my.vals$raw.data<-rbind(my.vals$raw.data,CellSeg)
       Positive.table<-rbind(Positive.table,Pos)
       Positive.table
-      rm(CellSeg)
     }else if(fraction.type =='Cells'){
       ##read data in and organize it
       CellSeg<-
