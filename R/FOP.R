@@ -259,6 +259,7 @@ FOP<-function(){
     #
     fraction.type <-out$fraction.type
     Positive.table<-data.frame()
+    # raw.data <- data.frame()
     Positive.table<-findposFOP(Positive.table, out,  my.vals)
     Positive.table
     #
@@ -279,7 +280,11 @@ FOP<-function(){
     my.vals$wd <- wd
     print('running')
     #makes variable name to look for in inForm output
-    Antibody_Opal<-paste0('Opal ',Opal1)
+    if (!grepl("\\D", Opal1)) {
+      Antibody_Opal<-paste0('Opal ',Opal1)
+    } else {
+      Antibody_Opal<-Opal1
+    }
     #this is seperated for whichever measure is used for determining positivity
     if(fraction.type=='PPC Pixels'){
       ##reads in and organizes data
@@ -311,12 +316,14 @@ FOP<-function(){
       ##Antibody is the positive pixel count R does not read it in as a
       # numerical variable so we change it here
       CellSeg$Antibody<-as.numeric(CellSeg$Antibody)
-      ##these two loops help shorten variable descritions
+      ##these two loops help shorten variable descriptions
       for(count3 in Slide_ID){
         CellSeg$Slide.ID<-gsub(
           paste0('.*', count3,'.*'),
           count3, CellSeg$Slide.ID)
       }
+      fop <- (CellSeg$Antibody/CellSeg$Totals)
+      CellSeg<- cbind(CellSeg, fop)
       ##this is the part of the script that determines the % +-ivity and
       # organizes the output
       Pos<-dplyr::mutate(
@@ -340,6 +347,7 @@ FOP<-function(){
       )
       ##now we add it to a data data for export. This is the data table can be
       # added to for additional AB with the same SlideIDs.
+      my.vals$raw.data<-rbind(my.vals$raw.data,CellSeg)
       Positive.table<-rbind(Positive.table,Pos)
       Positive.table
     }else if(fraction.type =='Cells'){
@@ -352,8 +360,8 @@ FOP<-function(){
                 list.files(wd,
                            pattern = '.*]_cell_seg_data.txt$',full.names=TRUE),
                 function(x) data.table::fread(x, na.strings=c('NA', '#N/A'),
-                                  select=c('Slide ID','Phenotype'),
-                                  data.table = FALSE))),
+                                              select=c('Slide ID','Phenotype'),
+                                              data.table = FALSE))),
             c('Slide.ID','Phenotype')),
           Slide.ID)
       ##change AB to a single variable
@@ -479,7 +487,7 @@ FOP<-function(){
     #
     my.vals <- reactiveValues(
       Slide_ID=NULL, wd=NULL, Positive.table=NULL, delin = NULL,
-      Opal1 = NULL, AB = NULL, IHC = NULL)
+      Opal1 = NULL, AB = NULL, IHC = NULL, raw.data=NULL, delins=NULL)
     #
     # another ab modal
     #
@@ -529,7 +537,7 @@ FOP<-function(){
           ),
           shiny::checkboxInput(
             "IHC2", label = "Is this IHC?", value = FALSE
-            ),
+          ),
           shiny::checkboxInput(
             "MoTiF2", label = "Is this MoTiF?", value = FALSE)
         ),
@@ -551,8 +559,9 @@ FOP<-function(){
         #
         err.val = 0
         my.vals$Slide_ID <- unlist(strsplit(input$Slide_ID,
-                                                  split = ','))
+                                            split = ','))
         my.vals$delin = input$Concentration
+        my.vals$delins <- cbind(my.vals$delins, input$Concentration)
         my.vals$Opal1 <- input$Opal1
         my.vals$AB <- input$Antibody
         my.vals$IHC <- input$IHC
@@ -561,24 +570,44 @@ FOP<-function(){
         my.vals$Positive.table <- runforpos(input, my.vals)
         shiny::showModal(another.ab.modal())
         #
-      }, warning = function(cond){
+      }
+      # , warning = function(cond){
+      #   my.vals$delins<-NULL
+      #   my.vals$raw.data<-NULL
+      #   name <- c()
+      #   ID.list <- c()
+      #   delin.list <- c()
+      #   max_num <- 0
+      #   modal_out <- shinyalert::shinyalert(
+      #     title = "Input Warning.",
+      #     text = paste0(
+      #       "Please check if input and output are valid and that the ",
+      #       "correct directory was selected.",
+      #       "Then contact Sigfredo Soto at",
+      #       "ssotodi1@jh.edu should you need any additional",
+      #       "assistance.",
+      #       cond
+      #     ),
+      #     type = 'error',
+      #     showConfirmButton = TRUE
+      #   )
+      # }
+      , error = function(cond){
+        my.vals$delins<-NULL
+        my.vals$raw.data<-NULL
+        name <- c()
+        ID.list <- c()
+        delin.list <- c()
+        max_num <- 0
         modal_out <- shinyalert::shinyalert(
-          title = "Undefined error.",
-          text = paste(
-            "Please check if input and output are valid. Then",
-            "contact Benjamin Green at bgreen42@jh.edu if you need additional",
-            "assistance."
-          ),
-          type = 'error',
-          showConfirmButton = TRUE
-        )
-      }, error = function(cond){
-        modal_out <- shinyalert::shinyalert(
-          title = "Undefined error.",
-          text = paste(
-            "Please check if input and output are valid. Then",
-            "contact Benjamin Green at bgreen42@jh.edu if you need additional",
-            "assistance."
+          title = "Input Error.",
+          text = paste0(
+            "Please check if input and output are valid and that the ",
+            "correct directory was selected.",
+            "Then contact Sigfredo Soto at",
+            "ssotodi1@jh.edu should you need any additional",
+            "assistance.",
+            cond
           ),
           type = 'error',
           showConfirmButton = TRUE
@@ -611,6 +640,7 @@ FOP<-function(){
         #
         err.val = 0
         my.vals$delin <- input$Concentration2
+        my.vals$delins <- cbind(my.vals$delins, input$Concentration2)
         my.vals$Opal1 <- input$Opal2
         my.vals$AB <- input$Antibody2
         my.vals$IHC <- input$IHC2
@@ -620,23 +650,42 @@ FOP<-function(){
         shiny::showModal(another.ab.modal())
         #
       }, warning = function(cond){
+        my.vals$delins<-NULL
+        my.vals$raw.data<-NULL
+        name <- c()
+        ID.list <- c()
+        delin.list <- c()
+        max_num <- 0
         modal_out <- shinyalert::shinyalert(
-          title = "Undefined error.",
+          title = "Second Window Input Warning.",
           text = paste(
-            "Please check if input and output are valid. Then",
-            "contact Benjamin Green at bgreen42@jh.edu if you need additional",
-            "assistance."
+            "Please check if input and output are valid and that the ",
+            "correct directory was selected.",
+            "Then contact Sigfredo Soto at",
+            "ssotodi1@jh.edu should you need any additional",
+            "assistance.",
+            cond
           ),
           type = 'error',
           showConfirmButton = TRUE
         )
       }, error = function(cond){
+        my.vals$delins<-NULL
+        my.vals$raw.data<-NULL
+        name <- c()
+        ID.list <- c()
+        delin.list <- c()
+        max_num <- 0
         modal_out <- shinyalert::shinyalert(
-          title = "Undefined error.",
+          title = "Second Window Input Error.",
           text = paste(
-            "Please check if input and output are valid. Then",
-            "contact Benjamin Green at bgreen42@jh.edu if you need additional",
-            "assistance."
+            "Please check if input and output are valid, that the ",
+            "correct directory was selected, and that the Primary Opal ",
+            "is spelled correctly (case-sensitive).",
+            "Then contact Sigfredo Soto at",
+            "ssotodi1@jh.edu should you need any additional",
+            "assistance.",
+            cond
           ),
           type = 'error',
           showConfirmButton = TRUE
@@ -656,6 +705,52 @@ FOP<-function(){
           wd,'/ + ',input$fraction.type,'.csv'),
           sep=',', row.names=F )
         #
+        name <- c()
+        ID.list <- c()
+        delin.list <- c()
+        max_num <- 0
+        for(del in 1:length(my.vals$delins)){
+          con_list <-
+            my.vals$raw.data[my.vals$raw.data$Concentration == my.vals$delins[[del]],]
+          for(id in my.vals$Slide_ID){
+            num = sum(con_list$Slide.ID == id)
+            if(num>max_num){
+              max_num = num
+            }
+          }
+        }
+        max_num <- max_num+2
+        for(del in my.vals$delins){
+          delin.list <-
+            my.vals$raw.data[my.vals$raw.data$Concentration == del,]
+          for(id in my.vals$Slide_ID){
+
+            ID.list <-
+              delin.list[delin.list$Slide.ID == id,]
+            ID.list <- t(dplyr::select(ID.list, fop))
+            ID.list <- c(id, del, ID.list)
+
+            Id.length <- length(ID.list)
+            # tryCatch({
+            if(Id.length<max_num){
+              ID.list <- c(ID.list, paste(integer(max_num-Id.length)))
+            }
+            name <- rbind(name, ID.list)
+          }
+          rbind(name, NA)
+
+        }
+        # write.table(my.vals$raw.data,file=paste0(
+        #   wd,'/ + ',input$fraction.type,'_raw_data.csv'),
+        #   sep=',', row.names=F )
+        write.table(name,file=paste0(
+          wd,'/ + ',input$fraction.type,'_raw_data_ordered.csv'),
+          sep=',', row.names=F )
+
+        my.vals$raw.data=NULL
+        my.vals$delins=NULL
+
+        #
         modal_out <- shinyalert::shinyalert(
           title = "Finished",
           text = paste(
@@ -668,7 +763,7 @@ FOP<-function(){
         modal_out <- shinyalert::shinyalert(
           title = "Failed to Save",
           text = paste(
-            ""
+            cond
           ),
           type = 'error',
           showConfirmButton = TRUE
@@ -676,7 +771,7 @@ FOP<-function(){
           modal_out <- shinyalert::shinyalert(
             title = "Failed to Save",
             text = paste(
-              ""
+              cond
             ),
             type = 'error',
             showConfirmButton = TRUE
@@ -716,7 +811,7 @@ FOP<-function(){
                                    host = ip, quiet = T))
   }, warning = function(cond) {
     tryCatch({
-      options(browser = "C:/Program Files (x86)/Internet Explorer/iexplore.exe")
+      options(browser = "C:/Program Files/Google/Chrome/Application/chrome.exe")
       shiny::shinyApp(ui = FOP.ui, FOP.server.side,
                       options = list(width = 1000, launch.browser = TRUE,
                                      host = ip, quiet = T))
@@ -728,7 +823,7 @@ FOP<-function(){
     #
   }, error = function(cond) {
     tryCatch({
-      options(browser = "C:/Program Files (x86)/Internet Explorer/iexplore.exe")
+      options(browser = "C:/Program Files/Google/Chrome/Application/chrome.exe")
       shiny::shinyApp(ui = FOP.ui, FOP.server.side,
                       options = list(width = 1000, launch.browser = TRUE,
                                      host = ip, quiet = T))
