@@ -37,10 +37,6 @@ populate.tables <- function(
     Slide_Descript, Concentration, Antibody_Opal, Thresholds, Opal1,
     flowout, Protocol, paths, titration.type.name, connected.pixels,
     decile.logical, threshold.logical, pb.count = "", pb.Object = ""){
-  export_var <- function(v1, v2) {
-    filename = paste0("C:\\Users\\Public\\Documents\\", deparse(substitute(v1)), v2, ".csv")
-    write.csv(v1, filename, row.names=FALSE)
-  }
   #
   #############pre-allocating tables to store results###################
   #
@@ -111,10 +107,8 @@ populate.tables <- function(
             Concentration, x, y, Image.IDs, Antibody_Opal,
             titration.type.name, Thresholds, paths,
             connected.pixels, flowout, Opal1,
-            decile.logical, threshold.logical, cl
-          )
+            decile.logical, threshold.logical)
         }, warning = function(cond) {
-          if(!small.tables.byimage$err.val==20) {
             modal_out <- shinyalert::shinyalert(
               title = paste0('Warning Reading Component Images for ',
                              x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
@@ -127,11 +121,24 @@ populate.tables <- function(
               type = 'error',
               showConfirmButton = TRUE
             )
-          }
           err.val <- 14
           return(err.val)
         }, error = function(cond) {
-          if(!small.tables.byimage$err.val==20) {
+          tryCatch({
+          if (typeof(pb.Object) != "character"){
+            str1 = paste0("Stopping parallel process for ", x, ' 1:',Concentration[[y]])
+            pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
+            mIFTO::doupdate.pgbar(pb.count2, pb.Object, paste0(
+              str1,'. Processing time will significantly increase - Reading Tiffs and Generating Image Statistics - ',
+              length(Image.IDs[[x]][[y]])))
+          }
+          mIFTO::parallel.invoke.gpxp(
+            Concentration, x, y, Image.IDs, Antibody_Opal,
+            titration.type.name, Thresholds, paths,
+            connected.pixels, flowout, Opal1,
+            decile.logical, threshold.logical, para=FALSE
+          )} , error = function(cond) {
+            if(!small.tables.byimage$err.val==20) {
             modal_out <- shinyalert::shinyalert(
               title = paste0('Error Reading Component Images for ',
                              x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
@@ -144,9 +151,9 @@ populate.tables <- function(
               type = 'error',
               showConfirmButton = TRUE
             )
-          }
-          err.val <- 14
-          return(err.val)
+            }
+            err.val <- 14
+            return(err.val)})
         },
         finally={
           parallel::stopCluster(cl)

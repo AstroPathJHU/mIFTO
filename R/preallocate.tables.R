@@ -124,15 +124,15 @@ preallocate.tables <- function(
       a <- grep(']_M', cImage.IDs, ignore.case = F)
       if (!length(a) == 0){
         #_M file found
-        n <- shiny::showNotification(
-          paste0('M# duplicate file found: ', cImage.IDs[a]),
-          type = 'warning')
-        n <- shiny::showNotification(
-          paste(
-            'removing the M# duplicate from',
-            'computations. Please check image data\ clean up folders',
-            'as this may not always the correct approach.'),
-          type = 'warning')
+        # n <- shiny::showNotification(
+        #   paste0('M# duplicate file found: ', cImage.IDs[a]),
+        #   type = 'warning')
+        # n <- shiny::showNotification(
+        #   paste(
+        #     'removing the M# duplicate from',
+        #     'computations. Please check image data\ clean up folders',
+        #     'as this may not always the correct approach.'),
+        #   type = 'warning')
 
         cImage.IDs <- cImage.IDs[-a]
       }

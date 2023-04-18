@@ -17,36 +17,31 @@
 #' @export
 #'
 define.image.positivity <- function(
-  data.in,threshold,connected.pixels.now) {
+    data.in,threshold,connected.pixels.now) {
+  #
+  v <- data.in
+  m <- c()
+  #
+  mask<-v
+  mask[which(mask < threshold)] <- 0
+  mask[which(mask > 0)] <- 1
   #
   if (!connected.pixels.now == 'NA'){
-    quarter.length <- length(data.in[1, ])/4
-    m_bind <- c()
-    l_bind <- c()
-    for(section in 1:4){
-      split_data <-
-        data.in[, ((quarter.length*(section-1))+1):(quarter.length*section)]
-      v <- split_data
-      #
-      mask<-v
-      mask[which(mask < threshold)] <- 0
-      mask[which(mask > 0)] <- 1
-      #
-      l<-EBImage::bwlabel(mask)
-      l_bind <- cbind(l_bind, l)
-      m<-which(
-        EBImage::computeFeatures.shape(l,v)[,'s.area']<connected.pixels.now)
-      m_bind <- append(m_bind, m)
+    l<-EBImage::bwlabel(mask)
+    for (group in 1:max(l[, ])){
+      if (sum(l[, ] == group) < connected.pixels.now){
+        m <- append(m, group)
+      }
     }
-    pos.mask<-EBImage::rmObjects(l_bind,m_bind)
+    pos.mask<-EBImage::rmObjects(l,m)
     pos.mask[which(pos.mask>0)]<-1
   } else {
     pos.mask <- mask
   }
   #
-  pos <- data.in * pos.mask
+  pos <- v * pos.mask
   neg.mask <- -1 * (pos.mask - 1)
-  neg <- data.in * neg.mask
+  neg <- v * neg.mask
   #
   out <- list(pos = pos, neg = neg, pos.mask = pos.mask, neg.mask = neg.mask)
   return(out)

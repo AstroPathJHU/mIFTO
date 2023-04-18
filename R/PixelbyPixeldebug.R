@@ -34,6 +34,7 @@ pixelbypixeldebug <- function(out,pb.Object="") {
     filepath = paste0("C:\\Users\\Public\\Documents\\", deparse(substitute(v1)), ".csv")
     return(read.csv(file = filepath))
   }
+  print(Sys.time())
   #
   pb.count = 0; mIFTO::doupdate.pgbar(
     pb.count, pb.Object, 'Browse For Folder')
@@ -264,6 +265,7 @@ pixelbypixeldebug <- function(out,pb.Object="") {
   mIFTO::map.and.write.histograms(
     wd, Antibody_Opal, Slide_Descript,
     Concentration, Thresholds, Tables$Tables.wholeslide, theme1, colors)
+  print(Sys.time())
   #
   ############################### Finished #############################
   #

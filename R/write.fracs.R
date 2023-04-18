@@ -35,6 +35,7 @@ write.fracs <- function (
     Thresholds, connected.pixels, ihc.logical, ihc.Thresholds,
     ihc.connected.pixels, folders.px, theme1
 ){
+
   #
   # pull fractions of positivity for IF
   #
@@ -108,17 +109,19 @@ write.fracs <- function (
       a <- grep(']_M', cImage.IDs, ignore.case = F)
       if (!length(a) == 0){
         #_M file found
-        n <- shiny::showNotification(
-          paste0('M# duplicate file found: ', cImage.IDs[a]),
-          type = 'warning')
-        n <- shiny::showNotification(
-          paste(
-            'removing the M# duplicate from',
-            'computations. Please check image data\ clean up folders',
-            'as this may not always the correct approach.'),
-          type = 'warning')
+        # n <- shiny::showNotification(
+        #   paste0('M# duplicate file found: ', cImage.IDs[a]),
+        #   type = 'warning')
+        # print("Alabama")
+        # n <- shiny::showNotification(
+        #   paste0(
+        #     'removing the M# duplicate from',
+        #     'computations. Please check image data\ clean up folders',
+        #     'as this may not always the correct approach.'),
+        #   type = 'warning')
         #
         cImage.IDs <- cImage.IDs[-a]
+        rm(a)
       }
       #
       # check that files exist for each AB
@@ -156,8 +159,8 @@ write.fracs <- function (
           getOption("cl.cores", numcores), useXDR = FALSE, methods = FALSE);
         parallel::clusterEvalQ(cl, library(mIFTO));
         #
-        ihc.small.tables.byimage <- tryCatch({
-          mIFTO::ihc.parallel.invoke.gpxp(
+        tryCatch({
+          ihc.small.tables.byimage <- mIFTO::ihc.parallel.invoke.gpxp(
             ihc.path, x, ihc.Image.IDs, ihc.Thresholds,
             ihc.connected.pixels, cl
           )

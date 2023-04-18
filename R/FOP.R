@@ -280,7 +280,11 @@ FOP<-function(){
     my.vals$wd <- wd
     print('running')
     #makes variable name to look for in inForm output
-    Antibody_Opal<-paste0('Opal ',Opal1)
+    if (!grepl("\\D", Opal1)) {
+      Antibody_Opal<-paste0('Opal ',Opal1)
+    } else {
+      Antibody_Opal<-Opal1
+    }
     #this is seperated for whichever measure is used for determining positivity
     if(fraction.type=='PPC Pixels'){
       ##reads in and organizes data
@@ -575,7 +579,7 @@ FOP<-function(){
         max_num <- 0
         modal_out <- shinyalert::shinyalert(
           title = "Input Warning.",
-          text = cat(
+          text = paste0(
             "Please check if input and output are valid and that the ",
             "correct directory was selected.",
             "Then contact Sigfredo Soto at",
@@ -595,7 +599,7 @@ FOP<-function(){
         max_num <- 0
         modal_out <- shinyalert::shinyalert(
           title = "Input Error.",
-          text = paste(
+          text = paste0(
             "Please check if input and output are valid and that the ",
             "correct directory was selected.",
             "Then contact Sigfredo Soto at",
@@ -673,8 +677,9 @@ FOP<-function(){
         modal_out <- shinyalert::shinyalert(
           title = "Second Window Input Error.",
           text = paste(
-            "Please check if input and output are valid and that the ",
-            "correct directory was selected.",
+            "Please check if input and output are valid, that the ",
+            "correct directory was selected, and that the Primary Opal ",
+            "is spelled correctly (case-sensitive).",
             "Then contact Sigfredo Soto at",
             "ssotodi1@jh.edu should you need any additional",
             "assistance.",

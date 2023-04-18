@@ -51,4 +51,5 @@ ihc.parallel.invoke.gpxp <- function (
     cl,ihc.Image.IDs[[x]],function(z) mIFTO::ihc.generate.pxp.image.data(
       ihc.path, x, ihc.Thresholds, ihc.connected.pixels, z))
   #
+  return(small.tables.byimage)
 }

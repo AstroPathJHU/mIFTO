@@ -38,35 +38,51 @@ parallel.invoke.gpxp <- function (
     Concentration, x, y, Image.IDs, Antibody_Opal,
     titration.type.name, Thresholds, paths,
     connected.pixels, flowout, Opal1,
-    decile.logical, threshold.logical, cl){
-  #
-  # define the environment for the cluster
-  #
-  my_env <- environment()
-  parent.env(my_env) <- .GlobalEnv
-  #
-  # for each image gather the stats and return the images
-  # to reduce RAM usage the code does this one image at a time
-  # in addition parallel computing was implemented
-  # to speed this up. Though the actual RAM usage is quite low
-  # if I only carry the part of the image that is needed...
-  #
-  parallel::clusterExport(
-    cl=cl, varlist=c("Concentration", "x", "y", "Antibody_Opal",
-                     "titration.type.name","Thresholds","paths",
-                     "connected.pixels","flowout","Opal1",
-                     "decile.logical", "threshold.logical"),
-    envir=my_env)
+    decile.logical, threshold.logical, cl="", para=TRUE){
+  export_var <- function(v1, v2) {
+    filename = paste0("C:\\Users\\Public\\Documents\\", deparse(substitute(v1)), v2, ".csv")
+    write.csv(v1, filename, row.names=FALSE)
+  }
+  comb = sprintf("(%s_%d)", x, y)
+  if (para) {
+    #
+    # define the environment for the cluster
+    #
+    my_env <- environment()
+    parent.env(my_env) <- .GlobalEnv
+    #
+    # for each image gather the stats and return the images
+    # to reduce RAM usage the code does this one image at a time
+    # in addition parallel computing was implemented
+    # to speed this up. Though the actual RAM usage is quite low
+    # if I only carry the part of the image that is needed...
+    #
+    parallel::clusterExport(
+      cl=cl, varlist=c("Concentration", "x", "y", "Antibody_Opal",
+                       "titration.type.name","Thresholds","paths",
+                       "connected.pixels","flowout","Opal1",
+                       "decile.logical", "threshold.logical"),
+      envir=my_env)
+  }
   #
   ###### need to add a try catch, but also need to determine what happens
   ###### when I throw an error instead of the envir
   tryCatch({
+    if (para) {
     small.tables.byimage<- parallel::parLapply(
       cl,Image.IDs[[x]][[y]],function(z) mIFTO::generate.pxp.image.data(
         Concentration, x, y, z, Antibody_Opal,
         titration.type.name, Thresholds, paths,
         connected.pixels, flowout, Opal1,
         decile.logical, threshold.logical))
+    } else {
+      small.tables.byimage<- lapply(
+        Image.IDs[[x]][[y]],function(z) mIFTO::generate.pxp.image.data(
+          Concentration, x, y, z, Antibody_Opal,
+          titration.type.name, Thresholds, paths,
+          connected.pixels, flowout, Opal1,
+          decile.logical, threshold.logical))
+    }
   }, warning = function(cond) {
     modal_out <- shinyalert::shinyalert(
       title = paste0('Warning generating tables for ',
@@ -78,35 +94,17 @@ parallel.invoke.gpxp <- function (
     err.val <- 20
     return(err.val)
   }, error = function(cond) {
-    tryCatch({
-      small.tables.byimage<- lapply(
-        Image.IDs[[x]][[y]],function(z) mIFTO::generate.pxp.image.data(
-          Concentration, x, y, z, Antibody_Opal,
-          titration.type.name, Thresholds, paths,
-          connected.pixels, flowout, Opal1,
-          decile.logical, threshold.logical))
-    }, warning = function(cond) {
-      modal_out <- shinyalert::shinyalert(
-        title = paste0('Warning generating tables second attempt for ',
-                       x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
-        text = paste0(cond),
-        type = 'error',
-        showConfirmButton = TRUE
-      )
-      err.val <- 20
-      return(err.val)
-    }, error = function(cond) {
-      traceback()
-      modal_out <- shinyalert::shinyalert(
-        title = paste0('Error generating tables second attempt for ',
-                       x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
-        text = paste0(cond),
-        type = 'error',
-        showConfirmButton = TRUE
-      )
-      err.val <- 20
-      return(err.val)
-    })
+    modal_out <- shinyalert::shinyalert(
+      title = paste0('Error generating tables second attempt for ',
+                     x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
+      text = paste0(cond),
+      type = 'error',
+      showConfirmButton = TRUE
+    )
+    err.val <- 20
+    return(err.val)
   }, finally={})
+  small.tables.byimage_var = object.size(small.tables.byimage)[1]
+  export_var(small.tables.byimage_var, comb)
   #
 }

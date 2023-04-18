@@ -39,15 +39,17 @@ map.and.plot.threshold.graphs <- function(
   wd, Antibody_Opal, Antibody, Slide_Descript, Concentration, Tables,
   Thresholds, connected.pixels, ihc.logical, ihc.Thresholds,
   ihc.connected.pixels, folders.px, theme1, con_type, colors,
-  Antibody_Opal.snratio, Antibody_Opal.ttest, pb.Object){
+  Antibody_Opal.snratio, Antibody_Opal.ttest, pb.Object=""){
   #
-  if (ihc.logical){
-    mIFTO::doupdate.pgbar(
-      90, pb.Object,
-      'Writing out the fractions tables and making IHC vs IF graph')
+  if (typeof(pb.Object) != "character"){
+    if (ihc.logical){
+      mIFTO::doupdate.pgbar(
+        90, pb.Object,
+        'Writing out the fractions tables and making IHC vs IF graph')
 
-  } else {
-    mIFTO::doupdate.pgbar(90, pb.Object, 'Writing out the fractions tables')
+    } else {
+      mIFTO::doupdate.pgbar(90, pb.Object, 'Writing out the fractions tables')
+    }
   }
   #
   ihc.plots <- mIFTO::write.fracs(
@@ -60,8 +62,10 @@ map.and.plot.threshold.graphs <- function(
   }
   ihc.plots <- list(ihc.plots$ihc.graphs)
   #
-  mIFTO::doupdate.pgbar(92, pb.Object,
-                        'Generating Signal-to-Noise Ratio Graphs')
+  if (typeof(pb.Object) != "character"){
+    mIFTO::doupdate.pgbar(92, pb.Object,
+                          'Generating Signal-to-Noise Ratio Graphs')
+  }
   #
   sn.plots <- mIFTO::map.snratio.plots(
     wd, Antibody_Opal, Slide_Descript,
@@ -70,7 +74,9 @@ map.and.plot.threshold.graphs <- function(
     'threshold'
   )
   #
-  mIFTO::doupdate.pgbar(93, pb.Object, 'Generating t-Test Graphs')
+  if (typeof(pb.Object) != "character"){
+    mIFTO::doupdate.pgbar(93, pb.Object, 'Generating t-Test Graphs')
+  }
   #
   tplots <- mIFTO::map.ttest.plots(
     wd, Antibody_Opal, Slide_Descript,
@@ -79,7 +85,9 @@ map.and.plot.threshold.graphs <- function(
     'threshold'
   )
   #
-  mIFTO::doupdate.pgbar(94, pb.Object, 'Generating Boxplots')
+  if (typeof(pb.Object) != "character"){
+    mIFTO::doupdate.pgbar(94, pb.Object, 'Generating Boxplots')
+  }
   #
   bx.plots <- mIFTO::map.boxplots.plots(
     wd, Antibody_Opal, Slide_Descript,
@@ -90,7 +98,9 @@ map.and.plot.threshold.graphs <- function(
   #
   # print some graphs
   #
-  mIFTO::doupdate.pgbar(95, pb.Object, 'Printing Graphs')
+  if (typeof(pb.Object) != "character"){
+    mIFTO::doupdate.pgbar(95, pb.Object, 'Printing Graphs')
+  }
   #
   # pull names vectors together
   #

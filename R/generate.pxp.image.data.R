@@ -37,12 +37,6 @@ generate.pxp.image.data <- function(
     connected.pixels, flowout, Opal1,
     decile.logical, threshold.logical
 ){
-  export_var <- function(v1, v2) {
-    filename = paste0("C:\\Users\\Public\\Documents\\", deparse(substitute(v1)), v2, ".csv")
-    write.csv(v1, filename, row.names=FALSE)
-  }
-  indicator <- paste0(x, Concentration[y], q)
-  export_var(q, indicator)
   #
   # this is the current image name
   #

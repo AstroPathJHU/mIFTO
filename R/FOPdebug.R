@@ -33,6 +33,10 @@
 #'concentration, one for each slide descriptors, and Antibody
 #'
 #' @export
+export_var <- function(v1) {
+  filename = paste0("C:\\Users\\Public\\Documents\\", deparse(substitute(v1)), ".csv")
+  write.csv(v1, filename, row.names=FALSE)
+}
 FOPdebug<-function(){
   fm.object <- mIFTO::ui.formats(1000, 1)
   #
@@ -257,6 +261,7 @@ FOPdebug<-function(){
   #
   runforpos<-function(out, my.vals){
     #
+    print("runforpos")
     fraction.type <-out$fraction.type
     Positive.table<-data.frame()
     # raw.data <- data.frame()
@@ -279,6 +284,8 @@ FOPdebug<-function(){
     wd<-choose.dir(my.vals$wd, caption = 'Data directory:')
     my.vals$wd <- wd
     print('running')
+    export_var(my.vals)
+    print(my.vals)
     #makes variable name to look for in inForm output
     Antibody_Opal<-paste0('Opal ',Opal1)
     #this is seperated for whichever measure is used for determining positivity
@@ -555,17 +562,29 @@ FOPdebug<-function(){
       tryCatch({
         #
         err.val = 0
+        print("errval")
         my.vals$Slide_ID <- unlist(strsplit(input$Slide_ID,
                                                   split = ','))
+        print("my.vals$slideid")
         my.vals$delin = input$Concentration
+        print("delin")
         my.vals$delins <- cbind(my.vals$delins, input$Concentration)
+        print("delins")
         my.vals$Opal1 <- input$Opal1
+        print("opal1")
         my.vals$AB <- input$Antibody
+        print("ab")
         my.vals$IHC <- input$IHC
+        print("ihc")
         my.vals$MoTiF <- input$MoTiF
+        print("motif")
         my.vals$wd <- ""
+        print("wd")
         my.vals$Positive.table <- runforpos(input, my.vals)
+        print("pos table")
+        print(my.vals)
         shiny::showModal(another.ab.modal())
+        print("showmodal")
         #
       }, warning = function(cond){
         my.vals$delins<-NULL
@@ -584,10 +603,11 @@ FOPdebug<-function(){
             "assistance.",
             cond
           ),
-          type = 'error',
+          type = 'warning',
           showConfirmButton = TRUE
         )
       }, error = function(cond){
+        print(my.vals)
         my.vals$delins<-NULL
         my.vals$raw.data<-NULL
         name <- c()
@@ -665,6 +685,7 @@ FOPdebug<-function(){
           showConfirmButton = TRUE
         )
       }, error = function(cond){
+        print(my.vals)
         my.vals$delins<-NULL
         my.vals$raw.data<-NULL
         name <- c()
