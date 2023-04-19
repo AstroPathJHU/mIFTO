@@ -118,7 +118,7 @@ write.fracs <- function (
       #
       if(length(cImage.IDs) == 0 ){
         modal_out <- shinyalert::shinyalert(
-          title =  paste0('Search failed for ', x, ' ', titration.type.name,
+          title =  paste0('Search failed for ', x,
                           'IHC images'),
           text = paste0(
             'Please check slide names and that component data tiffs for ',
