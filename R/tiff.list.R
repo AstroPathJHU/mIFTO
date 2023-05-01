@@ -59,7 +59,7 @@ tiff.list <- function(wd, pattern.in, Opal1="") {
   #   }, warning = function(cond) {
   #   }, error = function(cond) {
   #   }, finally = {})
-  }
+  # }
   tryCatch({
     pattern.match="\\<Name\\>(.*?)\\<Name\\>"
     #
