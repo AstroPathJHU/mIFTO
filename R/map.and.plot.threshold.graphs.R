@@ -55,7 +55,7 @@ map.and.plot.threshold.graphs <- function(
   ihc.plots <- mIFTO::write.fracs(
     wd, Antibody_Opal, Antibody, Slide_Descript, Concentration,
     Tables$Tables.byimage, Thresholds, connected.pixels, ihc.logical,
-    ihc.Thresholds, ihc.connected.pixels, folders.px, theme1
+    ihc.Thresholds, ihc.connected.pixels, folders.px, theme1, pb.Object
   )
   if (!ihc.plots$err.val == 0){
     return(list(err.val = ihc.plots$err.val))

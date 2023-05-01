@@ -27,13 +27,14 @@
 #' @param folders.px whether or not tiffs are divided into a number of folders
 #' or not
 #' @param theme1 graphing theme
+#' @param pb.Object graphing theme
 #' @return exports the fraction spreadsheets
 #' @export
 #'
 write.fracs <- function (
     wd, Antibody_Opal, Antibody, Slide_Descript, Concentration, tables_in,
     Thresholds, connected.pixels, ihc.logical, ihc.Thresholds,
-    ihc.connected.pixels, folders.px, theme1
+    ihc.connected.pixels, folders.px, theme1, pb.Object=""
 ){
 
   #
@@ -101,31 +102,45 @@ write.fracs <- function (
       } else {
         ihc.path <- wd
       }
+      # ihc.path[2] = "E:\\Data\\Bond_Optimizations\\Antibody_Titrations_Double_Dispensed\\Arginase\\TSA_Titration_1.26.2023\\Data/Arg1_IHC"
+      # ihc.path[1] = "E:\\Data\\Bond_Optimizations\\Antibody_Titrations_Double_Dispensed\\Arginase\\TSA_Titration_1.26.2023\\Data/IHC"
+      # print(ihc.path)
       cImage.IDs <-  list.files(
         ihc.path, pattern = str, ignore.case = T)
-      #
-      # search for M files
-      #
-      a <- grep(']_M', cImage.IDs, ignore.case = F)
-      if (!length(a) == 0){
-        #_M file found
-        #
-        cImage.IDs <- cImage.IDs[-a]
-        rm(a)
+      c <- c()
+      lastline = ""
+      for (file in cImage.IDs){
+        loc1 = gregexpr(']', file);
+        loc2 = gregexpr('\\[', file);
+        line = paste0('\\' , substring(file, loc2, loc1));
+        if (!lastline == line){
+          b <- grep(line, cImage.IDs, ignore.case = T);
+          while (length(b) > 1){
+            c <- append(c, b[1])
+            b<-b[-1]
+          }
+        }
+        lastline = line
+      }
+      if(length(c)){
+        cImage.IDs <- cImage.IDs[-c]
+        rm(c)
       }
       #
       # check that files exist for each AB
       #
       if(length(cImage.IDs) == 0 ){
-        modal_out <- shinyalert::shinyalert(
-          title =  paste0('Search failed for ', x,
-                          'IHC images'),
-          text = paste0(
-            'Please check slide names and that component data tiffs for ',
-            x, ' IHC exist'),
-          type = 'error',
-          showConfirmButton = TRUE
-        )
+        if (typeof(pb.Object) != "character"){
+          modal_out <- shinyalert::shinyalert(
+            title =  paste0('Search failed for ', x,
+                            ' IHC images'),
+            text = paste0(
+              'Please check slide names and that component data tiffs for ',
+              x, ' IHC exist'),
+            type = 'error',
+            showConfirmButton = TRUE
+          )
+        }
         err.val <- 13
         return(list(err.val = err.val))
       }
@@ -155,33 +170,37 @@ write.fracs <- function (
             ihc.connected.pixels, cl
           )
         }, warning = function(cond) {
-          modal_out <- shinyalert::shinyalert(
-            title = paste0('Error Reading Component Images for ',
-                           x, ' IHC'),
-            text = paste0('Please check the computer resources, slide names, ',
-                          'image layers correspond to protocol type, ',
-                          'and that component data tiffs for ', x,
-                          ' IHC exist. Then contact ',
-                          'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
-                          cond),
-            type = 'error',
-            showConfirmButton = TRUE
-          )
+          if (typeof(pb.Object) != "character"){
+            modal_out <- shinyalert::shinyalert(
+              title = paste0('Error Reading Component Images for ',
+                             x, ' IHC'),
+              text = paste0('Please check the computer resources, slide names, ',
+                            'image layers correspond to protocol type, ',
+                            'and that component data tiffs for ', x,
+                            ' IHC exist. Then contact ',
+                            'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
+                            cond),
+              type = 'error',
+              showConfirmButton = TRUE
+            )
+          }
           err.val <- 15
           return(err.val)
         }, error = function(cond) {
-          modal_out <- shinyalert::shinyalert(
-            title = paste0('Error Reading Component Images for ',
-                           x, ' IHC'),
-            text = paste0('Please check the computer resources, slide names, ',
-                          'image layers correspond to protocol type, ',
-                          'and that component data tiffs for ', x,
-                          ' IHC exist. Then contact ',
-                          'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
-                          cond),
-            type = 'error',
-            showConfirmButton = TRUE
-          )
+          if (typeof(pb.Object) != "character"){
+            modal_out <- shinyalert::shinyalert(
+              title = paste0('Error Reading Component Images for ',
+                             x, ' IHC'),
+              text = paste0('Please check the computer resources, slide names, ',
+                            'image layers correspond to protocol type, ',
+                            'and that component data tiffs for ', x,
+                            ' IHC exist. Then contact ',
+                            'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
+                            cond),
+              type = 'error',
+              showConfirmButton = TRUE
+            )
+          }
           err.val <- 15
           return(err.val)
         },
@@ -234,9 +253,13 @@ write.fracs <- function (
       )
     )
     #
+    tryCatch({
     ihc.graphs <- mIFTO::map.ihc.comp.plots(
       wd, Antibody_Opal, Slide_Descript,
       Concentration, tbl.long, theme1)
+    }, warning = function(cond){
+    }, finally={
+    })
     #
   } else {
     row.vals.names <- c(as.character(Concentration))

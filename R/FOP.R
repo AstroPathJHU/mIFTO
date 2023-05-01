@@ -293,8 +293,8 @@ FOP<-function(){
           dplyr::filter(
             do.call(
               rbind,lapply(
-                list.files(wd,
-                           pattern = '.*]_coloc_data.txt$',full.names=TRUE),
+                cleaned.file.list(wd,
+                           '.*]_coloc_data.txt$'),
                 function(x) data.table::fread(x, na.strings=c('NA', '#N/A'),
                                               select = if(IHC==T){c(
                                                 'Sample Name','DAB Area',
@@ -357,8 +357,8 @@ FOP<-function(){
           data.table::setnames(
             do.call(
               rbind,lapply(
-                list.files(wd,
-                           pattern = '.*]_cell_seg_data.txt$',full.names=TRUE),
+                cleaned.file.list(wd,
+                           '.*]_cell_seg_data.txt$'),
                 function(x) data.table::fread(x, na.strings=c('NA', '#N/A'),
                                               select=c('Slide ID','Phenotype'),
                                               data.table = FALSE))),
@@ -399,9 +399,8 @@ FOP<-function(){
         reshape2::dcast(
           do.call(
             rbind,lapply(
-              list.files(wd,
-                         pattern = '.*]_tissue_seg_data_summary.txt$',
-                         full.names=TRUE
+              cleaned.file.list(wd,
+                         '.*]_tissue_seg_data_summary.txt$'
               ),
               function(x) data.table::fread(
                 x, na.strings=c('NA', '#N/A'),
@@ -442,9 +441,8 @@ FOP<-function(){
         reshape2::dcast(
           do.call(
             rbind,lapply(
-              list.files(wd,
-                         pattern = '.*]_tissue_seg_data_summary.txt$',
-                         full.names=TRUE
+              cleaned.file.list(wd,
+                         '.*]_tissue_seg_data_summary.txt$'
               ),
               function(x) data.table::fread(
                 x, na.strings=c('NA', '#N/A'),
@@ -478,6 +476,36 @@ FOP<-function(){
       )
       )
       Positive.table}}
+  #
+  # handle ]_M files
+  #
+  cleaned.file.list <- function(wd, str){
+    cImage.IDs <-  list.files(wd,pattern = str, full.names = TRUE)
+    #
+    # search for M files
+    #
+    c <- c()
+    lastline = ""
+    for (file in cImage.IDs){
+      loc1 = gregexpr(']', file);
+      loc2 = gregexpr('\\[', file);
+      line = paste0('\\' , substring(file, loc2, loc1));
+      if (!lastline == line){
+        b <- grep(line, cImage.IDs, ignore.case = T);
+        while (length(b) > 1){
+          c <- append(c, b[1])
+          b<-b[-1]
+        }
+      }
+      lastline = line
+    }
+    if(length(c)){
+      cImage.IDs <- cImage.IDs[-c]
+      rm(c)
+    }
+    cImage.IDs
+  }
+
   #
   # server side -------------------------------------
   #

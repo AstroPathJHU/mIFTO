@@ -43,7 +43,6 @@ parallel.invoke.gpxp <- function (
     filename = paste0("C:\\Users\\Public\\Documents\\", deparse(substitute(v1)), v2, ".csv")
     write.csv(v1, filename, row.names=FALSE)
   }
-  comb = sprintf("(%s_%d)", x, y)
   if (para) {
     #
     # define the environment for the cluster
@@ -84,27 +83,11 @@ parallel.invoke.gpxp <- function (
           decile.logical, threshold.logical))
     }
   }, warning = function(cond) {
-    modal_out <- shinyalert::shinyalert(
-      title = paste0('Warning generating tables for ',
-                     x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
-      text = paste0(cond),
-      type = 'error',
-      showConfirmButton = TRUE
-    )
     err.val <- 20
     return(err.val)
   }, error = function(cond) {
-    modal_out <- shinyalert::shinyalert(
-      title = paste0('Error generating tables second attempt for ',
-                     x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
-      text = paste0(cond),
-      type = 'error',
-      showConfirmButton = TRUE
-    )
     err.val <- 20
     return(err.val)
   }, finally={})
-  small.tables.byimage_var = object.size(small.tables.byimage)[1]
-  export_var(small.tables.byimage_var, comb)
   #
 }

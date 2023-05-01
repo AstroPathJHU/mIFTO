@@ -291,13 +291,14 @@ populate.tables <- function(
       }, warning = function(cond)
       {
         #
+        if (typeof(pb.Object) != "character"){
         modal_out <- shinyalert::shinyalert(
           title = paste0('Warning Creating Data Frame 1 for ',
                          x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
           text = paste0(cond),
           type = 'error',
           showConfirmButton = TRUE
-        )
+        )}
         #
         err.val <- 14
         return(err.val)
@@ -305,13 +306,14 @@ populate.tables <- function(
       }, error = function(cond)
       {
         #
+        if (typeof(pb.Object) != "character"){
         modal_out <- shinyalert::shinyalert(
           title = paste0('Error Creating Data Frame 1 Images for ',
                          x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
           text = paste0(cond),
           type = 'error',
           showConfirmButton = TRUE
-        )
+        )}
         #
         err.val <- 14
         return(err.val)
@@ -334,26 +336,28 @@ populate.tables <- function(
       #
     }, warning = function(cond) {
       #
+      if (typeof(pb.Object) != "character"){
       modal_out <- shinyalert::shinyalert(
         title = paste0('Warning Creating Data Frame 2 for ',
                        x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
         text = paste0(cond),
         type = 'error',
         showConfirmButton = TRUE
-      )
+      )}
       #
       err.val <- 14
       return(err.val)
       #
     }, error = function(cond) {
       #
+      if (typeof(pb.Object) != "character"){
       modal_out <- shinyalert::shinyalert(
         title = paste0('Error Creating Data Frame 2 Images for ',
                        x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
         text = paste0(cond),
         type = 'error',
         showConfirmButton = TRUE
-      )
+      )}
       #
       err.val <- 14
       return(err.val)
@@ -372,26 +376,28 @@ populate.tables <- function(
       #
     }, warning = function(cond) {
       #
+      if (typeof(pb.Object) != "character"){
       modal_out <- shinyalert::shinyalert(
         title = paste0('Warning Creating Data Frame 3 for ',
                        x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
         text = paste0(cond),
         type = 'error',
         showConfirmButton = TRUE
-      )
+      )}
       #
       err.val <- 14
       return(err.val)
       #
     }, error = function(cond) {
       #
+      if (typeof(pb.Object) != "character"){
       modal_out <- shinyalert::shinyalert(
         title = paste0('Error Creating Data Frame 3 Images for ',
                        x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
         text = paste0(cond),
         type = 'error',
         showConfirmButton = TRUE
-      )
+      )}
       #
       err.val <- 14
       return(err.val)
@@ -411,26 +417,28 @@ populate.tables <- function(
     #
   }, warning = function(cond) {
     #
+    if (typeof(pb.Object) != "character"){
     modal_out <- shinyalert::shinyalert(
       title = paste0('Warning Creating Data Frame 4 for ',
                      x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
       text = paste0(cond),
       type = 'error',
       showConfirmButton = TRUE
-    )
+    )}
     #
     err.val <- 14
     return(err.val)
     #
   }, error = function(cond) {
     #
+    if (typeof(pb.Object) != "character"){
     modal_out <- shinyalert::shinyalert(
       title = paste0('Error Creating Data Frame 4 Images for ',
                      x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
       text = paste0(cond),
       type = 'error',
       showConfirmButton = TRUE
-    )
+    )}
     #
     err.val <- 14
     return(err.val)
@@ -449,26 +457,28 @@ populate.tables <- function(
     #
   }, warning = function(cond) {
     #
+    if (typeof(pb.Object) != "character"){
     modal_out <- shinyalert::shinyalert(
       title = paste0('Warning Creating Data Frame 5 for ',
                      x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
       text = paste0(cond),
       type = 'error',
       showConfirmButton = TRUE
-    )
+    )}
     #
     err.val <- 14
     return(err.val)
     #
   }, error = function(cond) {
     #
+    if (typeof(pb.Object) != "character"){
     modal_out <- shinyalert::shinyalert(
       title = paste0('Error Creating Data Frame 5 Images for ',
                      x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
       text = paste0(cond),
       type = 'error',
       showConfirmButton = TRUE
-    )
+    )}
     #
     err.val <- 14
     return(err.val)

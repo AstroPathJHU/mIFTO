@@ -20,19 +20,45 @@ define.image.positivity <- function(
     data.in,threshold,connected.pixels.now) {
   #
   v <- data.in
-  m <- c()
   #
   mask<-v
   mask[which(mask < threshold)] <- 0
   mask[which(mask > 0)] <- 1
   #
+  # if (!connected.pixels.now == 'NA'){
+  #   quarter.length <- length(data.in[1, ])/4
+  #   print(quarter.length)
+  #   m_bind <- c()
+  #   l_bind <- c()
+  #   for(section in 1:4){
+  #     split_data <-
+  #       data.in[, ((quarter.length*(section-1))+1):(quarter.length*section)]
+  #     v <- split_data
+  #     print(length(v))
+  #     #
+  #     mask<-v
+  #     mask[which(mask < threshold)] <- 0
+  #     mask[which(mask > 0)] <- 1
+  #     #
+  #     l<-EBImage::bwlabel(mask)
+  #     print(length(l))
+  #     m<-which(
+  #       EBImage::computeFeatures.shape(l,v)[,'s.area']<connected.pixels.now)
+  #     print(length(m))
+  #     l_bind <- c(l_bind, l)
+  #     print(length(l_bind))
+  #     m_bind <- append(m_bind, m)
+  #     print(length(m_bind))
+  #   }
+  #   pos.mask<-EBImage::rmObjects(l_bind,m_bind)
+  #   pos.mask[which(pos.mask>0)]<-1
+  # } else {
+  #   pos.mask <- mask
+  # }
   if (!connected.pixels.now == 'NA'){
     l<-EBImage::bwlabel(mask)
-    for (group in 1:max(l[, ])){
-      if (sum(l[, ] == group) < connected.pixels.now){
-        m <- append(m, group)
-      }
-    }
+    m<-which(
+      EBImage::computeFeatures.shape(l,v)[,'s.area']<connected.pixels.now)
     pos.mask<-EBImage::rmObjects(l,m)
     pos.mask[which(pos.mask>0)]<-1
   } else {

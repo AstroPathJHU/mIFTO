@@ -121,20 +121,24 @@ preallocate.tables <- function(
       #
       # search for M files
       #
-      a <- grep(']_M', cImage.IDs, ignore.case = F)
-      if (!length(a) == 0){
-        #_M file found
-        # n <- shiny::showNotification(
-        #   paste0('M# duplicate file found: ', cImage.IDs[a]),
-        #   type = 'warning')
-        # n <- shiny::showNotification(
-        #   paste(
-        #     'removing the M# duplicate from',
-        #     'computations. Please check image data\ clean up folders',
-        #     'as this may not always the correct approach.'),
-        #   type = 'warning')
-
-        cImage.IDs <- cImage.IDs[-a]
+      c <- c()
+      lastline = ""
+      for (file in cImage.IDs){
+        loc1 = gregexpr(']', file);
+        loc2 = gregexpr('\\[', file);
+        line = paste0('\\' , substring(file, loc2, loc1));
+        if (!lastline == line){
+          b <- grep(line, cImage.IDs, ignore.case = T);
+          while (length(b) > 1){
+            c <- append(c, b[1])
+            b<-b[-1]
+          }
+        }
+        lastline = line
+      }
+      if(length(c)){
+        cImage.IDs <- cImage.IDs[-c]
+        rm(c)
       }
       #
       # check that files exist for each AB-dilution pair

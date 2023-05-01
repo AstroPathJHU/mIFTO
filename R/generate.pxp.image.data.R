@@ -28,6 +28,7 @@
 #' @param Opal1 the opal value of interest
 #' @param decile.logical whether or not to run a decile approach analysis
 #' @param threshold.logical whether or not to run a threshold approach analysis
+#' @param pb.Object
 #' @return
 #' @export
 #'
@@ -35,7 +36,7 @@ generate.pxp.image.data <- function(
     Concentration, x, y, q, Antibody_Opal,
     titration.type.name, Thresholds, paths,
     connected.pixels, flowout, Opal1,
-    decile.logical, threshold.logical
+    decile.logical, threshold.logical, pb.Object=""
 ){
   #
   # this is the current image name
@@ -48,13 +49,14 @@ generate.pxp.image.data <- function(
   # read that image in
   #
   data.in <- tryCatch({
-    data.in <- mIFTO::tiff.list(paths[[y]], pattern.in = str)
+    data.in <- mIFTO::tiff.list(paths[[y]], pattern.in = str, Opal1=Opal1)
     err.val <- data.in$err.val
     if (!err.val == 0){
       return(-1)
     }
     data.in$data.out
   }, warning = function(cond) {
+    if (typeof(pb.Object) != "character"){
     modal_out <- shinyalert::shinyalert(
       title = paste0('Warning in generate.pxp tiff.list Reading Component Images for ',
                      x, ' 1to', Concentration[y], '[', q, ']'),
@@ -66,11 +68,11 @@ generate.pxp.image.data <- function(
                     cond),
       type = 'error',
       showConfirmButton = TRUE
-    )
+    )}
     err.val <- 14
     return(-1)
   }, error = function(cond) {
-    print(cond)
+    if (typeof(pb.Object) != "character"){
     modal_out <- shinyalert::shinyalert(
       title = paste0('Error in generate.pxp tiff.list Reading Component Images for ',
                      x, ' 1to', Concentration[y], '[', q, ']'),
@@ -82,14 +84,14 @@ generate.pxp.image.data <- function(
                     cond),
       type = 'error',
       showConfirmButton = TRUE
-    )
+    )}
     err.val <- 14
     return(-1)
   }, finally = {})
   #
-  if(length(data.in[[1]]) == 1){
-    stop('error in slide ', str)
-  }
+  # if(length(data.in[[1]]) == 1){
+  #   stop('error in slide ', str)
+  # }
   data.in <- data.in[[1]]
   nn <- names(data.in)
   d.v <- grep(Opal1, nn, value = T)
@@ -142,10 +144,10 @@ generate.pxp.image.data <- function(
         data.in,Thresholds[[x]][y],connected.pixels)
     } else {
       tryCatch({
-        print("10")
         positivity.data <- mIFTO::define.image.positivity(
           data.in,Thresholds[[x]][y],connected.pixels[[x]][y])
       }, warning = function(cond) {
+        if (typeof(pb.Object) != "character"){
         modal_out <- shinyalert::shinyalert(
           title = paste0('Warning in threshold logical for ',
                          x, ' 1to', Concentration[y], '[', q, ']'),
@@ -157,11 +159,11 @@ generate.pxp.image.data <- function(
                         cond),
           type = 'error',
           showConfirmButton = TRUE
-        )
+        )}
         err.val <- 14
         return(-1)
       }, error = function(cond) {
-        print(cond)
+        if (typeof(pb.Object) != "character"){
         modal_out <- shinyalert::shinyalert(
           title = paste0('Error in threshold logical for ',
                          x, ' 1to', Concentration[y], '[', q, ']'),
@@ -173,7 +175,7 @@ generate.pxp.image.data <- function(
                         cond),
           type = 'error',
           showConfirmButton = TRUE
-        )
+        )}
         err.val <- 14
         return(-1)
       }, finally = {})
@@ -191,6 +193,7 @@ generate.pxp.image.data <- function(
                         '[',q,']'),
                       'Image' = list(positivity.data))
     }, warning = function(cond) {
+      if (typeof(pb.Object) != "character"){
       modal_out <- shinyalert::shinyalert(
         title = paste0('Warning in small.tables for ',
                        x, ' 1to', Concentration[y], '[', q, ']'),
@@ -202,12 +205,11 @@ generate.pxp.image.data <- function(
                       cond),
         type = 'error',
         showConfirmButton = TRUE
-      )
+      )}
       err.val <- 14
       return(-1)
     }, error = function(cond) {
-      traceback()
-      print(cond)
+      if (typeof(pb.Object) != "character"){
       modal_out <- shinyalert::shinyalert(
         title = paste0('Error in small.tables for ',
                        x, ' 1to', Concentration[y], '[', q, ']'),
@@ -219,7 +221,7 @@ generate.pxp.image.data <- function(
                       cond),
         type = 'error',
         showConfirmButton = TRUE
-      )
+      )}
       err.val <- 14
       return(-1)
     }, finally = {})

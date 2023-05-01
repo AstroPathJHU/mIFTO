@@ -23,40 +23,56 @@
 #'
 ihc.generate.pxp.image.data <- function (
   ihc.path, x, ihc.Thresholds,
-  ihc.connected.pixels, z) {
+  ihc.connected.pixels, z, pb.Object="") {
   #
-  str = paste0(
-    '.*', x, '.*_IHC',
-    '_.*\\[',z, '\\]'
-  )
-  #
+  tryCatch({
+    str = paste0(
+      '.*', x, '.*_IHC',
+      '_.*\\[',z, '\\]'
+    )
+  }, error = function(cond){
+    return(cond)
+  }, warning = function(cond){
+    return(cond)
+  }, finally = {
+  })
   # read in image data
-  #
-  data.in <- tryCatch({
+  tryCatch({
     data.in <- mIFTO::tiff.list(ihc.path, pattern.in = str)
     err.val <- data.in$err.val
     if (!err.val == 0){
       return(-1)
     }
-    data.in$data.out
+    data.in <- data.in$data.out
+    #
+    if(length(data.in[[1]]) == 1){
+      stop('error in slide ', str)
+    }
+    data.in <- data.in[[1]]
   }, error = function(cond){
-    return(-1)
+    return(cond)
   }, warning = function(cond){
-    return(-1)
-  }, finally = {})
+    return(cond)
+  })
   #
-  if(length(data.in[[1]]) == 1){
-    stop('error in slide ', str)
-  }
-  data.in <- data.in[[1]]
-  #
-  nn <- names(data.in)
-  d.v <- grep('DAB', nn, value = T)
-  data.in <- data.in[[d.v]]
-  pos <- define.image.positivity(data.in, ihc.Thresholds[[x]],ihc.connected.pixels[[x]])
-  positivity.inside <- cbind.data.frame(
-    fraction = sum(pos$pos.mask) / length(pos$pos.mask), Slide.ID = x,
-    Image.ID = z
-  )
+  tryCatch({
+    nn <- names(data.in)
+  }, error = function(cond) {
+    return(cond)
+  })
+  tryCatch({
+    d.v <- grep('DAB', nn, value = T)
+    data.in <- data.in[[d.v]]
+    pos <- define.image.positivity(data.in, ihc.Thresholds[[x]],ihc.connected.pixels[[x]])
+    positivity.inside <- cbind.data.frame(
+      fraction = sum(pos$pos.mask) / length(pos$pos.mask), Slide.ID = x,
+      Image.ID = z
+    )
+    return(positivity.inside)
+  }, error=function(cond) {
+    return(cond)
+  }, warning = function(cond) {
+    return(cond)
+  })
 #
 }
