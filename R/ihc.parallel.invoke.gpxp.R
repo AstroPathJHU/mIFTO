@@ -47,22 +47,9 @@ ihc.parallel.invoke.gpxp <- function (
   #
   ###### need to add a try catch, but also need to determine what happens
   ###### when I throw an error instead of the envir
-  tryCatch({
-    small.tables.byimage<- parallel::parLapply(
-      cl,ihc.Image.IDs[[x]],function(z) mIFTO::ihc.generate.pxp.image.data(
-        ihc.path, x, ihc.Thresholds, ihc.connected.pixels, z))
-    return(small.tables.byimage)
-  }, error=function(cond) {
-    return(cond)
-    small.tables.byimage<- lapply(
-      ihc.Image.IDs[[x]],function(z) mIFTO::ihc.generate.pxp.image.data(
-        ihc.path, x, ihc.Thresholds, ihc.connected.pixels, z))
-    return(small.tables.byimage)
-  }, warning=function(cond) {
-    small.tables.byimage<- lapply(
-      ihc.Image.IDs[[x]],function(z) mIFTO::ihc.generate.pxp.image.data(
-        ihc.path, x, ihc.Thresholds, ihc.connected.pixels, z))
-    return(small.tables.byimage)
-  })
+  small.tables.byimage<- parallel::parLapply(
+    cl,ihc.Image.IDs[[x]],function(z) mIFTO::ihc.generate.pxp.image.data(
+      ihc.path, x, ihc.Thresholds, ihc.connected.pixels, z))
+  return(small.tables.byimage)
   #
 }

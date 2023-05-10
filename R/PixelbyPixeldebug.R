@@ -202,6 +202,7 @@ pixelbypixeldebug <- function(out,pb.Object="") {
   #
   ###############################Reads in data##########################
   #
+  tryCatch({
   time <- system.time(
     Tables <- mIFTO::populate.tables(
       Slide_Descript, Concentration, Antibody_Opal, Thresholds, Opal1,
@@ -209,6 +210,22 @@ pixelbypixeldebug <- function(out,pb.Object="") {
       decile.logical, threshold.logical, pb.count, pb.Object
     )
   )
+  }, error = function(cond) {
+    if (typeof(pb.Object) != "character") {
+      modal_out <- shinyalert::shinyalert(
+        title = paste0('Error in small.tables for ',
+                       x, ' 1to', Concentration[y], '[', q, ']'),
+        text = paste0('Please check the computer resources, slide names, ',
+                      'image layers correspond to protocol type, ',
+                      'and that component data tiffs for ', x,
+                      ' 1to',Concentration[[y]], '[', q, ']',' exist. Then contact ',
+                      'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
+                      cond),
+        type = 'error',
+        showConfirmButton = TRUE
+      )
+    }
+  })
   #
   err.val <- Tables$err.val
   if (err.val != 0) {

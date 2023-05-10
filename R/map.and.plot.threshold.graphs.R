@@ -39,7 +39,7 @@ map.and.plot.threshold.graphs <- function(
   wd, Antibody_Opal, Antibody, Slide_Descript, Concentration, Tables,
   Thresholds, connected.pixels, ihc.logical, ihc.Thresholds,
   ihc.connected.pixels, folders.px, theme1, con_type, colors,
-  Antibody_Opal.snratio, Antibody_Opal.ttest, pb.Object=""){
+  Antibody_Opal.snratio, Antibody_Opal.ttest, pb.Object="") {
   #
   if (typeof(pb.Object) != "character"){
     if (ihc.logical){

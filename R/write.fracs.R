@@ -34,9 +34,7 @@
 write.fracs <- function (
     wd, Antibody_Opal, Antibody, Slide_Descript, Concentration, tables_in,
     Thresholds, connected.pixels, ihc.logical, ihc.Thresholds,
-    ihc.connected.pixels, folders.px, theme1, pb.Object=""
-){
-
+    ihc.connected.pixels, folders.px, theme1, pb.Object="") {
   #
   # pull fractions of positivity for IF
   #
@@ -102,9 +100,6 @@ write.fracs <- function (
       } else {
         ihc.path <- wd
       }
-      # ihc.path[2] = "E:\\Data\\Bond_Optimizations\\Antibody_Titrations_Double_Dispensed\\Arginase\\TSA_Titration_1.26.2023\\Data/Arg1_IHC"
-      # ihc.path[1] = "E:\\Data\\Bond_Optimizations\\Antibody_Titrations_Double_Dispensed\\Arginase\\TSA_Titration_1.26.2023\\Data/IHC"
-      # print(ihc.path)
       cImage.IDs <-  list.files(
         ihc.path, pattern = str, ignore.case = T)
       c <- c()
@@ -252,15 +247,11 @@ write.fracs <- function (
         mean, na.rm = T
       )
     )
-    #
-    tryCatch({
-    ihc.graphs <- mIFTO::map.ihc.comp.plots(
-      wd, Antibody_Opal, Slide_Descript,
-      Concentration, tbl.long, theme1)
-    }, warning = function(cond){
-    }, finally={
-    })
-    #
+  #
+  ihc.graphs <- mIFTO::map.ihc.comp.plots(
+    wd, Antibody_Opal, Slide_Descript,
+    Concentration, tbl.long, theme1)
+  #
   } else {
     row.vals.names <- c(as.character(Concentration))
     ihc.graphs <- list()

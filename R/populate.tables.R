@@ -101,64 +101,30 @@ populate.tables <- function(
         cl <- parallel::makeCluster(
           getOption("cl.cores", numcores), useXDR = FALSE, methods = FALSE);
         parallel::clusterEvalQ(cl, library(mIFTO));
-        #
-        small.tables.byimage <- tryCatch({
-          mIFTO::parallel.invoke.gpxp(
-            Concentration, x, y, Image.IDs, Antibody_Opal,
-            titration.type.name, Thresholds, paths,
-            connected.pixels, flowout, Opal1,
-            decile.logical, threshold.logical)
-        }, warning = function(cond) {
+        tryCatch({
+          small.tables.byimage <- mIFTO::parallel.invoke.gpxp(
+                Concentration, x, y, Image.IDs, Antibody_Opal,
+                titration.type.name, Thresholds, paths,
+                connected.pixels, flowout, Opal1,
+                decile.logical, threshold.logical, cl)
+        }, error = function(cond){
+          if (typeof(pb.Object) != "character") {
             modal_out <- shinyalert::shinyalert(
-              title = paste0('Warning Reading Component Images for ',
-                             x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
+              title = paste0('Error in small.tables for ',
+                             x, ' 1to', Concentration[y], '[', q, ']'),
               text = paste0('Please check the computer resources, slide names, ',
                             'image layers correspond to protocol type, ',
                             'and that component data tiffs for ', x,
-                            ' 1to',Concentration[[y]],' exist. Then contact ',
+                            ' 1to',Concentration[[y]], '[', q, ']',' exist. Then contact ',
                             'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
                             cond),
               type = 'error',
               showConfirmButton = TRUE
             )
-          err.val <- 14
-          return(err.val)
-        }, error = function(cond) {
-          tryCatch({
-          if (typeof(pb.Object) != "character"){
-            str1 = paste0("Stopping parallel process for ", x, ' 1:',Concentration[[y]])
-            pb.count <- pb.count + pb.step; pb.count2 <- round(pb.count, digits = 0);
-            mIFTO::doupdate.pgbar(pb.count2, pb.Object, paste0(
-              str1,'. Processing time will significantly increase - Reading Tiffs and Generating Image Statistics - ',
-              length(Image.IDs[[x]][[y]])))
           }
-          mIFTO::parallel.invoke.gpxp(
-            Concentration, x, y, Image.IDs, Antibody_Opal,
-            titration.type.name, Thresholds, paths,
-            connected.pixels, flowout, Opal1,
-            decile.logical, threshold.logical, para=FALSE
-          )} , error = function(cond) {
-            if(!small.tables.byimage$err.val==20) {
-            modal_out <- shinyalert::shinyalert(
-              title = paste0('Error Reading Component Images for ',
-                             x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
-              text = paste0('Please check the computer resources, slide names, ',
-                            'image layers correspond to protocol type, ',
-                            'and that component data tiffs for ', x,
-                            ' 1to',Concentration[[y]],' exist. Then contact ',
-                            'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
-                            cond),
-              type = 'error',
-              showConfirmButton = TRUE
-            )
-            }
-            err.val <- 14
-            return(err.val)})
-        },
-        finally={
+        }, finally = {
           parallel::stopCluster(cl)
         })
-        #
         if (length(small.tables.byimage) == 1) {
           err.val <- 14
           return(list(err.val = err.val))
@@ -264,7 +230,6 @@ populate.tables <- function(
           }
         }
         #
-        # Violin.Plots[[x]][[y]]<-IC.plots[['Violin.Calculations']]
         rm(All.Images, small.wholeslide.tables, ic.plots)
         #
       })
@@ -279,215 +244,59 @@ populate.tables <- function(
       # reorganize the data into a workable format for building graphs later
       # essentially turning the list into a data table
       #
-      tryCatch({
-        ##
-        for(i.1 in table.names.byimage){
-          for(i.2 in 1:length(Tables.byimage[[i.1]])){
-            Tables.byimage[[i.1]][[i.2]][[x]][[y]]<-do.call(
-              rbind.data.frame,Tables.byimage[[i.1]][[i.2]][[x]][[y]])
-          }
+      ##
+      for(i.1 in table.names.byimage){
+        for(i.2 in 1:length(Tables.byimage[[i.1]])){
+          Tables.byimage[[i.1]][[i.2]][[x]][[y]]<-do.call(
+            rbind.data.frame,Tables.byimage[[i.1]][[i.2]][[x]][[y]])
         }
-        #
-      }, warning = function(cond)
-      {
-        #
-        if (typeof(pb.Object) != "character"){
-        modal_out <- shinyalert::shinyalert(
-          title = paste0('Warning Creating Data Frame 1 for ',
-                         x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
-          text = paste0(cond),
-          type = 'error',
-          showConfirmButton = TRUE
-        )}
-        #
-        err.val <- 14
-        return(err.val)
-        #
-      }, error = function(cond)
-      {
-        #
-        if (typeof(pb.Object) != "character"){
-        modal_out <- shinyalert::shinyalert(
-          title = paste0('Error Creating Data Frame 1 Images for ',
-                         x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
-          text = paste0(cond),
-          type = 'error',
-          showConfirmButton = TRUE
-        )}
-        #
-        err.val <- 14
-        return(err.val)
-        #
-      },
-      finally={})
+      }
+      #
     }
     #
     # for each Analysis Table in 'Tables'
     # pair the data down into a data
     #
-    tryCatch({
-      #
-      for(i.1 in table.names.byimage){
-        for(w in 1:length(Tables.byimage[[i.1]])){
-          Tables.byimage[[i.1]][[w]][[x]]<-do.call(
-            rbind.data.frame,Tables.byimage[[i.1]][[w]][[x]])
-        }
-      }
-      #
-    }, warning = function(cond) {
-      #
-      if (typeof(pb.Object) != "character"){
-      modal_out <- shinyalert::shinyalert(
-        title = paste0('Warning Creating Data Frame 2 for ',
-                       x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
-        text = paste0(cond),
-        type = 'error',
-        showConfirmButton = TRUE
-      )}
-      #
-      err.val <- 14
-      return(err.val)
-      #
-    }, error = function(cond) {
-      #
-      if (typeof(pb.Object) != "character"){
-      modal_out <- shinyalert::shinyalert(
-        title = paste0('Error Creating Data Frame 2 Images for ',
-                       x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
-        text = paste0(cond),
-        type = 'error',
-        showConfirmButton = TRUE
-      )}
-      #
-      err.val <- 14
-      return(err.val)
-      #
-    },
-    finally={})
-    #
-    tryCatch({
-      #
-      for(i.1 in table.names.wholeslide){
-        for(w in 1:length(Tables.wholeslide[[i.1]])){
-          Tables.wholeslide[[i.1]][[w]][[x]]<-do.call(
-            rbind.data.frame,Tables.wholeslide[[i.1]][[w]][[x]])
-        }
-      }
-      #
-    }, warning = function(cond) {
-      #
-      if (typeof(pb.Object) != "character"){
-      modal_out <- shinyalert::shinyalert(
-        title = paste0('Warning Creating Data Frame 3 for ',
-                       x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
-        text = paste0(cond),
-        type = 'error',
-        showConfirmButton = TRUE
-      )}
-      #
-      err.val <- 14
-      return(err.val)
-      #
-    }, error = function(cond) {
-      #
-      if (typeof(pb.Object) != "character"){
-      modal_out <- shinyalert::shinyalert(
-        title = paste0('Error Creating Data Frame 3 Images for ',
-                       x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
-        text = paste0(cond),
-        type = 'error',
-        showConfirmButton = TRUE
-      )}
-      #
-      err.val <- 14
-      return(err.val)
-      #
-    },
-    finally={})
-  }
-  #
-  tryCatch({
     #
     for(i.1 in table.names.byimage){
       for(w in 1:length(Tables.byimage[[i.1]])){
-        Tables.byimage[[i.1]][[w]]<-do.call(
-          rbind.data.frame,Tables.byimage[[i.1]][[w]])
+        Tables.byimage[[i.1]][[w]][[x]]<-do.call(
+          rbind.data.frame,Tables.byimage[[i.1]][[w]][[x]])
       }
     }
     #
-  }, warning = function(cond) {
     #
-    if (typeof(pb.Object) != "character"){
-    modal_out <- shinyalert::shinyalert(
-      title = paste0('Warning Creating Data Frame 4 for ',
-                     x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
-      text = paste0(cond),
-      type = 'error',
-      showConfirmButton = TRUE
-    )}
-    #
-    err.val <- 14
-    return(err.val)
-    #
-  }, error = function(cond) {
-    #
-    if (typeof(pb.Object) != "character"){
-    modal_out <- shinyalert::shinyalert(
-      title = paste0('Error Creating Data Frame 4 Images for ',
-                     x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
-      text = paste0(cond),
-      type = 'error',
-      showConfirmButton = TRUE
-    )}
-    #
-    err.val <- 14
-    return(err.val)
-    #
-  },
-  finally={})
-  #
-  tryCatch({
     #
     for(i.1 in table.names.wholeslide){
       for(w in 1:length(Tables.wholeslide[[i.1]])){
-        Tables.wholeslide[[i.1]][[w]]<-do.call(
-          rbind.data.frame,Tables.wholeslide[[i.1]][[w]])
+        Tables.wholeslide[[i.1]][[w]][[x]]<-do.call(
+          rbind.data.frame,Tables.wholeslide[[i.1]][[w]][[x]])
       }
     }
     #
-  }, warning = function(cond) {
-    #
-    if (typeof(pb.Object) != "character"){
-    modal_out <- shinyalert::shinyalert(
-      title = paste0('Warning Creating Data Frame 5 for ',
-                     x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
-      text = paste0(cond),
-      type = 'error',
-      showConfirmButton = TRUE
-    )}
-    #
-    err.val <- 14
-    return(err.val)
-    #
-  }, error = function(cond) {
-    #
-    if (typeof(pb.Object) != "character"){
-    modal_out <- shinyalert::shinyalert(
-      title = paste0('Error Creating Data Frame 5 Images for ',
-                     x, ' 1to', Concentration[y], '[', Image.IDs[[x]][[y]], ']'),
-      text = paste0(cond),
-      type = 'error',
-      showConfirmButton = TRUE
-    )}
-    #
-    err.val <- 14
-    return(err.val)
-    #
-  },
-  finally={})
+  }
+  #
+  #
+  for(i.1 in table.names.byimage){
+    for(w in 1:length(Tables.byimage[[i.1]])){
+      Tables.byimage[[i.1]][[w]]<-do.call(
+        rbind.data.frame,Tables.byimage[[i.1]][[w]])
+    }
+  }
+  #
+  #
+  #
+  for(i.1 in table.names.wholeslide){
+    for(w in 1:length(Tables.wholeslide[[i.1]])){
+      Tables.wholeslide[[i.1]][[w]]<-do.call(
+        rbind.data.frame,Tables.wholeslide[[i.1]][[w]])
+    }
+  }
+  #
   #
   out <- list(Tables.byimage = Tables.byimage,
               Tables.wholeslide = Tables.wholeslide,
               err.val = err.val)
+  return(out)
   #
 }

@@ -36,8 +36,7 @@ generate.pxp.image.data <- function(
     Concentration, x, y, q, Antibody_Opal,
     titration.type.name, Thresholds, paths,
     connected.pixels, flowout, Opal1,
-    decile.logical, threshold.logical, pb.Object=""
-){
+    decile.logical, threshold.logical, pb.Object="") {
   #
   # this is the current image name
   #
@@ -48,71 +47,26 @@ generate.pxp.image.data <- function(
   #
   # read that image in
   #
-  data.in <- tryCatch({
-    data.in <- mIFTO::tiff.list(paths[[y]], pattern.in = str, Opal1=Opal1)
-    err.val <- data.in$err.val
-    if (!err.val == 0){
-      return(-1)
-    }
-    data.in$data.out
-  }, warning = function(cond) {
-    if (typeof(pb.Object) != "character"){
-    modal_out <- shinyalert::shinyalert(
-      title = paste0('Warning in generate.pxp tiff.list Reading Component Images for ',
-                     x, ' 1to', Concentration[y], '[', q, ']'),
-      text = paste0('Please check the computer resources, slide names, ',
-                    'image layers correspond to protocol type, ',
-                    'and that component data tiffs for ', x,
-                    ' 1to',Concentration[[y]], '[', q, ']',' exist. Then contact ',
-                    'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
-                    cond),
-      type = 'error',
-      showConfirmButton = TRUE
-    )}
-    err.val <- 14
-    return(-1)
-  }, error = function(cond) {
-    if (typeof(pb.Object) != "character"){
-    modal_out <- shinyalert::shinyalert(
-      title = paste0('Error in generate.pxp tiff.list Reading Component Images for ',
-                     x, ' 1to', Concentration[y], '[', q, ']'),
-      text = paste0('Please check the computer resources, slide names, ',
-                    'image layers correspond to protocol type, ',
-                    'and that component data tiffs for ', x,
-                    ' 1to',Concentration[[y]], '[', q, ']',' exist. Then contact ',
-                    'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
-                    cond),
-      type = 'error',
-      showConfirmButton = TRUE
-    )}
-    err.val <- 14
-    return(-1)
-  }, finally = {})
-  #
-  # if(length(data.in[[1]]) == 1){
-  #   stop('error in slide ', str)
-  # }
+  data.in <- mIFTO::tiff.list(paths[[y]], pattern.in = str, Opal1=Opal1)
+  err.val <- data.in$err.val
+  data.in <- data.in$data.out
   data.in <- data.in[[1]]
   nn <- names(data.in)
   d.v <- grep(Opal1, nn, value = T)
   #
   # measure crosstalk between channels
   #
-  #***************************************************************
-
-  #
   # create the flow output for this image
   #
-  if (flowout == TRUE){
+  if (flowout == TRUE) {
     data.in.write <- vector('list',length(data.in))
-    for (i1 in 1:length(data.in)){
-      data.in.write[[i1]]<-as.numeric(unlist(data.in[[i1]]))
+    for (i1 in 1:length(data.in)) {
+      data.in.write[[i1]] <- as.numeric(unlist(data.in[[i1]]))
     }
     names(data.in.write) <- names(data.in)
     str = paste0(
-      wd,'/Results.pixels/data/raw/flow_like_tables/',Antibody_Opal,'_',x,'_1to',
-      Concentration[y],'_[',q,'].csv')
-
+      wd,'/Results.pixels/data/raw/flow_like_tables/',
+      Antibody_Opal,'_',x,'_1to',Concentration[y],'_[',q,'].csv')
     data.table::fwrite(data.in.write, file=str,sep=',')
   }
   #
@@ -122,106 +76,74 @@ generate.pxp.image.data <- function(
   #
   small.tables <- list()
   #
-  if(decile.logical){
+  if (decile.logical) {
     #
     decile.positivity.data <- mIFTO::decile.define.image.positivity(
       data.in, 10)
-    small.tables<-c(small.tables,
-                    'decile.SN.Ratio' = list(mIFTO::sn.ratio.calculations(
-                      decile.positivity.data,Concentration[y],x,q)),
-                    'decile.T.Tests' = list(mIFTO::welch.t.test.calculations(
-                      decile.positivity.data,Concentration[y],x,q)),
-                    'decile.Image' = list(decile.positivity.data)
+    small.tables <- c(
+      small.tables,'decile.SN.Ratio' =
+        list(mIFTO::sn.ratio.calculations(
+          decile.positivity.data,Concentration[y],x,q)),'decile.T.Tests' =
+        list(mIFTO::welch.t.test.calculations(
+          decile.positivity.data,Concentration[y],x,q)),'decile.Image' =
+        list(decile.positivity.data)
     )
   }
   #
-  if(threshold.logical){
+  if (threshold.logical) {
     #
     # get the positvity data
     #
-    if ((length(connected.pixels) == 1) & ('NA' %in% connected.pixels)){
+    if ((length(connected.pixels) == 1) & ('NA' %in% connected.pixels)) {
       positivity.data <- mIFTO::define.image.positivity(
         data.in,Thresholds[[x]][y],connected.pixels)
     } else {
-      tryCatch({
         positivity.data <- mIFTO::define.image.positivity(
           data.in,Thresholds[[x]][y],connected.pixels[[x]][y])
-      }, warning = function(cond) {
-        if (typeof(pb.Object) != "character"){
-        modal_out <- shinyalert::shinyalert(
-          title = paste0('Warning in threshold logical for ',
-                         x, ' 1to', Concentration[y], '[', q, ']'),
-          text = paste0('Please check the computer resources, slide names, ',
-                        'image layers correspond to protocol type, ',
-                        'and that component data tiffs for ', x,
-                        ' 1to',Concentration[[y]], '[', q, ']',' exist. Then contact ',
-                        'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
-                        cond),
-          type = 'error',
-          showConfirmButton = TRUE
-        )}
-        err.val <- 14
-        return(-1)
-      }, error = function(cond) {
-        if (typeof(pb.Object) != "character"){
-        modal_out <- shinyalert::shinyalert(
-          title = paste0('Error in threshold logical for ',
-                         x, ' 1to', Concentration[y], '[', q, ']'),
-          text = paste0('Please check the computer resources, slide names, ',
-                        'image layers correspond to protocol type, ',
-                        'and that component data tiffs for ', x,
-                        ' 1to',Concentration[[y]], '[', q, ']',' exist. Then contact ',
-                        'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
-                        cond),
-          type = 'error',
-          showConfirmButton = TRUE
-        )}
-        err.val <- 14
-        return(-1)
-      }, finally = {})
     }
     #
     # do the calculations for each type of graph and store
     #
     tryCatch({
-      small.tables<-c(small.tables,
-                      'SN.Ratio' = list(mIFTO::sn.ratio.calculations(
-                        positivity.data,Concentration[y],x,q)),
-                      'T.Tests' = list(mIFTO::welch.t.test.calculations(
-                        positivity.data,Concentration[y],x,q)),
-                      'Image.ID' = paste0(
-                        '[',q,']'),
-                      'Image' = list(positivity.data))
+      small.tables<-c(
+        small.tables,'SN.Ratio' =
+          list(mIFTO::sn.ratio.calculations(
+            positivity.data,Concentration[y],x,q)),'T.Tests' =
+          list(mIFTO::welch.t.test.calculations(
+            positivity.data,Concentration[y],x,q)),'Image.ID' =
+          paste0('[',q,']'),'Image' = list(positivity.data))
     }, warning = function(cond) {
       if (typeof(pb.Object) != "character"){
-      modal_out <- shinyalert::shinyalert(
-        title = paste0('Warning in small.tables for ',
-                       x, ' 1to', Concentration[y], '[', q, ']'),
-        text = paste0('Please check the computer resources, slide names, ',
-                      'image layers correspond to protocol type, ',
-                      'and that component data tiffs for ', x,
-                      ' 1to',Concentration[[y]], '[', q, ']',' exist. Then contact ',
-                      'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
-                      cond),
-        type = 'error',
-        showConfirmButton = TRUE
-      )}
+        modal_out <- shinyalert::shinyalert(
+          title = paste0('Warning in small.tables for ',
+                         x, ' 1to', Concentration[y], '[', q, ']'),
+          text = paste0('Please check the computer resources, slide names, ',
+                        'image layers correspond to protocol type, ',
+                        'and that component data tiffs for ', x,
+                        ' 1to',Concentration[[y]], '[', q, ']',' exist. Then contact ',
+                        'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
+                        cond),
+          type = 'error',
+          showConfirmButton = TRUE
+        )
+      }
       err.val <- 14
       return(-1)
     }, error = function(cond) {
-      if (typeof(pb.Object) != "character"){
-      modal_out <- shinyalert::shinyalert(
-        title = paste0('Error in small.tables for ',
-                       x, ' 1to', Concentration[y], '[', q, ']'),
-        text = paste0('Please check the computer resources, slide names, ',
-                      'image layers correspond to protocol type, ',
-                      'and that component data tiffs for ', x,
-                      ' 1to',Concentration[[y]], '[', q, ']',' exist. Then contact ',
-                      'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
-                      cond),
-        type = 'error',
-        showConfirmButton = TRUE
-      )}
+      if (typeof(pb.Object) != "character") {
+        modal_out <- shinyalert::shinyalert(
+          title = paste0('Error in small.tables for ',
+                         x, ' 1to', Concentration[y], '[', q, ']'),
+          text = paste0('Please check the computer resources, slide names, ',
+                        'image layers correspond to protocol type, ',
+                        'and that component data tiffs for ', x,
+                        ' 1to',Concentration[[y]], '[', q, ']',' exist. Then contact ',
+                        'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
+                        cond),
+          type = 'error',
+          showConfirmButton = TRUE
+        )
+      }
       err.val <- 14
       return(-1)
     }, finally = {})
@@ -236,5 +158,4 @@ generate.pxp.image.data <- function(
   #
   rm(data.in)
   return(small.tables)
-  #rm(small.tables)
 }

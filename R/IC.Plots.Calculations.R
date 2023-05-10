@@ -24,32 +24,19 @@
 #'
 ic.plots.calculations<-function(
     All.Images, Opal1, Concentration, x, y, m.opt){
-  export_var <- function(v1, v2) {
-    filename = paste0("C:\\Users\\Public\\Documents\\", deparse(substitute(v1)), v2, ".csv")
-    write.csv(v1, filename, row.names=FALSE)
-  }
   data<-vector('list',2)
   names(data)<-c('Noise.only.Threshold.Data',
                  'Signal.only.Threshold.Data')
   Signal <- All.Images[['pos']]
   SignalOnly <- Signal[All.Images[['pos.mask']] == 1]
   indicator <- paste0(x, Concentration[y])
-  export_var(SignalOnly, indicator)
   conY <- Concentration[y]
-  export_var(conY, indicator)
   data[['Signal.only.Threshold.Data']] <- data.table::setnames(cbind.data.frame(
     SignalOnly,Concentration[y]), c('Antibody','Concentration'))
   Noise <- All.Images[['neg']]
   NoiseOnly <- Noise[All.Images[['neg.mask']] == 1]
   data[['Noise.only.Threshold.Data']] <- data.table::setnames(cbind.data.frame(
     NoiseOnly,Concentration[y]), c('Antibody','Concentration'))
-  #
-  #plot<-vector('list',1)
-  #names(plot)<-c('Pixels')
-  #plot[[1]] <- ggplot2::geom_violin(
-  #  data = data[['Signal.only.Threshold.Data']],
-  #  ggplot2::aes(x = as.factor(Concentration), y = Antibody),
-  #  fill = colors[y], alpha = .4, width = .5, color = colors[y])
   #
   # main box plots
   #
