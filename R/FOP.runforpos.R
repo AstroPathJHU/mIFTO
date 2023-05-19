@@ -29,39 +29,18 @@
 #'8. for no: a browsing window will open; select where you want output table to
 #' go
 #'
-#'@return the output is a csv file that has the following columns:
-#'concentration, one for each slide descriptors, and Antibody
+#' @param out is the image for which positivity needs to be defined
+#' @param my.vals is the current threshold
+#' @return a list with three data.frames; a sn means, sn medians, and a
+#' fraction of pos
 #'
 #' @export
-FOPdebug<-function(){
-  e = 0
+FOP.runforpos<-function(out, my.vals){
   #
-  tryCatch({
-    err.msg <- FOP.error.check(1)
-    #
-    ip <- system("ipconfig", intern=TRUE)
-    ip <- ip[grep("IPv4", ip)]
-    ip <- gsub(".*? ([[:digit:]])", "\\1", ip)
-    ip <- ip[[1]]
-    #
-  }, error = function(cond){
-    message(err.msg)
-    ip <<- "127.0.0.1"
-  }, warning = function(cond){
-    message(err.msg)
-    ip <<- "127.0.0.1"
-  })
+  fraction.type <-out$fraction.type
+  Positive.table<-data.frame()
+  # raw.data <- data.frame()
+  Positive.table<-FOP.findpos(Positive.table, out,  my.vals)
+  return(Positive.table)
   #
-  tryCatch({
-    err.msg <- FOP.error.check(2)
-    shiny::shinyApp(ui = mIFTO::FOP.set.ui, mIFTO::FOP.server.side,
-                    options = list(width = 1000, launch.browser = TRUE,
-                                   host = ip, quiet = T))
-  },  warning = function(cond) {
-    print(cond)
-    print(err.msg)
-  },  error = function(cond) {
-    print(cond)
-    print(err.msg)
-  }, finally={})
 }
