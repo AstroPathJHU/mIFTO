@@ -33,7 +33,7 @@
 #'concentration, one for each slide descriptors, and Antibody
 #'
 #' @export
-FOPdebug<-function(){
+FOP<-function(){
   e = 0
   #
   tryCatch({

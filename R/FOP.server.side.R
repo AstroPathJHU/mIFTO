@@ -45,66 +45,6 @@ FOP.server.side <- function(input, output, session) {
     Slide_ID=NULL, wd=NULL, Positive.table=NULL, delin = NULL,
     Opal1 = NULL, Antibody = NULL, IHC = NULL, raw.data=NULL, delins=NULL)
   #
-  # another ab modal
-  #
-  another.ab.modal <- function(failed = FALSE) {
-    shiny::modalDialog(
-      title = "Is there another antibody or condition?",
-      shiny::tagList(
-        shiny::actionButton("confirm", "Yes"),
-        shiny::actionButton("decline", "No")
-      ),
-      footer = NULL,
-      size = "s"
-    )
-  }
-  #
-  # another ab modal input
-  #
-  another.ab.modal.input <- function(failed = FALSE) {
-    shiny::modalDialog(
-      title = "Additional antibody or condition information",
-      shiny::tagList(
-        shiny::textInput(
-          "Antibody2",
-          shiny::div(
-            shiny::br(),shiny::br(), shiny::br(),
-            "Primary Antibody:",shiny::br(),
-            style = fm.object$commontextstyle
-          ),
-          value = my.vals$Antibody
-        ),
-        shiny::textInput(
-          "Opal2",
-          shiny::div(shiny::br(),
-                     "Primary Opal:",shiny::br(),
-                     style = fm.object$commontextstyle
-          ),
-          value = my.vals$Opal1
-        ),
-        shiny::textInput(
-          "Concentration2",
-          shiny::div(shiny::br(),
-                     "Other condition delineation: ",
-                     shiny::br(),
-                     style = fm.object$commontextstyle
-          ),
-          value = my.vals$delin
-        ),
-        shiny::checkboxInput(
-          "IHC2", label = "Is this IHC?", value = FALSE
-        ),
-        shiny::checkboxInput(
-          "MoTiF2", label = "Is this MoTiF?", value = FALSE)
-      ),
-      footer = tagList(
-        shiny::actionButton("run.secondary", "Run"),
-        shiny::modalButton("Close")
-      ),
-      size = "s"
-    )
-  }
-  #
   # main observe event
   #
   shiny::observeEvent(input$FOP, {
@@ -137,7 +77,7 @@ FOP.server.side <- function(input, output, session) {
       if (length(my.vals$Positive.table)==2){
         stop(my.vals$Positive.table)
       }
-      shiny::showModal(another.ab.modal())
+      shiny::showModal(FOP.another.ab.modal())
       #
     }, warning = function(cond){
       err.msg <- FOP.error.check(cond$message)
@@ -177,7 +117,7 @@ FOP.server.side <- function(input, output, session) {
     # show another ab modal input
     #
     shiny::removeModal()
-    shiny::showModal(another.ab.modal.input())
+    shiny::showModal(FOP.another.ab.modal.input(my.vals, fm.object))
     #
   })
   #
@@ -215,7 +155,7 @@ FOP.server.side <- function(input, output, session) {
       if (length(my.vals$Positive.table)==2){
         stop(my.vals$Positive.table)
       }
-      shiny::showModal(another.ab.modal())
+      shiny::showModal(FOP.another.ab.modal())
       #
     }, warning = function(cond){
       err.msg <- FOP.error.check(cond$message)
