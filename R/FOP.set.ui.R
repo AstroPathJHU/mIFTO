@@ -34,7 +34,7 @@
 #'
 #' @export
 FOP.set.ui <- function(){
-  fm.object <- mIFTO::ui.formats(1000, 1)
+  fm.object <- mIFTO::mIFTO.ui.formats(1000, 1)
   FOP.ui <- shiny::fixedPage(
     #
     # add a title to the GUI with an image

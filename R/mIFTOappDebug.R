@@ -26,7 +26,6 @@
 #' @export
 #'
 mIFTOappDebug <- function(){
-  print("hello")
   #
   if (!.Platform$OS.type == "windows") {
     warning(paste('Application has only been tested on windows machines.',
@@ -40,6 +39,7 @@ mIFTOappDebug <- function(){
   e = 0
   #
   tryCatch({
+    err.msg <- mIFTO::mIFTO.error.check("ip")
     #
     ip <- system("ipconfig", intern=TRUE)
     ip <- ip[grep("IPv4", ip)]
@@ -47,12 +47,13 @@ mIFTOappDebug <- function(){
     ip <- ip[[1]]
     #
   }, error = function(cond){
-    message('cannot find local IP, using shiny default. Performance may suffer.')
-    ip = "127.0.0.1"
+    print(cond)
+    message(err.msg)
+    ip <<- "127.0.0.1"
   })
   #
   options(browser = "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe")
-  shiny::shinyApp(ui = mIFTO::ui.map(), mIFTO::server.sidedebug,
+  shiny::shinyApp(ui = mIFTO::mIFTO.ui.map(), mIFTO::mIFTO.server.sidedebug,
                 options = list(width = 1000, launch.browser = TRUE,
                                host = ip, quiet = T))
     #

@@ -52,13 +52,13 @@ mIFTOapp <- function(){
   #
   tryCatch({
   options(browser = "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe")
-  shiny::shinyApp(ui = mIFTO::ui.map(), mIFTO::server.side,
+  shiny::shinyApp(ui = mIFTO::mIFTO.ui.map(), mIFTO::mIFTO.server.side,
                 options = list(width = 1000, launch.browser = TRUE,
                                host = ip, quiet = T))
   }, warning = function(cond) {
     tryCatch({
       options(browser = "C:/Program Files/Google/Chrome/Application/chrome.exe")
-      shiny::shinyApp(ui = mIFTO::ui.map(), mIFTO::server.side,
+      shiny::shinyApp(ui = mIFTO::mIFTO.ui.map(), mIFTO::mIFTO.server.side,
                       options = list(width = 1000, launch.browser = TRUE,
                                      host = ip, quiet = T))
     },  warning = function(cond) {
@@ -70,7 +70,7 @@ mIFTOapp <- function(){
   }, error = function(cond) {
     tryCatch({
       options(browser = "C:/Program Files/Google/Chrome/Application/chrome.exe")
-      shiny::shinyApp(ui = mIFTO::ui.map(), mIFTO::server.side,
+      shiny::shinyApp(ui = mIFTO::mIFTO.ui.map(), mIFTO::mIFTO.server.side,
                       options = list(width = 1000, launch.browser = TRUE,
                                      host = ip, quiet = T))
     },  warning = function(cond) {

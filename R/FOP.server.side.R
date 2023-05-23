@@ -37,7 +37,7 @@
 #'
 #' @export
 FOP.server.side <- function(input, output, session) {
-  fm.object <- mIFTO::ui.formats(1000, 1)
+  fm.object <- mIFTO::mIFTO.ui.formats(1000, 1)
   #
   # intialize passable variables
   #
