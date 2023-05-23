@@ -64,7 +64,7 @@ mIFTO.map.and.write.histograms <- function(
     #
     # write out a histogram data for each image
     #
-    write.hist.data(
+    mIFTO::mIFTO.write.hist.data(
       table_in, wd, Antibody_Opal, Slide_Descript, Concentration, i.1)
     #
     if (i.1 == 'Plus1'){

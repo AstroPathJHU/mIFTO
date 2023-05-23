@@ -63,7 +63,7 @@ mIFTO.ihc.generate.pxp.image.data <- function (
   tryCatch({
     d.v <- grep('DAB', nn, value = T)
     data.in <- data.in[[d.v]]
-    pos <- define.image.positivity(data.in, ihc.Thresholds[[x]],ihc.connected.pixels[[x]])
+    pos <- mIFTO::mIFTO.define.image.positivity(data.in, ihc.Thresholds[[x]],ihc.connected.pixels[[x]])
     positivity.inside <- cbind.data.frame(
       fraction = sum(pos$pos.mask) / length(pos$pos.mask), Slide.ID = x,
       Image.ID = z
