@@ -62,7 +62,6 @@ mIFTO.write.fracs <- function (
   tbl_avg <- dplyr::summarise_at(
     dplyr::group_by(tbl, Concentration),
     paste0('fracs.',Slide_Descript), mean, na.rm = T)
-  print(tbl_avg)
   #
   # thresholds as a table
   #

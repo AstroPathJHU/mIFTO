@@ -16,6 +16,7 @@
 #'
 mIFTO.error.check <- function(
     err.val) {
+  print(err.val)
   err.msg <- dplyr::case_when(
     err.val ==  "Input Slide ID" ~ "Please enter valid slide desciptor input.",
     #
