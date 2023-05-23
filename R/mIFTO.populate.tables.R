@@ -100,7 +100,7 @@ mIFTO.populate.tables <- function(
       time <- system.time({
         cl <- parallel::makeCluster(
           getOption("cl.cores", numcores), useXDR = FALSE, methods = FALSE);
-        parallel::clusterEvalQ(cl, devtools::load_all());
+        parallel::clusterEvalQ(cl, library(mIFTO));
         tryCatch({
           small.tables.byimage <- mIFTO::mIFTO.parallel.invoke.gpxp(
                 Concentration, x, y, Image.IDs, Antibody_Opal,
