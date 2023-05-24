@@ -39,6 +39,7 @@ mIFTO.parallel.invoke.gpxp <- function (
     titration.type.name, titration.type, Thresholds, paths,
     connected.pixels, flowout, Opal1,
     decile.logical, threshold.logical, cl) {
+  err.val<-0
   tryCatch({
     #
     # define the environment for the cluster
