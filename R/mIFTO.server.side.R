@@ -188,6 +188,7 @@ mIFTO.server.side <- function(input, output, session) {
       )
       #
     }, warning = function(cond){
+      print(cond)
       err <- mIFTO::mIFTO.error.check(cond$message)
       on.exit(pb$close());
       modal_out <- shinyalert::shinyalert(
@@ -197,6 +198,7 @@ mIFTO.server.side <- function(input, output, session) {
         showConfirmButton = TRUE
       )
     }, error = function(cond){
+      print(cond)
       err <- mIFTO::mIFTO.error.check(cond$message)
       on.exit(pb$close());
       modal_out <- shinyalert::shinyalert(

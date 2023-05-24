@@ -35,7 +35,7 @@ mIFTO.pixelbypixel <- function(out,pb.Object) {
   # check input parameters and allocate some for eaiser indexing
   #
   tryCatch({
-    outchecked <- mIFTO::mIFTO.check.varsdebug(out)
+    outchecked <- mIFTO::mIFTO.check.vars(out)
     err.val <- outchecked$err.val
   }, error=function(cond){
     err.val<<-cond$message
@@ -91,6 +91,7 @@ mIFTO.pixelbypixel <- function(out,pb.Object) {
       )
     )
   }, warning = function(cond) {
+    print(cond)
     stop(cond$message)
     # if (typeof(pb.Object) != "character") {
     #   modal_out <- shinyalert::shinyalert(
@@ -102,6 +103,7 @@ mIFTO.pixelbypixel <- function(out,pb.Object) {
     #   )
     # }
   }, error = function(cond) {
+    print(cond)
     stop(cond$message)
     # if (typeof(pb.Object) != "character") {
     #   modal_out <- shinyalert::shinyalert(
@@ -156,6 +158,7 @@ mIFTO.pixelbypixel <- function(out,pb.Object) {
         ihc.connected.pixels, folders.px, theme1, con_type, colors,
         Antibody_Opal.snratio, Antibody_Opal.ttest, pb.Object)
     }, error = function(cond) {
+      print(cond)
       return(cond)
     })
   }
