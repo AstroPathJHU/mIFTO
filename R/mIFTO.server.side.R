@@ -11,7 +11,7 @@
 #'@return updates UI or runs relevent functions
 #'@export
 #'
-mIFTO.server.sidedebug <- function(input, output, session) {
+mIFTO.server.side <- function(input, output, session) {
   #
   fm.object <- mIFTO::mIFTO.ui.formats("1000", 0)
   #

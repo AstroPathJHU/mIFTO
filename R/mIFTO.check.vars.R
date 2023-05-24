@@ -20,14 +20,7 @@ mIFTO.check.vars <- function(out) {
   #
   err.val <- 0
   if (out$Slide_ID == ""){
-    modal_out <- shinyalert::shinyalert(
-      title = "Slide description input is empty.",
-      text = paste(
-        "Please enter valid slide desciptor input."),
-      type = 'error',
-      showConfirmButton = TRUE
-    )
-    err.val <- 1
+    err.val <- "Input Slide ID"
     return(list(err.val = err.val))
   }
   #
@@ -75,14 +68,7 @@ mIFTO.check.vars <- function(out) {
   Antibody <- out$Antibody
   #
   if (Antibody == ""){
-    modal_out <- shinyalert::shinyalert(
-      title = "Antibody input is empty.",
-      text = paste(
-        "Please enter a value for the antibody input."),
-      type = 'error',
-      showConfirmButton = TRUE
-    )
-    err.val <- 2
+    err.val <- "Input Antibody"
     return(list(err.val = err.val))
   }
   #
@@ -90,14 +76,7 @@ mIFTO.check.vars <- function(out) {
   #
   err.val <- 0
   if (out$Concentration == ""){
-    modal_out <- shinyalert::shinyalert(
-      title = "Concentration input is empty.",
-      text = paste(
-        "Please enter valid concentration input."),
-      type = 'error',
-      showConfirmButton = TRUE
-    )
-    err.val <- 3
+    err.val <- "Input Concentration"
     return(list(err.val = err.val))
   }
   #
@@ -119,54 +98,33 @@ mIFTO.check.vars <- function(out) {
       )
     )
   }, warning = function(cond) {
-    modal_out <- shinyalert::shinyalert(
-      title = "Error in concentration input.",
-      text = paste(
-        "Concentration input:", Concentration, "not valid. Please enter a list",
-        "of numeric values separated by commas."),
-      type = 'warning',
-      showConfirmButton = TRUE
-    )
-    return(-1)
+    err.val <- "Input Concentration"
+    return(list(err.val = err.val))
   }, error = function(cond) {
-    modal_out <- shinyalert::shinyalert(
-      title = "Error in concentration input.",
-      text = paste(
-        "Concentration input:", Concentration, "not valid. Please enter a list",
-        "of numeric values separated by commas."),
-      type = 'warning',
-      showConfirmButton = TRUE
-    )
-    return(-1)
+    err.val <- "Input Concentration"
+    return(list(err.val = err.val))
   }
   )
   #
-  if (length(Concentration1) == 1){
-    if (Concentration1 == -1){
-      err.val = 4
-      return(list(err.val = err.val))
-    }
-  }
+  # if (length(Concentration1) == 1){
+  #   if (Concentration1 == -1){
+  #     err.val = 4
+  #     return(list(err.val = err.val))
+  #   }
+  # }
   #
   Concentration <- Concentration1
-  if (is.unsorted(Concentration) || !min(Concentration) > 0){
-    err.val = 4
-    return(list(err.val = err.val))
-  }
+  # if (is.unsorted(Concentration) || !min(Concentration) > 0){
+  #   err.val = 4
+  #   return(list(err.val = err.val))
+  # }
   #
   # the opal name
   #
   Opal1 <- out$Opal1
   #
   if (Opal1 == ""){
-    modal_out <- shinyalert::shinyalert(
-      title = "Primary Opal input is empty.",
-      text = paste(
-        "Please enter a value for the primary opal input."),
-      type = 'error',
-      showConfirmButton = TRUE
-    )
-    err.val <- 5
+    err.val <- "Input Opal"
     return(list(err.val = err.val))
   }
   #
@@ -192,15 +150,7 @@ mIFTO.check.vars <- function(out) {
   #
   wd <- choose.dir(caption = 'Select the folder the data is contained in')
   if(is.na(wd)) {
-    modal_out <- shinyalert::shinyalert(
-      title = "Directory not valid.",
-      text = paste(
-        "User selected cancel. Please select a valid directory."
-      ),
-      type = 'error',
-      showConfirmButton = TRUE
-    )
-    err.val <- 6
+    err.val <- "Empty Directory"
     return(list(err.val = err.val))
   }
   #
@@ -247,17 +197,17 @@ mIFTO.check.vars <- function(out) {
       # check that files exist for each AB
       #
       if(length(cImage.IDs) == 0 ){
-        modal_out <- shinyalert::shinyalert(
-          title =  paste('Search failed for', x, titration.type.name,
-                         'IHC images'),
-          text = paste0(
-            'Please check Slide Identifiers, Primary Antibody, and that component data tiffs for ',
-            x, ' IHC exist. For data separated in folders by dilution, put IHC ',
-            'data in an "IHC" or "',Antibody, '_IHC" folder'),
-          type = 'error',
-          showConfirmButton = TRUE
-        )
-        err.val <- 13
+        # modal_out <- shinyalert::shinyalert(
+        #   title =  paste('Search failed for', x, titration.type.name,
+        #                  'IHC images'),
+        #   text = paste0(
+        #     'Please check Slide Identifiers, Primary Antibody, and that component data tiffs for ',
+        #     x, ' IHC exist. For data separated in folders by dilution, put IHC ',
+        #     'data in an "IHC" or "',Antibody, '_IHC" folder'),
+        #   type = 'error',
+        #   showConfirmButton = TRUE
+        # )
+        err.val <- paste0("IHC Search: ", x, " - ", Antibody)
         return(list(err.val = err.val))
       }
     }
@@ -279,18 +229,18 @@ mIFTO.check.vars <- function(out) {
   #
   for (x in 1:length(paths)){
     if (length(paths[[x]]) != 1){
-      modal_out <- shinyalert::shinyalert(
-        title = "Error could not find paths.",
-        text = paste(
-          "The number of paths for each concentration does not equal 1.",
-          "Please check the status of the naming convention on folders, ",
-          "that the Concentrations entered are correct, that the correct ",
-          "Titration is selected, and that all folders exist."
-        ),
-        type = 'error',
-        showConfirmButton = TRUE
-      )
-      err.val <- 7
+      # modal_out <- shinyalert::shinyalert(
+      #   title = "Error could not find paths.",
+      #   text = paste(
+      #     "The number of paths for each concentration does not equal 1.",
+      #     "Please check the status of the naming convention on folders, ",
+      #     "that the Concentrations entered are correct, that the correct ",
+      #     "Titration is selected, and that all folders exist."
+      #   ),
+      #   type = 'error',
+      #   showConfirmButton = TRUE
+      # )
+      err.val <- "Number of paths"
       return(list(err.val = err.val))
     }
   }
@@ -307,16 +257,16 @@ mIFTO.check.vars <- function(out) {
   # if both threshold and logical pixels are false then return an error
   #
   if ((!threshold.logical & !decile.logical)){
-    modal_out <- shinyalert::shinyalert(
-      title = "Error must apply thresholds or run quantile analysis.",
-      text = paste(
-        "Both analysis types cannot be left blank, please threshold the data or ",
-        "run the quantile analysis."
-      ),
-      type = 'error',
-      showConfirmButton = TRUE
-    )
-    err.val <- 7
+    # modal_out <- shinyalert::shinyalert(
+    #   title = "Error must apply thresholds or run quantile analysis.",
+    #   text = paste(
+    #     "Both analysis types cannot be left blank, please threshold the data or ",
+    #     "run the quantile analysis."
+    #   ),
+    #   type = 'error',
+    #   showConfirmButton = TRUE
+    # )
+    err.val <- "Analysis Logical"
     return(list(err.val = err.val))
   }
   #
@@ -372,45 +322,43 @@ mIFTO.check.vars <- function(out) {
       #
       # try to convert to a valid string
       #
-      Thresholds1 <- tryCatch({
-        as.numeric(
-          unlist(
-            strsplit(
-              Thresholds[[x]], split =','
-            )
-          )
-        )
+      tryCatch({
+        Thresholds1 <-
+          as.numeric(unlist(strsplit(Thresholds[[x]], split =',')))
       }, warning = function(cond) {
-        modal_out <- shinyalert::shinyalert(
-          title = "Error in threshold input.",
-          text = paste0(
-            "Could not parse threshold input:", Thresholds[[x]],
-            ". Please enter a valid list of numeric thresholds, separated by ",
-            "commas."
-          ),
-          type = 'error',
-          showConfirmButton = TRUE
-        )
-        return(-1)
+        # modal_out <- shinyalert::shinyalert(
+        #   title = "Error in threshold input.",
+        #   text = paste0(
+        #     "Could not parse threshold input:", Thresholds[[x]],
+        #     ". Please enter a valid list of numeric thresholds, separated by ",
+        #     "commas."
+        #   ),
+        #   type = 'error',
+        #   showConfirmButton = TRUE
+        # )
+        err.val <<- paste0("Input Threshold parse: ", Thresholds[[x]])
+        stop(err.val)
       }, error = function(cond) {
-        modal_out <- shinyalert::shinyalert(
-          title = "Error in threshold input.",
-          text = paste0(
-            "Could not parse threshold input:", Thresholds[[x]],
-            ". Please enter a valid list of numeric thresholds, separated by ",
-            "commas."
-          ),
-          type = 'error',
-          showConfirmButton = TRUE
-        )
-        return(-1)
+        # modal_out <- shinyalert::shinyalert(
+        #   title = "Error in threshold input.",
+        #   text = paste0(
+        #     "Could not parse threshold input:", Thresholds[[x]],
+        #     ". Please enter a valid list of numeric thresholds, separated by ",
+        #     "commas."
+        #   ),
+        #   type = 'error',
+        #   showConfirmButton = TRUE
+        # )
+        err.val <<- paste0("Input Threshold parse: ", Thresholds[[x]])
+        stop(err.val)
       })
+      # if (err.val!=0){
+      #   return(list(err.val = err.val))
+      # }
       #
-      if (length(Thresholds1) == 1){
-        if (Thresholds1 == -1){
-          err.val = 8
-          return(list(err.val = err.val))
-        }
+      if (length(Thresholds1) < 1){
+        err.val <- "Input Threshold"
+        return(list(err.val = err.val))
       }
       #
       Thresholds[[x]] <- Thresholds1
@@ -436,17 +384,17 @@ mIFTO.check.vars <- function(out) {
         } else{
           thrsh.message <- ""
         }
-        modal_out <- shinyalert::shinyalert(
-          title = "Error in threshold input.",
-          text = paste(
-            "The length of concentration list does",
-            "not equal the length of threshold list. ",
-            thrsh.message, ihc.message
-          ),
-          type = 'error',
-          showConfirmButton = TRUE
-        )
-        err.val <- 9
+        # modal_out <- shinyalert::shinyalert(
+        #   title = "Error in threshold input.",
+        #   text = paste(
+        #     "The length of concentration list does",
+        #     "not equal the length of threshold list. ",
+        #     thrsh.message, ihc.message
+        #   ),
+        #   type = 'error',
+        #   showConfirmButton = TRUE
+        # )
+        err.val <- "Input Threshold length"
         return(list(err.val = err.val))
       }
       #
@@ -478,37 +426,37 @@ mIFTO.check.vars <- function(out) {
           )
         )
       }, warning = function(cond) {
-        modal_out <- shinyalert::shinyalert(
-          title = "Error in connected pixel input.",
-          text = paste0(
-            "Could not parse connected pixel input:", Thresholds[[x]],
-            ". Please enter a valid list of numeric connected pixel values, ",
-            "separated by commas."
-          ),
-          type = 'error',
-          showConfirmButton = TRUE
-        )
-        return(-1)
+        # modal_out <- shinyalert::shinyalert(
+        #   title = "Error in connected pixel input.",
+        #   text = paste0(
+        #     "Could not parse connected pixel input:", Thresholds[[x]],
+        #     ". Please enter a valid list of numeric connected pixel values, ",
+        #     "separated by commas."
+        #   ),
+        #   type = 'error',
+        #   showConfirmButton = TRUE
+        # )
+        err.val <- "Input Connected Pixels"
+        return(list(err.val = err.val))
       }, error = function(cond) {
-        modal_out <- shinyalert::shinyalert(
-          title = "Error in connected pixel input.",
-          text = paste0(
-            "Could not parse connected pixel input:", Thresholds[[x]],
-            ". Please enter a valid list of numeric connected pixel values, ",
-            "separated by commas."
-          ),
-          type = 'error',
-          showConfirmButton = TRUE
-        )
-        return(-1)
+        # modal_out <- shinyalert::shinyalert(
+        #   title = "Error in connected pixel input.",
+        #   text = paste0(
+        #     "Could not parse connected pixel input:", Thresholds[[x]],
+        #     ". Please enter a valid list of numeric connected pixel values, ",
+        #     "separated by commas."
+        #   ),
+        #   type = 'error',
+        #   showConfirmButton = TRUE
+        # )
+        err.val <- "Input Connected Pixels"
+        return(list(err.val = err.val))
       }
       )
       #
-      if (length(connected.pixels1) == 1){
-        if (connected.pixels1 == -1){
-          err.val = 10
-          return(list(err.val = err.val))
-        }
+      if (length(connected.pixels1) < 1){
+        err.val <- "Input Connected Pixels"
+        return(list(err.val = err.val))
       }
       #
       if(!isTRUE(all(connected.pixels1 == floor(connected.pixels1)))){
@@ -544,17 +492,17 @@ mIFTO.check.vars <- function(out) {
         } else{
           thrsh.message <- ""
         }
-        modal_out <- shinyalert::shinyalert(
-          title = "Error in connected pixels input.",
-          text = paste(
-            "The length of concentration list does",
-            "not equal the length of connected pixels list. ",
-            thrsh.message, ihc.message
-          ),
-          type = 'error',
-          showConfirmButton = TRUE
-        )
-        err.val <- 11
+        # modal_out <- shinyalert::shinyalert(
+        #   title = "Error in connected pixels input.",
+        #   text = paste(
+        #     "The length of concentration list does",
+        #     "not equal the length of connected pixels list. ",
+        #     thrsh.message, ihc.message
+        #   ),
+        #   type = 'error',
+        #   showConfirmButton = TRUE
+        # )
+        err.val <- "Input Connected Pixels length"
         return(list(err.val = err.val))
       }
       #
@@ -586,29 +534,33 @@ mIFTO.check.vars <- function(out) {
           'BiocManager', ask = FALSE, quiet = TRUE, verbose = FALSE)
         BiocManager::install("EBImage", ask=FALSE)
       }, warning = function(cond) {
-        modal_out <- shinyalert::shinyalert(
-          title = "Error installing EBImage from BiocManager.",
-          text = paste0(
-            "Please attempt to update\ install BiocManager separately using: ",
-            "install.packages('BiocManager'); then attempt to update\ install ",
-            "EBImage from the Bioc repo using: BiocManager::install('EBImage')."
-          ),
-          type = 'error',
-          showConfirmButton = TRUE
-        )
-        connected.pixels <- 'NA'
+        # modal_out <- shinyalert::shinyalert(
+        #   title = "Error installing EBImage from BiocManager.",
+        #   text = paste0(
+        #     "Please attempt to update\ install BiocManager separately using: ",
+        #     "install.packages('BiocManager'); then attempt to update\ install ",
+        #     "EBImage from the Bioc repo using: BiocManager::install('EBImage')."
+        #   ),
+        #   type = 'error',
+        #   showConfirmButton = TRUE
+        # )
+        # connected.pixels <- 'NA'
+        err.val <- "BiocManager"
+        return(list(err.val = err.val))
       }, error = function(cond) {
-        modal_out <- shinyalert::shinyalert(
-          title = "Error installing EBImage from BiocManager.",
-          text = paste0(
-            "Please attempt to update\ install BiocManager separately using: ",
-            "install.packages('BiocManager'); then attempt to update\ install ",
-            "EBImage from the Bioc repo using: BiocManager::install('EBImage')."
-          ),
-          type = 'error',
-          showConfirmButton = TRUE
-        )
+        # modal_out <- shinyalert::shinyalert(
+        #   title = "Error installing EBImage from BiocManager.",
+        #   text = paste0(
+        #     "Please attempt to update\ install BiocManager separately using: ",
+        #     "install.packages('BiocManager'); then attempt to update\ install ",
+        #     "EBImage from the Bioc repo using: BiocManager::install('EBImage')."
+        #   ),
+        #   type = 'error',
+        #   showConfirmButton = TRUE
+        # )
         connected.pixels <- 'NA'
+        err.val <- "BiocManager"
+        return(list(err.val = err.val))
       })
     }, error = function(cond) {
       tryCatch({
@@ -616,36 +568,40 @@ mIFTO.check.vars <- function(out) {
           'BiocManager', ask = FALSE, quiet = TRUE, verbose = FALSE)
         BiocManager::install("EBImage", ask=FALSE)
       }, warning = function(cond) {
-        modal_out <- shinyalert::shinyalert(
-          title = "Error installing EBImage from BiocManager.",
-          text = paste0(
-            "Please attempt to update\ install BiocManager separately using: ",
-            "install.packages('BiocManager'); then attempt to update\ install ",
-            "EBImage from the Bioc repo using: BiocManager::install('EBImage')."
-          ),
-          type = 'error',
-          showConfirmButton = TRUE
-        )
+        # modal_out <- shinyalert::shinyalert(
+        #   title = "Error installing EBImage from BiocManager.",
+        #   text = paste0(
+        #     "Please attempt to update\ install BiocManager separately using: ",
+        #     "install.packages('BiocManager'); then attempt to update\ install ",
+        #     "EBImage from the Bioc repo using: BiocManager::install('EBImage')."
+        #   ),
+        #   type = 'error',
+        #   showConfirmButton = TRUE
+        # )
         connected.pixels <- 'NA'
+        err.val <- "BiocManager"
+        return(list(err.val = err.val))
       }, error = function(cond) {
-        modal_out <- shinyalert::shinyalert(
-          title = "Error installing EBImage from BiocManager.",
-          text = paste0(
-            "Please attempt to update\ install BiocManager separately using: ",
-            "install.packages('BiocManager'); then attempt to update\ install ",
-            "EBImage from the Bioc repo using: BiocManager::install('EBImage')."
-          ),
-          type = 'error',
-          showConfirmButton = TRUE
-        )
+        # modal_out <- shinyalert::shinyalert(
+        #   title = "Error installing EBImage from BiocManager.",
+        #   text = paste0(
+        #     "Please attempt to update\ install BiocManager separately using: ",
+        #     "install.packages('BiocManager'); then attempt to update\ install ",
+        #     "EBImage from the Bioc repo using: BiocManager::install('EBImage')."
+        #   ),
+        #   type = 'error',
+        #   showConfirmButton = TRUE
+        # )
         connected.pixels <- 'NA'
+        err.val <- "BiocManager"
+        return(list(err.val = err.val))
       })
     })
   }
   #
   if (length(connected.pixels) == 1){
     if (grepl('NA',connected.pixels)){
-      err.val <- 12
+      err.val <- "Input Connected Pixels"
       return(list(err.val = err.val))
     }
   }
@@ -662,5 +618,6 @@ mIFTO.check.vars <- function(out) {
     Thresholds = Thresholds, titration.type.name = titration.type.name,
     connected.pixels = connected.pixels, ihc.Thresholds = ihc.Thresholds,
     ihc.connected.pixels = ihc.connected.pixels, folders.px = folders.px,
-    threshold.logical = threshold.logical, decile.logical = decile.logical)
+    threshold.logical = threshold.logical, decile.logical = decile.logical,
+    titration.type = out$titration.type)
 }
