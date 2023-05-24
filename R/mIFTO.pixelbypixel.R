@@ -62,6 +62,7 @@ mIFTO.pixelbypixel <- function(out,pb.Object) {
     Protocol <- outchecked$Protocol
     paths <- outchecked$paths
     titration.type.name <- outchecked$titration.type.name
+    titration.type <- outchecked$titration.type
     connected.pixels <- outchecked$connected.pixels
     decile.logical <- outchecked$decile.logical
     threshold.logical <- outchecked$threshold.logical
