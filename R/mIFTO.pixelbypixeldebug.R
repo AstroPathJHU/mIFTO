@@ -272,7 +272,6 @@ mIFTO.pixelbypixeldebug <- function(out,pb.Object="") {
       wd, Antibody_Opal, Slide_Descript,
       Concentration, Thresholds, Tables$Tables.wholeslide, theme1, colors)
   }, error = function(cond) {
-    print(cond)
     err.val <- cond
     return(err.val)
   })

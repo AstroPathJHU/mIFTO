@@ -37,6 +37,7 @@ mIFTO.populate.tables <- function(
     Slide_Descript, Concentration, Antibody_Opal, Thresholds, Opal1,
     flowout, Protocol, paths, titration.type.name, titration.type, connected.pixels,
     decile.logical, threshold.logical, pb.count = "", pb.Object = ""){
+  err.val<-0
   #
   #############pre-allocating tables to store results###################
   #
