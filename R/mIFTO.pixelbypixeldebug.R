@@ -177,6 +177,7 @@ mIFTO.pixelbypixeldebug <- function(out,pb.Object="") {
     )
   )
   }, warning = function(cond) {
+    print(cond)
     stop(cond$message)
     # if (typeof(pb.Object) != "character") {
     #   modal_out <- shinyalert::shinyalert(
@@ -188,6 +189,7 @@ mIFTO.pixelbypixeldebug <- function(out,pb.Object="") {
     #   )
     # }
   }, error = function(cond) {
+    print(cond)
     stop(cond$message)
     # if (typeof(pb.Object) != "character") {
     #   modal_out <- shinyalert::shinyalert(
@@ -242,6 +244,7 @@ mIFTO.pixelbypixeldebug <- function(out,pb.Object="") {
         ihc.connected.pixels, folders.px, theme1, con_type, colors,
         Antibody_Opal.snratio, Antibody_Opal.ttest, pb.Object)
     }, error = function(cond) {
+      print(cond)
       return(cond)
     })
   }
@@ -272,6 +275,7 @@ mIFTO.pixelbypixeldebug <- function(out,pb.Object="") {
       wd, Antibody_Opal, Slide_Descript,
       Concentration, Thresholds, Tables$Tables.wholeslide, theme1, colors)
   }, error = function(cond) {
+    print(cond)
     err.val <- cond
     return(err.val)
   })

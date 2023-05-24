@@ -17,13 +17,7 @@
 FOP.error.check <- function(
     err.val) {
   err.msg <- dplyr::case_when(
-    err.val == 1 ~ "Problem generating IP. Defaulting to 127.0.0.1.
-    \nContact Sigfredo Soto at ssotodi1@jh.edu should you need any
-    additional assistance.",
-    #
-    err.val == 2 ~ "Error could not find supported web browser.\n
-    Contact Sigfredo Soto at ssotodi1@jh.edu should you need any
-    additional assistance.",
+    err.val ==  "Error finding IP" ~ "Could not find IP address. Using default shiny IP address.",
     #
     err.val == "Missing inputs."
     ~ "Please make sure all text boxes have inputs.\n

@@ -108,8 +108,8 @@ mIFTO.populate.tables <- function(
                 titration.type.name, titration.type, Thresholds, paths,
                 connected.pixels, flowout, Opal1,
                 decile.logical, threshold.logical, cl)
-          small.tables.byimage<-small.tables.byimage$small.tables.byimage
           err.val<-small.tables.byimage$err.val
+          small.tables.byimage<-small.tables.byimage$small.tables.byimage
         }, warning = function(cond){
           if (typeof(pb.Object) != "character") {
             # modal_out <- shinyalert::shinyalert(

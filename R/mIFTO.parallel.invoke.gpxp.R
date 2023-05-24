@@ -39,25 +39,31 @@ mIFTO.parallel.invoke.gpxp <- function (
     titration.type.name, titration.type, Thresholds, paths,
     connected.pixels, flowout, Opal1,
     decile.logical, threshold.logical, cl) {
-  err.val<-0
-  #
-  # define the environment for the cluster
-  #
-  my_env <- environment()
-  parent.env(my_env) <- .GlobalEnv
-  #
-  # for each image gather the stats and return the images
-  # to reduce RAM usage the code does this one image at a time
-  # in addition parallel computing was implemented
-  # to speed this up. Though the actual RAM usage is quite low
-  # if I only carry the part of the image that is needed...
-  #
-  parallel::clusterExport(
-    cl=cl, varlist=c("Concentration", "x", "y", "Antibody_Opal",
-                     "titration.type.name","Thresholds","paths",
-                     "connected.pixels","flowout","Opal1",
-                     "decile.logical", "threshold.logical"),
-    envir=my_env)
+  tryCatch({
+    #
+    # define the environment for the cluster
+    #
+    my_env <- environment()
+    parent.env(my_env) <- .GlobalEnv
+    #
+    # for each image gather the stats and return the images
+    # to reduce RAM usage the code does this one image at a time
+    # in addition parallel computing was implemented
+    # to speed this up. Though the actual RAM usage is quite low
+    # if I only carry the part of the image that is needed...
+    #
+    parallel::clusterExport(
+      cl=cl, varlist=c("Concentration", "x", "y", "Antibody_Opal",
+                       "titration.type.name","Thresholds","paths",
+                       "connected.pixels","flowout","Opal1",
+                       "decile.logical", "threshold.logical"),
+      envir=my_env)
+  }, warning=function(cond){
+    return(list(err.val=cond))
+  }, error=function(cond){
+    return(list(err.val=cond))
+  })
+
   #
   ###### need to add a try catch, but also need to determine what happens
   ###### when I throw an error instead of the envir
@@ -101,5 +107,7 @@ mIFTO.parallel.invoke.gpxp <- function (
     #   )
     # }
   }, finally={})
+  print("end of par")
+  print(err.val)
   return(list(small.tables.byimage=small.tables.byimage, err.val=err.val))
 }

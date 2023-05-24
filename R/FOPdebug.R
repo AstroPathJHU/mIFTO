@@ -37,7 +37,6 @@ FOPdebug<-function(){
   e = 0
   #
   tryCatch({
-    err.msg <- FOP.error.check(1)
     #
     ip <- system("ipconfig", intern=TRUE)
     ip <- ip[grep("IPv4", ip)]
@@ -45,9 +44,11 @@ FOPdebug<-function(){
     ip <- ip[[1]]
     #
   }, error = function(cond){
+    err.msg <- mIFTO::mIFTO.error.check("Error finding IP")
     message(err.msg)
     ip <<- "127.0.0.1"
   }, warning = function(cond){
+    err.msg <- mIFTO::mIFTO.error.check("Error finding IP")
     message(err.msg)
     ip <<- "127.0.0.1"
   })
@@ -58,10 +59,8 @@ FOPdebug<-function(){
                     options = list(width = 1000, launch.browser = TRUE,
                                    host = ip, quiet = T))
   },  warning = function(cond) {
-    print(cond)
-    print(err.msg)
+    err.msg <- mIFTO::mIFTO.error.check(cond$message)
   },  error = function(cond) {
-    print(cond)
-    print(err.msg)
+    err.msg <- mIFTO::mIFTO.error.check(cond$message)
   }, finally={})
 }

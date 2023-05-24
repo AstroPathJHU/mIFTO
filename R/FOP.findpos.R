@@ -121,7 +121,6 @@ FOP.findpos<-function(Positive.table, out, my.vals){
     # added to for additional AB with the same SlideIDs.
     my.vals$raw.data<-rbind(my.vals$raw.data,CellSeg)
     Positive.table<-rbind(Positive.table,Pos)
-    print(Positive.table)
     return(Positive.table)
   }else if(fraction.type =='Cells'){
     ##read data in and organize it

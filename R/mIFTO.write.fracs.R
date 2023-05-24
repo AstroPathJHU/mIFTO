@@ -158,7 +158,7 @@ mIFTO.write.fracs <- function (
       time <- system.time({
         cl <- parallel::makeCluster(
           getOption("cl.cores", numcores), useXDR = FALSE, methods = FALSE);
-        parallel::clusterEvalQ(cl, library(mIFTO));
+        parallel::clusterEvalQ(cl, devtools::load_all());
         #
         tryCatch({
           ihc.small.tables.byimage <- mIFTO::mIFTO.ihc.parallel.invoke.gpxp(
