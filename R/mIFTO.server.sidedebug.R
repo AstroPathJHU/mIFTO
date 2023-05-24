@@ -178,32 +178,30 @@ mIFTO.server.sidedebug <- function(input, output, session) {
       }
       #
       on.exit(pb$close());
-      if (err.val == 0){
-        modal_out <- shinyalert::shinyalert(
-          title = "Finished",
-          text = paste(
-            ""
-          ),
-          type = 'success',
-          showConfirmButton = TRUE
-        )
-      }
+      modal_out <- shinyalert::shinyalert(
+        title = "Finished",
+        text = paste(
+          ""
+        ),
+        type = 'success',
+        showConfirmButton = TRUE
+      )
       #
     }, warning = function(cond){
-      err.msg <- mIFTO::mIFTO.error.check(err.val)
+      err <- mIFTO::mIFTO.error.check(cond$message)
       on.exit(pb$close());
       modal_out <- shinyalert::shinyalert(
-        title = err.val,
-        text = paste(err.msg),
+        title = err$err.val,
+        text = paste(err$err.msg),
         type = 'error',
         showConfirmButton = TRUE
       )
     }, error = function(cond){
-      err.msg <- mIFTO::mIFTO.error.check(err.val)
+      err <- mIFTO::mIFTO.error.check(cond$message)
       on.exit(pb$close());
       modal_out <- shinyalert::shinyalert(
-        title = err.val,
-        text = paste(err.msg),
+        title = err$err.val,
+        text = paste(err$err.msg),
         type = 'error',
         showConfirmButton = TRUE
       )

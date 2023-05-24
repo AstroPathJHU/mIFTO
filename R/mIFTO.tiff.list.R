@@ -43,6 +43,9 @@ mIFTO.tiff.list <- function(wd, pattern.in, Opal1="") {
       image_names<-image_names[1]
     }
   }
+  if (length(image_names) < 1){
+    return(list(err.val = paste0("No files containing Opal", Opal1)))
+  }
   tryCatch({
     pattern.match="\\<Name\\>(.*?)\\<Name\\>"
     #
@@ -51,9 +54,9 @@ mIFTO.tiff.list <- function(wd, pattern.in, Opal1="") {
     a <- ijtiff::read_tags(image_names,'all' )
     results.match <- matrix(length(a), 1)
   }, error=function(cond) {
-    return(cond)
+    return(list(err.val = cond))
   }, warning = function(cond) {
-    return(cond)
+    return(list(err.val = cond))
   }, finally = {})
   #
   tryCatch({
@@ -68,9 +71,9 @@ mIFTO.tiff.list <- function(wd, pattern.in, Opal1="") {
       results.match[[i.1]] <- result.match.1
     }
   }, error=function(cond) {
-    return(cond)
+    return(list(err.val = cond))
   }, warning = function(cond) {
-    return(cond)
+    return(list(err.val = cond))
   }, finally = {})
   #
   tryCatch({
@@ -78,9 +81,9 @@ mIFTO.tiff.list <- function(wd, pattern.in, Opal1="") {
     #
     m2 <- list()
   }, error=function(cond) {
-    return(cond)
+    return(list(err.val = cond))
   }, warning = function(cond) {
-    return(cond)
+    return(list(err.val = cond))
   }, finally = {})
   #
   # read each image in separately
@@ -97,8 +100,8 @@ mIFTO.tiff.list <- function(wd, pattern.in, Opal1="") {
     }
     return(list(data.out = m2, err.val = err.val))
   }, error=function(cond) {
-    return(cond)
+    return(list(err.val = cond))
   }, warning = function(cond) {
-    return(cond)
+    return(list(err.val = cond))
   }, finally = {})
 }

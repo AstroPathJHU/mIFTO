@@ -322,14 +322,9 @@ mIFTO.check.varsdebug <- function(out) {
       #
       # try to convert to a valid string
       #
-      Thresholds1 <- tryCatch({
-        as.numeric(
-          unlist(
-            strsplit(
-              Thresholds[[x]], split =','
-            )
-          )
-        )
+      tryCatch({
+        Thresholds1 <-
+          as.numeric(unlist(strsplit(Thresholds[[x]], split =',')))
       }, warning = function(cond) {
         # modal_out <- shinyalert::shinyalert(
         #   title = "Error in threshold input.",
@@ -341,8 +336,8 @@ mIFTO.check.varsdebug <- function(out) {
         #   type = 'error',
         #   showConfirmButton = TRUE
         # )
-        err.val <- paste0("Input Threshold parse: ", Thresholds[[x]])
-        return(list(err.val = err.val))
+        err.val <<- paste0("Input Threshold parse: ", Thresholds[[x]])
+        stop(err.val)
       }, error = function(cond) {
         # modal_out <- shinyalert::shinyalert(
         #   title = "Error in threshold input.",
@@ -354,15 +349,16 @@ mIFTO.check.varsdebug <- function(out) {
         #   type = 'error',
         #   showConfirmButton = TRUE
         # )
-        err.val <- paste0("Input Threshold parse: ", Thresholds[[x]])
-        return(list(err.val = err.val))
+        err.val <<- paste0("Input Threshold parse: ", Thresholds[[x]])
+        stop(err.val)
       })
+      # if (err.val!=0){
+      #   return(list(err.val = err.val))
+      # }
       #
-      if (length(Thresholds1) == 1){
-        if (Thresholds1 == -1){
-          err.val <- "Input Threshold"
-          return(list(err.val = err.val))
-        }
+      if (length(Thresholds1) < 1){
+        err.val <- "Input Threshold"
+        return(list(err.val = err.val))
       }
       #
       Thresholds[[x]] <- Thresholds1
@@ -458,11 +454,9 @@ mIFTO.check.varsdebug <- function(out) {
       }
       )
       #
-      if (length(connected.pixels1) == 1){
-        if (connected.pixels1 == -1){
-          err.val <- "Input Connected Pixels"
-          return(list(err.val = err.val))
-        }
+      if (length(connected.pixels1) < 1){
+        err.val <- "Input Connected Pixels"
+        return(list(err.val = err.val))
       }
       #
       if(!isTRUE(all(connected.pixels1 == floor(connected.pixels1)))){
@@ -624,5 +618,6 @@ mIFTO.check.varsdebug <- function(out) {
     Thresholds = Thresholds, titration.type.name = titration.type.name,
     connected.pixels = connected.pixels, ihc.Thresholds = ihc.Thresholds,
     ihc.connected.pixels = ihc.connected.pixels, folders.px = folders.px,
-    threshold.logical = threshold.logical, decile.logical = decile.logical)
+    threshold.logical = threshold.logical, decile.logical = decile.logical,
+    titration.type = out$titration.type)
 }

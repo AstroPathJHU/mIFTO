@@ -11,7 +11,7 @@
 #'@return updates UI or runs relevent functions
 #'@export
 #'
-mIFTO.server.side <- function(input, output, session) {
+mIFTO.server.sidedebug <- function(input, output, session) {
   #
   fm.object <- mIFTO::mIFTO.ui.formats("1000", 0)
   #
@@ -173,34 +173,35 @@ mIFTO.server.side <- function(input, output, session) {
     tryCatch({
       #
       err.val <- mIFTO::mIFTO.pixelbypixel(input,pb)
-      #
-      on.exit(pb$close());
-      if (err.val == 0){
-        modal_out <- shinyalert::shinyalert(
-          title = "Finished",
-          text = paste(
-            ""
-          ),
-          type = 'success',
-          showConfirmButton = TRUE
-        )
+      if (err.val != 0){
+        stop(err.val)
       }
       #
-    }, warning = function(cond){
-      err.msg <- FOP.error.check(cond)
       on.exit(pb$close());
       modal_out <- shinyalert::shinyalert(
-        title = "Undefined Warning.",
-        text = paste(err.msg),
+        title = "Finished",
+        text = paste(
+          ""
+        ),
+        type = 'success',
+        showConfirmButton = TRUE
+      )
+      #
+    }, warning = function(cond){
+      err <- mIFTO::mIFTO.error.check(cond$message)
+      on.exit(pb$close());
+      modal_out <- shinyalert::shinyalert(
+        title = err$err.val,
+        text = paste(err$err.msg),
         type = 'error',
         showConfirmButton = TRUE
       )
     }, error = function(cond){
-      err.msg <- FOP.error.check(cond)
+      err <- mIFTO::mIFTO.error.check(cond$message)
       on.exit(pb$close());
       modal_out <- shinyalert::shinyalert(
-        title = "Undefined Error.",
-        text = paste(err.msg),
+        title = err$err.val,
+        text = paste(err$err.msg),
         type = 'error',
         showConfirmButton = TRUE
       )

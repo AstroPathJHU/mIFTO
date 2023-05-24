@@ -140,35 +140,39 @@ mIFTO.preallocate.tables <- function(
       # check that files exist for each AB-dilution pair
       #
       if(length(cImage.IDs) == 0 ){
-        modal_out <- shinyalert::shinyalert(
-          title =  paste0('Search failed for ', x, ' ', titration.type.name,
-                          '_1to', Concentration[y]),
-          text = paste0(
-            'Please check slide names and that component data tiffs for ',
-            x, ' 1to',Concentration[[y]],' exist'),
-          type = 'error',
-          showConfirmButton = TRUE
-        )
-        err.val <- 13
+        # modal_out <- shinyalert::shinyalert(
+        #   title =  paste0('Search failed for ', x, ' ', titration.type.name,
+        #                   '_1to', Concentration[y]),
+        #   text = paste0(
+        #     'Please check slide names and that component data tiffs for ',
+        #     x, ' 1to',Concentration[[y]],' exist'),
+        #   type = 'error',
+        #   showConfirmButton = TRUE
+        # )
+        err.val <- paste0(
+          'Search failed for ', x, ' - ', titration.type.name,
+          '_1to', Concentration[y])
         return(list(err.val = err.val))
       }
       #
       for (i.1 in 1:length(cImage.IDs)){
         a <- ijtiff::read_tags(paste0(paths[y],'\\',cImage.IDs[[i.1]]), 'all' )
         if (!length(a) == Protocol.layers){
-          modal_out <- shinyalert::shinyalert(
-            title =  paste0(
-              'Wrong number of layers in image for unmixing protocol: ',
-              Protocol),
-            text = paste0(
-              'Please check that slides were unmixed properly for ',
-              x, ' ', titration.type.name,'_1to', Concentration[y],
-              '; Image name: ',
-              cImage.IDs[[i.1]]),
-            type = 'error',
-            showConfirmButton = TRUE
-          )
-          err.val <- 13
+          # modal_out <- shinyalert::shinyalert(
+          #   title =  paste0(
+          #     'Wrong number of layers in image for unmixing protocol: ',
+          #     Protocol),
+          #   text = paste0(
+          #     'Please check that slides were unmixed properly for ',
+          #     x, ' ', titration.type.name,'_1to', Concentration[y],
+          #     '; Image name: ',
+          #     cImage.IDs[[i.1]]),
+          #   type = 'error',
+          #   showConfirmButton = TRUE
+          # )
+          err.val <- paste0(
+            'Wrong number of layers in image for unmixing protocol: ',
+            Protocol)
           return(list(err.val = err.val))
         }
       }

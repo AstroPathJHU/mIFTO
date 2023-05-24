@@ -36,9 +36,10 @@
 #'
 mIFTO.parallel.invoke.gpxp <- function (
     Concentration, x, y, Image.IDs, Antibody_Opal,
-    titration.type.name, Thresholds, paths,
+    titration.type.name, titration.type, Thresholds, paths,
     connected.pixels, flowout, Opal1,
     decile.logical, threshold.logical, cl) {
+  err.val<-0
   #
   # define the environment for the cluster
   #
@@ -61,27 +62,44 @@ mIFTO.parallel.invoke.gpxp <- function (
   ###### need to add a try catch, but also need to determine what happens
   ###### when I throw an error instead of the envir
   tryCatch({
-  small.tables.byimage<- parallel::parLapply(
-    cl,Image.IDs[[x]][[y]],function(z) mIFTO::mIFTO.generate.pxp.image.data(
+  small.tables.byimage<- lapply(
+    Image.IDs[[x]][[y]],function(z) mIFTO::mIFTO.generate.pxp.image.data(
       Concentration, x, y, z, Antibody_Opal,
-      titration.type.name, Thresholds, paths,
+      titration.type.name, titration.type, Thresholds, paths,
       connected.pixels, flowout, Opal1,
       decile.logical, threshold.logical))
+  }, warning=function(cond) {
+    stop(cond)
+    # if (typeof(pb.Object) != "character") {
+    #   modal_out <- shinyalert::shinyalert(
+    #     title = paste0('Error in small.tables for ',
+    #                    x, ' 1to', Concentration[y]),
+    #     text = paste0('Please check the computer resources, slide names, ',
+    #                   'image layers correspond to protocol type, ',
+    #                   'and that component data tiffs for ', x,
+    #                   ' 1to',Concentration[[y]],' exist. Then contact ',
+    #                   'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
+    #                   cond),
+    #     type = 'error',
+    #     showConfirmButton = TRUE
+    #   )
+    # }
   }, error=function(cond) {
-    if (typeof(pb.Object) != "character") {
-      modal_out <- shinyalert::shinyalert(
-        title = paste0('Error in small.tables for ',
-                       x, ' 1to', Concentration[y]),
-        text = paste0('Please check the computer resources, slide names, ',
-                      'image layers correspond to protocol type, ',
-                      'and that component data tiffs for ', x,
-                      ' 1to',Concentration[[y]],' exist. Then contact ',
-                      'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
-                      cond),
-        type = 'error',
-        showConfirmButton = TRUE
-      )
-    }
+    stop(cond)
+    # if (typeof(pb.Object) != "character") {
+    #   modal_out <- shinyalert::shinyalert(
+    #     title = paste0('Error in small.tables for ',
+    #                    x, ' 1to', Concentration[y]),
+    #     text = paste0('Please check the computer resources, slide names, ',
+    #                   'image layers correspond to protocol type, ',
+    #                   'and that component data tiffs for ', x,
+    #                   ' 1to',Concentration[[y]],' exist. Then contact ',
+    #                   'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
+    #                   cond),
+    #     type = 'error',
+    #     showConfirmButton = TRUE
+    #   )
+    # }
   }, finally={})
-  return(small.tables.byimage)
+  return(list(small.tables.byimage=small.tables.byimage, err.val=err.val))
 }

@@ -39,7 +39,6 @@ mIFTOappDebug <- function(){
   e = 0
   #
   tryCatch({
-    err.msg <- mIFTO::mIFTO.error.check("ip")
     #
     ip <- system("ipconfig", intern=TRUE)
     ip <- ip[grep("IPv4", ip)]
@@ -47,15 +46,21 @@ mIFTOappDebug <- function(){
     ip <- ip[[1]]
     #
   }, error = function(cond){
-    print(cond)
+    err.msg <- mIFTO::mIFTO.error.check("Error finding IP")
     message(err.msg)
     ip <<- "127.0.0.1"
   })
   #
+  tryCatch({
   options(browser = "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe")
   shiny::shinyApp(ui = mIFTO::mIFTO.ui.map(), mIFTO::mIFTO.server.sidedebug,
                 options = list(width = 1000, launch.browser = TRUE,
                                host = ip, quiet = T))
+  }, warning=function(cond){
+    err.msg <- mIFTO::mIFTO.error.check(cond$message)
+  }, error=function(cond){
+    err.msg <- mIFTO::mIFTO.error.check(cond$message)
+  })
     #
   #
 }

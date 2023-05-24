@@ -52,12 +52,19 @@ mIFTO.map.and.plot.threshold.graphs <- function(
     }
   }
   #
-  ihc.plots <- mIFTO::mIFTO.write.fracs(
-    wd, Antibody_Opal, Antibody, Slide_Descript, Concentration,
-    Tables$Tables.byimage, Thresholds, connected.pixels, ihc.logical,
-    ihc.Thresholds, ihc.connected.pixels, folders.px, theme1, pb.Object
-  )
-  if (!ihc.plots$err.val == 0){
+  tryCatch({
+    ihc.plots <- mIFTO::mIFTO.write.fracs(
+      wd, Antibody_Opal, Antibody, Slide_Descript, Concentration,
+      Tables$Tables.byimage, Thresholds, connected.pixels, ihc.logical,
+      ihc.Thresholds, ihc.connected.pixels, folders.px, theme1, pb.Object
+    )
+  }, warning=function(cond){
+    stop(cond)
+  }, error=function(cond){
+    stop(cond)
+  })
+
+  if (ihc.plots$err.val != 0){
     return(list(err.val = ihc.plots$err.val))
   }
   ihc.plots <- list(ihc.plots$ihc.graphs)
@@ -163,4 +170,5 @@ mIFTO.map.and.plot.threshold.graphs <- function(
   #
   ggplot2::ggsave(paste0(str,'.pdf'),gout,
                   height = 9, width = 8.5, units = 'in', scale = 1, dpi = 300)
+  return(err.val)
 }

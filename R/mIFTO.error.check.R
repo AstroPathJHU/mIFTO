@@ -18,6 +18,8 @@ mIFTO.error.check <- function(
     err.val) {
   print(err.val)
   err.msg <- dplyr::case_when(
+    err.val ==  "Error finding IP" ~ "Could not find IP address. Using default shiny IP address.",
+    #
     err.val ==  "Input Slide ID" ~ "Please enter valid slide desciptor input.",
     #
     err.val ==  "Input Antibody" ~ "Please enter a value for the antibody input.",
@@ -53,7 +55,7 @@ mIFTO.error.check <- function(
     err.val ==  "Input Threshold" ~ "Please enter a value for the Threshold input.",
     #
     err.val ==  "Input Threshold length" ~ "The length of concentration list does not
-    equal the length of threshold list.",
+    equal the length of threshold list. Make sure IHCs are accounted for if they are being analyzed",
     #
     err.val ==  "Input Connected Pixels" ~ "Could not parse connected pixel
     input. Please enter a valid list of numeric connected pixel values,
@@ -71,7 +73,35 @@ mIFTO.error.check <- function(
     BiocManager::install('EBImage')\n
     Once those install, try rerunning mIFTO.",
     #
+    grepl("Wrong number of layers", err.val, fixed = TRUE)
+    ~ paste0(
+          'Please make sure the staining protocol is correct.'),
+    #
+    grepl("No files containing", err.val, fixed = TRUE)
+    ~ 'Make sure the opal is correct.',
+    #
+    grepl("Search failed for", err.val, fixed = TRUE)
+    ~ paste0(
+      'Please check slide names and that component data tiffs exist for ',
+      strsplit(err.val, " for ")[[1]][2]),
+    #
+    grepl("Error in small.tables", err.val, fixed = TRUE)
+    ~ paste0('Please check slide names, connected pixel entries, threshold entries',
+             ', that image layers correspond to protocol type, ',
+             'and that component data tiffs for ',
+             strsplit(err.val, "for ")[[1]][2],' exist. Then contact ',
+             'Sigfredo Soto at ssotodi1@jh.edu for assistance.'),
+    #
+    grepl("Error Reading Component Images", err.val, fixed = TRUE)
+    ~ paste0('Please check the computer resources, slide names, ',
+             'image layers correspond to protocol type, ',
+             'and that component data tiffs for ',
+             strsplit(err.val, "for ")[[1]][2],
+             ' exist. Then contact ',
+             'Sigfredo Soto at ssotodi1@jh.edu for assistance.'),
+    #
     .default = as.character(err.val)
   )
-  return(err.msg)
+  print(err.msg)
+  return(list(err.val=err.val,err.msg=err.msg))
 }

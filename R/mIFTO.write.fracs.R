@@ -126,17 +126,18 @@ mIFTO.write.fracs <- function (
       #
       if(length(cImage.IDs) == 0 ){
         if (typeof(pb.Object) != "character"){
-          modal_out <- shinyalert::shinyalert(
-            title =  paste0('Search failed for ', x,
-                            ' IHC images'),
-            text = paste0(
-              'Please check slide names and that component data tiffs for ',
-              x, ' IHC exist'),
-            type = 'error',
-            showConfirmButton = TRUE
-          )
+          # modal_out <- shinyalert::shinyalert(
+          #   title =  paste0('Search failed for ', x,
+          #                   ' IHC'),
+          #   text = paste0(
+          #     'Please check slide names and that component data tiffs for ',
+          #     x, ' IHC exist'),
+          #   type = 'error',
+          #   showConfirmButton = TRUE
+          # )
         }
-        err.val <- 13
+        err.val <- paste0('Search failed for ', x,
+                          ' IHC')
         return(list(err.val = err.val))
       }
       ihc.Image.IDs[[x]]<-gsub('.*\\[|\\].*','',cImage.IDs)
@@ -166,45 +167,44 @@ mIFTO.write.fracs <- function (
           )
         }, warning = function(cond) {
           if (typeof(pb.Object) != "character"){
-            modal_out <- shinyalert::shinyalert(
-              title = paste0('Error Reading Component Images for ',
-                             x, ' IHC'),
-              text = paste0('Please check the computer resources, slide names, ',
-                            'image layers correspond to protocol type, ',
-                            'and that component data tiffs for ', x,
-                            ' IHC exist. Then contact ',
-                            'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
-                            cond),
-              type = 'error',
-              showConfirmButton = TRUE
-            )
+            # modal_out <- shinyalert::shinyalert(
+            #   title = paste0('Error Reading Component Images for ',
+            #                  x, ' IHC'),
+            #   text = paste0('Please check the computer resources, slide names, ',
+            #                 'image layers correspond to protocol type, ',
+            #                 'and that component data tiffs for ', x,
+            #                 ' IHC exist. Then contact ',
+            #                 'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
+            #                 cond),
+            #   type = 'error',
+            #   showConfirmButton = TRUE
+            # )
           }
-          err.val <- 15
-          return(err.val)
+          stop(cond)
         }, error = function(cond) {
           if (typeof(pb.Object) != "character"){
-            modal_out <- shinyalert::shinyalert(
-              title = paste0('Error Reading Component Images for ',
-                             x, ' IHC'),
-              text = paste0('Please check the computer resources, slide names, ',
-                            'image layers correspond to protocol type, ',
-                            'and that component data tiffs for ', x,
-                            ' IHC exist. Then contact ',
-                            'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
-                            cond),
-              type = 'error',
-              showConfirmButton = TRUE
-            )
+            # modal_out <- shinyalert::shinyalert(
+            #   title = paste0('Error Reading Component Images for ',
+            #                  x, ' IHC'),
+            #   text = paste0('Please check the computer resources, slide names, ',
+            #                 'image layers correspond to protocol type, ',
+            #                 'and that component data tiffs for ', x,
+            #                 ' IHC exist. Then contact ',
+            #                 'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
+            #                 cond),
+            #   type = 'error',
+            #   showConfirmButton = TRUE
+            # )
           }
-          err.val <- 15
-          return(err.val)
+          stop(cond)
         },
         finally={
           parallel::stopCluster(cl)
         })
         #
         if (length(ihc.small.tables.byimage) == 1) {
-          err.val <- 15
+          err.val <- paste0('Error Reading Component Images for ',
+                            x, ' IHC')
           return(list(err.val = err.val))
         }
       })

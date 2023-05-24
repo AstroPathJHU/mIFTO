@@ -25,11 +25,11 @@
 #'
 #' @export
 #'
-mIFTOapp <- function(){
+mIFTOappDebug <- function(){
   #
   if (!.Platform$OS.type == "windows") {
     warning(paste('Application has only been tested on windows machines.',
-            'Other OSs are not yet supported'))
+                  'Other OSs are not yet supported'))
   }
   #
   if (!curl::has_internet()) {
@@ -46,39 +46,21 @@ mIFTOapp <- function(){
     ip <- ip[[1]]
     #
   }, error = function(cond){
-    message('cannot find local IP, using shiny default. Performance may suffer.')
-    ip = "127.0.0.1"
+    err.msg <- mIFTO::mIFTO.error.check("Error finding IP")
+    message(err.msg)
+    ip <<- "127.0.0.1"
   })
   #
   tryCatch({
-  options(browser = "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe")
-  shiny::shinyApp(ui = mIFTO::mIFTO.ui.map(), mIFTO::mIFTO.server.side,
-                options = list(width = 1000, launch.browser = TRUE,
-                               host = ip, quiet = T))
-  }, warning = function(cond) {
-    tryCatch({
-      options(browser = "C:/Program Files/Google/Chrome/Application/chrome.exe")
-      shiny::shinyApp(ui = mIFTO::mIFTO.ui.map(), mIFTO::mIFTO.server.side,
-                      options = list(width = 1000, launch.browser = TRUE,
-                                     host = ip, quiet = T))
-    },  warning = function(cond) {
-      stop('Error could not find supported web browser.')
-    },  error = function(cond) {
-      stop('Error could not find supported web browser.')
-    })
-    #
-  }, error = function(cond) {
-    tryCatch({
-      options(browser = "C:/Program Files/Google/Chrome/Application/chrome.exe")
-      shiny::shinyApp(ui = mIFTO::mIFTO.ui.map(), mIFTO::mIFTO.server.side,
-                      options = list(width = 1000, launch.browser = TRUE,
-                                     host = ip, quiet = T))
-    },  warning = function(cond) {
-      stop('Error could not find supported web browser.')
-    },  error = function(cond) {
-      stop('Error could not find supported web browser.')
-    })
+    options(browser = "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe")
+    shiny::shinyApp(ui = mIFTO::mIFTO.ui.map(), mIFTO::mIFTO.server.side,
+                    options = list(width = 1000, launch.browser = TRUE,
+                                   host = ip, quiet = T))
+  }, warning=function(cond){
+    err.msg <- mIFTO::mIFTO.error.check(cond$message)
+  }, error=function(cond){
+    err.msg <- mIFTO::mIFTO.error.check(cond$message)
   })
-    #
+  #
   #
 }

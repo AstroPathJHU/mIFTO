@@ -35,7 +35,7 @@
 #'
 mIFTO.populate.tables <- function(
     Slide_Descript, Concentration, Antibody_Opal, Thresholds, Opal1,
-    flowout, Protocol, paths, titration.type.name, connected.pixels,
+    flowout, Protocol, paths, titration.type.name, titration.type, connected.pixels,
     decile.logical, threshold.logical, pb.count = "", pb.Object = ""){
   #
   #############pre-allocating tables to store results###################
@@ -104,29 +104,52 @@ mIFTO.populate.tables <- function(
         tryCatch({
           small.tables.byimage <- mIFTO::mIFTO.parallel.invoke.gpxp(
                 Concentration, x, y, Image.IDs, Antibody_Opal,
-                titration.type.name, Thresholds, paths,
+                titration.type.name, titration.type, Thresholds, paths,
                 connected.pixels, flowout, Opal1,
                 decile.logical, threshold.logical, cl)
+          small.tables.byimage<-small.tables.byimage$small.tables.byimage
+          err.val<-small.tables.byimage$err.val
+        }, warning = function(cond){
+          if (typeof(pb.Object) != "character") {
+            # modal_out <- shinyalert::shinyalert(
+            #   title = paste0('Error in small.tables for ',
+            #                  x, ' 1to', Concentration[[y]]),
+            #   text = paste0('Please check the computer resources, slide names, ',
+            #                 'image layers correspond to protocol type, ',
+            #                 'and that component data tiffs for ', x,
+            #                 ' 1to',Concentration[[y]],' exist. Then contact ',
+            #                 'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
+            #                 cond),
+            #   type = 'error',
+            #   showConfirmButton = TRUE
+            # )
+            stop(cond)
+          }
         }, error = function(cond){
           if (typeof(pb.Object) != "character") {
-            modal_out <- shinyalert::shinyalert(
-              title = paste0('Error in small.tables for ',
-                             x, ' 1to', Concentration[[y]]),
-              text = paste0('Please check the computer resources, slide names, ',
-                            'image layers correspond to protocol type, ',
-                            'and that component data tiffs for ', x,
-                            ' 1to',Concentration[[y]],' exist. Then contact ',
-                            'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
-                            cond),
-              type = 'error',
-              showConfirmButton = TRUE
-            )
+            # modal_out <- shinyalert::shinyalert(
+            #   title = paste0('Error in small.tables for ',
+            #                  x, ' 1to', Concentration[[y]]),
+            #   text = paste0('Please check the computer resources, slide names, ',
+            #                 'image layers correspond to protocol type, ',
+            #                 'and that component data tiffs for ', x,
+            #                 ' 1to',Concentration[[y]],' exist. Then contact ',
+            #                 'Sigfredo Soto at ssotodi1@jh.edu for assistance.',
+            #                 cond),
+            #   type = 'error',
+            #   showConfirmButton = TRUE
+            # )
+            stop(cond)
           }
         }, finally = {
           parallel::stopCluster(cl)
         })
+        # if (err.val != 0){
+        #   return(list(err.val = small.tables.byimage$err.val))
+        # }
         if (length(small.tables.byimage) == 1) {
-          err.val <- 14
+          err.val <- paste0('Error in small.tables for ',
+                            x, ' 1to', Concentration[[y]])
           return(list(err.val = err.val))
         }
       })

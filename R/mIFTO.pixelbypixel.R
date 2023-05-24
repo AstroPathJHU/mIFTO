@@ -26,24 +26,20 @@
 mIFTO.pixelbypixel <- function(out,pb.Object) {
   ##############################input parameters########################
   #
-  export_var <- function(v1) {
-    filename = paste0("C:\\Users\\Public\\Documents\\", deparse(substitute(v1)), ".csv")
-    write.csv(v1, filename, row.names=FALSE)
-  }
-  tryCatch({
-    export_var(out)
-    }, error = function(cond) {
-      err.val <- 1
-      return(err.val)
-      })
-
+  print(Sys.time())
+  #
   pb.count = 0; mIFTO::mIFTO.doupdate.pgbar(
     pb.count, pb.Object, 'Browse For Folder')
+  err.val <- 0
   #
   # check input parameters and allocate some for eaiser indexing
   #
-  outchecked <- mIFTO::mIFTO.check.vars(out)
-  err.val <- outchecked$err.val
+  tryCatch({
+    outchecked <- mIFTO::mIFTO.check.varsdebug(out)
+    err.val <- outchecked$err.val
+  }, error=function(cond){
+    err.val<<-cond$message
+  })
   if (err.val != 0) {
     return(err.val)
   }
@@ -85,13 +81,37 @@ mIFTO.pixelbypixel <- function(out,pb.Object) {
   #
   ###############################Reads in data##########################
   #
-  time <- system.time(
-    Tables <- mIFTO::mIFTO.populate.tables(
-      Slide_Descript, Concentration, Antibody_Opal, Thresholds, Opal1,
-      flowout, Protocol, paths, titration.type.name, connected.pixels,
-      decile.logical, threshold.logical, pb.count, pb.Object
+  tryCatch({
+    time <- system.time(
+      Tables <- mIFTO::mIFTO.populate.tables(
+        Slide_Descript, Concentration, Antibody_Opal, Thresholds, Opal1,
+        flowout, Protocol, paths, titration.type.name, titration.type, connected.pixels,
+        decile.logical, threshold.logical, pb.count, pb.Object
+      )
     )
-  )
+  }, warning = function(cond) {
+    stop(cond$message)
+    # if (typeof(pb.Object) != "character") {
+    #   modal_out <- shinyalert::shinyalert(
+    #     title = paste0('Error in Tables'),
+    #     text = paste0('Error',
+    #                   cond),
+    #     type = 'error',
+    #     showConfirmButton = TRUE
+    #   )
+    # }
+  }, error = function(cond) {
+    stop(cond$message)
+    # if (typeof(pb.Object) != "character") {
+    #   modal_out <- shinyalert::shinyalert(
+    #     title = paste0('Error in Tables'),
+    #     text = paste0('Error',
+    #                   cond),
+    #     type = 'error',
+    #     showConfirmButton = TRUE
+    #   )
+    # }
+  })
   #
   err.val <- Tables$err.val
   if (err.val != 0) {
@@ -114,30 +134,45 @@ mIFTO.pixelbypixel <- function(out,pb.Object) {
   #
   ##################prepares some parameters for the graphs#############
   #
-  graph.out <- mIFTO::mIFTO.create.my.theme(Antibody_Opal)
-  theme1 <- graph.out$theme1
-  colors <- graph.out$colors
-  Antibody_Opal.snratio <- graph.out$Antibody_Opal.snratio
-  Antibody_Opal.ttest <- graph.out$Antibody_Opal.ttest
-  con_type <- 'factor'
+  tryCatch({
+    graph.out <- mIFTO::mIFTO.create.my.theme(Antibody_Opal)
+    theme1 <- graph.out$theme1
+    colors <- graph.out$colors
+    Antibody_Opal.snratio <- graph.out$Antibody_Opal.snratio
+    Antibody_Opal.ttest <- graph.out$Antibody_Opal.ttest
+    con_type <- 'factor'
+  }, error = function(cond) {
+    return(cond)
+  })
   #
   ###############################generate plots#########################
   #
   if (threshold.logical){
-    mIFTO::mIFTO.map.and.plot.threshold.graphs(
-      wd, Antibody_Opal, Antibody, Slide_Descript, Concentration, Tables,
-      Thresholds, connected.pixels, ihc.logical, ihc.Thresholds,
-      ihc.connected.pixels, folders.px, theme1, con_type, colors,
-      Antibody_Opal.snratio, Antibody_Opal.ttest, pb.Object)
+    tryCatch({
+      err.val<-mIFTO::mIFTO.map.and.plot.threshold.graphs(
+        wd, Antibody_Opal, Antibody, Slide_Descript, Concentration, Tables,
+        Thresholds, connected.pixels, ihc.logical, ihc.Thresholds,
+        ihc.connected.pixels, folders.px, theme1, con_type, colors,
+        Antibody_Opal.snratio, Antibody_Opal.ttest, pb.Object)
+    }, error = function(cond) {
+      return(cond)
+    })
+  }
+  if (err.val != 0){
+    return(err.val)
   }
   #
   # some decile graphs
   #
   if (decile.logical){
-    mIFTO::mIFTO.map.and.plot.decile.graphs(
-      wd, Antibody_Opal, Antibody, Slide_Descript, Concentration, Tables,
-      theme1, con_type, colors, Antibody_Opal.snratio, Antibody_Opal.ttest,
-      pb.Object)
+    tryCatch({
+      mIFTO::mIFTO.map.and.plot.decile.graphs(
+        wd, Antibody_Opal, Antibody, Slide_Descript, Concentration, Tables,
+        theme1, con_type, colors, Antibody_Opal.snratio, Antibody_Opal.ttest,
+        pb.Object)
+    }, error = function(cond) {
+      return(cond)
+    })
   }
   #
   ###############################Histogram Graphs ######################
@@ -145,9 +180,16 @@ mIFTO.pixelbypixel <- function(out,pb.Object) {
   ii = 97;mIFTO::mIFTO.doupdate.pgbar(
     ii, pb.Object, 'Generating Histogram Graphs')
   #
-  mIFTO::mIFTO.map.and.write.histograms(
-    wd, Antibody_Opal, Slide_Descript,
-    Concentration, Thresholds, Tables$Tables.wholeslide, theme1, colors)
+  tryCatch({
+    mIFTO::mIFTO.map.and.write.histograms(
+      wd, Antibody_Opal, Slide_Descript,
+      Concentration, Thresholds, Tables$Tables.wholeslide, theme1, colors)
+  }, error = function(cond) {
+    print(cond)
+    err.val <- cond
+    return(err.val)
+  })
+  print(Sys.time())
   #
   ############################### Finished #############################
   #

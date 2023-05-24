@@ -42,11 +42,15 @@ mIFTO.pixelbypixeldebug <- function(out,pb.Object="") {
   #
   # check input parameters and allocate some for eaiser indexing
   #
-  outchecked <- mIFTO::mIFTO.check.varsdebug(out)
-  err.val <- outchecked$err.val
+  tryCatch({
+    outchecked <- mIFTO::mIFTO.check.varsdebug(out)
+    err.val <- outchecked$err.val
+  }, error=function(cond){
+    err.val<<-cond$message
+  })
   if (err.val != 0) {
-    # return(err.val)
-    import = TRUE
+    return(err.val)
+    import = FALSE
   } else {
     import = FALSE
   }
@@ -80,6 +84,7 @@ mIFTO.pixelbypixeldebug <- function(out,pb.Object="") {
       Protocol <- import_var(Protocol)[[1]]
       paths <- import_var(paths)[[1]]
       titration.type.name <- import_var(titration.type.name)[[1]]
+      titration.type <- import_var(titration.type)[[1]]
       connected.pixels <- import_var(connected.pixels)
       decile.logical.str <- import_var(decile.logical)[[1]]
       if (decile.logical.str=="FALSE"){
@@ -94,13 +99,13 @@ mIFTO.pixelbypixeldebug <- function(out,pb.Object="") {
         threshold.logical = TRUE
         }
     }, error = function(cond) {
-      modal_out <- shinyalert::shinyalert(
-        title = paste0('Something went wrong'),
-        text = paste0(cond),
-        type = 'error',
-        showConfirmButton = TRUE
-      )
-      err.val <- 14
+      # modal_out <- shinyalert::shinyalert(
+      #   title = paste0('Something went wrong'),
+      #   text = paste0(cond),
+      #   type = 'error',
+      #   showConfirmButton = TRUE
+      # )
+      err.val <- cond
       return(err.val)
     })
   }
@@ -140,6 +145,8 @@ mIFTO.pixelbypixeldebug <- function(out,pb.Object="") {
       export_var(paths)
       titration.type.name <- outchecked$titration.type.name
       export_var(titration.type.name)
+      titration.type <- outchecked$titration.type
+      export_var(titration.type)
       connected.pixels <- outchecked$connected.pixels
       export_var(connected.pixels)
       decile.logical <- outchecked$decile.logical
@@ -147,7 +154,7 @@ mIFTO.pixelbypixeldebug <- function(out,pb.Object="") {
       threshold.logical <- outchecked$threshold.logical
       export_var(threshold.logical)
     }, error = function(cond) {
-      err.val <- 1
+      err.val <- "Variable loading error"
       return(err.val)
     })
     rm(outchecked, out)
@@ -165,21 +172,32 @@ mIFTO.pixelbypixeldebug <- function(out,pb.Object="") {
   time <- system.time(
     Tables <- mIFTO::mIFTO.populate.tables(
       Slide_Descript, Concentration, Antibody_Opal, Thresholds, Opal1,
-      flowout, Protocol, paths, titration.type.name, connected.pixels,
+      flowout, Protocol, paths, titration.type.name, titration.type, connected.pixels,
       decile.logical, threshold.logical, pb.count, pb.Object
     )
   )
+  }, warning = function(cond) {
+    stop(cond$message)
+    # if (typeof(pb.Object) != "character") {
+    #   modal_out <- shinyalert::shinyalert(
+    #     title = paste0('Error in Tables'),
+    #     text = paste0('Error',
+    #                   cond),
+    #     type = 'error',
+    #     showConfirmButton = TRUE
+    #   )
+    # }
   }, error = function(cond) {
-    print(cond)
-    if (typeof(pb.Object) != "character") {
-      modal_out <- shinyalert::shinyalert(
-        title = paste0('Error in Tables'),
-        text = paste0('Error',
-                      cond),
-        type = 'error',
-        showConfirmButton = TRUE
-      )
-    }
+    stop(cond$message)
+    # if (typeof(pb.Object) != "character") {
+    #   modal_out <- shinyalert::shinyalert(
+    #     title = paste0('Error in Tables'),
+    #     text = paste0('Error',
+    #                   cond),
+    #     type = 'error',
+    #     showConfirmButton = TRUE
+    #   )
+    # }
   })
   #
   err.val <- Tables$err.val
@@ -203,30 +221,45 @@ mIFTO.pixelbypixeldebug <- function(out,pb.Object="") {
   #
   ##################prepares some parameters for the graphs#############
   #
-  graph.out <- mIFTO::mIFTO.create.my.theme(Antibody_Opal)
-  theme1 <- graph.out$theme1
-  colors <- graph.out$colors
-  Antibody_Opal.snratio <- graph.out$Antibody_Opal.snratio
-  Antibody_Opal.ttest <- graph.out$Antibody_Opal.ttest
-  con_type <- 'factor'
+  tryCatch({
+    graph.out <- mIFTO::mIFTO.create.my.theme(Antibody_Opal)
+    theme1 <- graph.out$theme1
+    colors <- graph.out$colors
+    Antibody_Opal.snratio <- graph.out$Antibody_Opal.snratio
+    Antibody_Opal.ttest <- graph.out$Antibody_Opal.ttest
+    con_type <- 'factor'
+  }, error = function(cond) {
+    return(cond)
+  })
   #
   ###############################generate plots#########################
   #
   if (threshold.logical){
-    mIFTO::mIFTO.map.and.plot.threshold.graphs(
-      wd, Antibody_Opal, Antibody, Slide_Descript, Concentration, Tables,
-      Thresholds, connected.pixels, ihc.logical, ihc.Thresholds,
-      ihc.connected.pixels, folders.px, theme1, con_type, colors,
-      Antibody_Opal.snratio, Antibody_Opal.ttest, pb.Object)
+    tryCatch({
+      err.val<-mIFTO::mIFTO.map.and.plot.threshold.graphs(
+        wd, Antibody_Opal, Antibody, Slide_Descript, Concentration, Tables,
+        Thresholds, connected.pixels, ihc.logical, ihc.Thresholds,
+        ihc.connected.pixels, folders.px, theme1, con_type, colors,
+        Antibody_Opal.snratio, Antibody_Opal.ttest, pb.Object)
+    }, error = function(cond) {
+      return(cond)
+    })
+  }
+  if (err.val != 0){
+    return(err.val)
   }
   #
   # some decile graphs
   #
   if (decile.logical){
-    mIFTO::mIFTO.map.and.plot.decile.graphs(
-      wd, Antibody_Opal, Antibody, Slide_Descript, Concentration, Tables,
-      theme1, con_type, colors, Antibody_Opal.snratio, Antibody_Opal.ttest,
-      pb.Object)
+    tryCatch({
+      mIFTO::mIFTO.map.and.plot.decile.graphs(
+        wd, Antibody_Opal, Antibody, Slide_Descript, Concentration, Tables,
+        theme1, con_type, colors, Antibody_Opal.snratio, Antibody_Opal.ttest,
+        pb.Object)
+    }, error = function(cond) {
+      return(cond)
+    })
   }
   #
   ###############################Histogram Graphs ######################
@@ -234,9 +267,15 @@ mIFTO.pixelbypixeldebug <- function(out,pb.Object="") {
   ii = 97;mIFTO::mIFTO.doupdate.pgbar(
     ii, pb.Object, 'Generating Histogram Graphs')
   #
-  mIFTO::mIFTO.map.and.write.histograms(
-    wd, Antibody_Opal, Slide_Descript,
-    Concentration, Thresholds, Tables$Tables.wholeslide, theme1, colors)
+  tryCatch({
+    mIFTO::mIFTO.map.and.write.histograms(
+      wd, Antibody_Opal, Slide_Descript,
+      Concentration, Thresholds, Tables$Tables.wholeslide, theme1, colors)
+  }, error = function(cond) {
+    print(cond)
+    err.val <- cond
+    return(err.val)
+  })
   print(Sys.time())
   #
   ############################### Finished #############################
