@@ -209,5 +209,8 @@ mIFTO.server.side <- function(input, output, session) {
       )
     })
   })
+  session$onSessionEnded(function() {
+    stopApp()
+  })
   #
 }

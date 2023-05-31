@@ -17,7 +17,7 @@
 #'
 #' @param out is the list of variables given by the GUI function
 #' @param pb is the progress bar created by the GUI
-#' @return exports a variety of graphs displayed in the documentation
+#' @stop exports a variety of graphs displayed in the documentation
 #'  Such as SNRatio graphs, t statisitics and graphs,
 #'  histograms of the log intensity profiles
 #'  for images, positivity measures given thresholds
@@ -41,7 +41,7 @@ mIFTO.pixelbypixel <- function(out,pb.Object) {
     err.val<<-cond$message
   })
   if (err.val != 0) {
-    return(err.val)
+    stop(err.val)
   }
   tryCatch({
     wd <- outchecked$wd
@@ -68,7 +68,7 @@ mIFTO.pixelbypixel <- function(out,pb.Object) {
     threshold.logical <- outchecked$threshold.logical
   }, error = function(cond) {
     err.val <- 1
-    return(err.val)
+    stop(err.val)
   })
   #
   rm(outchecked, out)
@@ -118,7 +118,7 @@ mIFTO.pixelbypixel <- function(out,pb.Object) {
   #
   err.val <- Tables$err.val
   if (err.val != 0) {
-    return(err.val)
+    stop(err.val)
   }
   #
   time1 <- time[['elapsed']]/60
@@ -145,7 +145,7 @@ mIFTO.pixelbypixel <- function(out,pb.Object) {
     Antibody_Opal.ttest <- graph.out$Antibody_Opal.ttest
     con_type <- 'factor'
   }, error = function(cond) {
-    return(cond)
+    stop(cond)
   })
   #
   ###############################generate plots#########################
@@ -159,11 +159,11 @@ mIFTO.pixelbypixel <- function(out,pb.Object) {
         Antibody_Opal.snratio, Antibody_Opal.ttest, pb.Object)
     }, error = function(cond) {
       print(cond)
-      return(cond)
+      stop(cond)
     })
   }
   if (err.val != 0){
-    return(err.val)
+    stop(err.val)
   }
   #
   # some decile graphs
@@ -175,7 +175,7 @@ mIFTO.pixelbypixel <- function(out,pb.Object) {
         theme1, con_type, colors, Antibody_Opal.snratio, Antibody_Opal.ttest,
         pb.Object)
     }, error = function(cond) {
-      return(cond)
+      stop(cond)
     })
   }
   #
@@ -191,7 +191,7 @@ mIFTO.pixelbypixel <- function(out,pb.Object) {
   }, error = function(cond) {
     print(cond)
     err.val <- cond
-    return(err.val)
+    stop(err.val)
   })
   print(Sys.time())
   #

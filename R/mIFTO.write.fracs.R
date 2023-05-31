@@ -165,6 +165,8 @@ mIFTO.write.fracs <- function (
             ihc.path, x, ihc.Image.IDs, ihc.Thresholds,
             ihc.connected.pixels, cl
           )
+          print(length(ihc.small.tables.byimage))
+          print(ihc.small.tables.byimage)
         }, warning = function(cond) {
           if (typeof(pb.Object) != "character"){
             # modal_out <- shinyalert::shinyalert(

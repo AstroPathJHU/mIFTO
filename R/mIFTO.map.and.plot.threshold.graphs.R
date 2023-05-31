@@ -40,6 +40,7 @@ mIFTO.map.and.plot.threshold.graphs <- function(
   Thresholds, connected.pixels, ihc.logical, ihc.Thresholds,
   ihc.connected.pixels, folders.px, theme1, con_type, colors,
   Antibody_Opal.snratio, Antibody_Opal.ttest, pb.Object="") {
+  err.val=0
   #
   if (typeof(pb.Object) != "character"){
     if (ihc.logical){
