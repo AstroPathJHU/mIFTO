@@ -48,7 +48,7 @@ mIFTO.generate.pxp.image.data <- function(
   }
   if (grepl("Fluoro", titration.type, fixed = TRUE)){
     str = paste0(
-      '.*', x, '.*',titration.type.name, '.*Opal',Opal1,'_1to', '.*', Concentration[y],
+      '.*', x, '.*','.*Opal',Opal1,'_1to', '.*', Concentration[y],
       '_.*\\[',q, '\\]'
     )
   }
