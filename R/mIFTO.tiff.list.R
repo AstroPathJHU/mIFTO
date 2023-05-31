@@ -44,7 +44,8 @@ mIFTO.tiff.list <- function(wd, pattern.in, Opal1="") {
     }
   }
   if (length(image_names) < 1){
-    return(list(err.val = paste0("No files containing Opal", Opal1)))
+    return(list(err.val = paste0("No files containing Opal ", Opal1, ".
+                                 Tried using ", pattern.in, " as pattern.")))
   }
   tryCatch({
     pattern.match="\\<Name\\>(.*?)\\<Name\\>"
