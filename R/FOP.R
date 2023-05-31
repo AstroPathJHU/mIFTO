@@ -34,7 +34,7 @@
 #'
 #' @export
 FOP<-function(){
-  e = 0
+  err.msg = "Finished"
   #
   tryCatch({
     #
@@ -44,23 +44,25 @@ FOP<-function(){
     ip <- ip[[1]]
     #
   }, error = function(cond){
-    err.msg <- mIFTO::mIFTO.error.check("Error finding IP")
+    err.msg <<- mIFTO::mIFTO.error.check("Error finding IP")
     message(err.msg)
     ip <<- "127.0.0.1"
   }, warning = function(cond){
-    err.msg <- mIFTO::mIFTO.error.check("Error finding IP")
+    err.msg <<- mIFTO::mIFTO.error.check("Error finding IP")
     message(err.msg)
     ip <<- "127.0.0.1"
   })
   #
   tryCatch({
-    err.msg <- FOP.error.check(2)
     shiny::shinyApp(ui = mIFTO::FOP.set.ui, mIFTO::FOP.server.side,
                     options = list(width = 1000, launch.browser = TRUE,
                                    host = ip, quiet = T))
   },  warning = function(cond) {
-    err.msg <- mIFTO::mIFTO.error.check(cond$message)
+    err.msg <<- mIFTO::mIFTO.error.check(cond$message)
+    return(err.msg)
   },  error = function(cond) {
-    err.msg <- mIFTO::mIFTO.error.check(cond$message)
-  }, finally={})
+    err.msg <<- mIFTO::mIFTO.error.check(cond$message)
+    return(err.msg)
+  }, finally={
+  })
 }

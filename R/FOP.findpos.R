@@ -32,11 +32,13 @@
 #' @param Positive.table is the image for which positivity needs to be defined
 #' @param out is the current threshold
 #' @param my.vals is the current connected pixels value
+#' @param test.bool is the current connected pixels value
+#' @param wd is the current connected pixels value
 #' @return a list with three data.frames; a sn means, sn medians, and a
 #' fraction of pos
 #'
 #' @export
-FOP.findpos<-function(Positive.table, out, my.vals){
+FOP.findpos<-function(Positive.table, out, my.vals, test.bool, wd=""){
   AB <- my.vals$AB
   Opal1 <- my.vals$Opal1
   Concentration <- my.vals$delin
@@ -45,7 +47,9 @@ FOP.findpos<-function(Positive.table, out, my.vals){
   Slide_ID <- my.vals$Slide_ID
   fraction.type <- out$fraction.type
   #find working directory
-  wd<-choose.dir(my.vals$wd, caption = 'Data directory:')
+  if (wd==""){
+    wd<-choose.dir(my.vals$wd, caption = 'Data directory:')
+  }
   if (is.na(wd)){
     stop("Empty Directory")
   }
@@ -121,7 +125,7 @@ FOP.findpos<-function(Positive.table, out, my.vals){
     # added to for additional AB with the same SlideIDs.
     my.vals$raw.data<-rbind(my.vals$raw.data,CellSeg)
     Positive.table<-rbind(Positive.table,Pos)
-    return(Positive.table)
+    return(list(Positive.table=Positive.table, my.vals=my.vals))
   }else if(fraction.type =='Cells'){
     ##read data in and organize it
     CellSeg<-

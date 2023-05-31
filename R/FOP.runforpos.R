@@ -31,16 +31,17 @@
 #'
 #' @param out is the image for which positivity needs to be defined
 #' @param my.vals is the current threshold
+#' @param test.bool is the current connected pixels value
+#' @param wd is the current connected pixels value
 #' @return a list with three data.frames; a sn means, sn medians, and a
 #' fraction of pos
 #'
 #' @export
-FOP.runforpos<-function(out, my.vals){
+FOP.runforpos<-function(out, my.vals, test.bool, wd=""){
   #
   fraction.type <-out$fraction.type
   Positive.table<-data.frame()
-  # raw.data <- data.frame()
-  Positive.table<-FOP.findpos(Positive.table, out,  my.vals)
-  return(Positive.table)
+  results<-mIFTO::FOP.findpos(Positive.table, out, my.vals, test.bool, wd)
+  return(results)
   #
 }

@@ -41,73 +41,26 @@ FOP.server.side <- function(input, output, session) {
   #
   # intialize passable variables
   #
-  my.vals <- reactiveValues(
-    Slide_ID=NULL, wd=NULL, Positive.table=NULL, delin = NULL,
-    Opal1 = NULL, Antibody = NULL, IHC = NULL, raw.data=NULL, delins=NULL)
+  pixel<-list(my.vals <- reactiveValues(
+    Slide_ID=NULL, delin = NULL, delins=NULL,
+    Opal1 = NULL, Antibody = NULL, IHC = NULL, MoTiF=NULL, wd=NULL,
+    raw.data=NULL, Positive.table=NULL),
+    err.msg=0)
+  run<-0
+  run <<- run+1
   #
   # main observe event
   #
   shiny::observeEvent(input$FOP, {
+    run <<- run+1
     #
     # run the code and catch any errors
     #
-    tryCatch({
-      #
-      len<-c()
-      my.vals$Slide_ID <- unlist(strsplit(input$Slide_ID,
-                                          split = ','))
-      len<-append(len,length(my.vals$Slide_ID))
-      my.vals$delin = input$Concentration
-      len<-append(len,nchar(my.vals$delin))
-      my.vals$delins <- cbind(my.vals$delins, input$Concentration)
-      len<-append(len,nchar(my.vals$delins))
-      my.vals$Opal1 <- input$Opal1
-      len<-append(len,nchar(my.vals$Opal1))
-      my.vals$Antibody <- input$Antibody
-      len<-append(len,nchar(my.vals$Antibody))
-      my.vals$IHC <- input$IHC
-      my.vals$MoTiF <- input$MoTiF
-      my.vals$wd <- ""
-      for (item in len){
-        if (item==0){
-          stop("Missing inputs.")
-        }
-      }
-      my.vals$Positive.table <- mIFTO::FOP.runforpos(input, my.vals)
-      if (length(my.vals$Positive.table)==2){
-        stop(my.vals$Positive.table)
-      }
-      shiny::showModal(FOP.another.ab.modal())
-      #
-    }, warning = function(cond){
-      err.msg <- FOP.error.check(cond$message)
-      my.vals$delins<-NULL
-      my.vals$raw.data<-NULL
-      name <- c()
-      ID.list <- c()
-      delin.list <- c()
-      max_num <- 0
-      modal_out <- shinyalert::shinyalert(
-        title = "Input Warning.",
-        text = paste0(err.msg),
-        type = 'error',
-        showConfirmButton = TRUE
-      )
-    }, error = function(cond){
-      err.msg <- FOP.error.check(cond$message)
-      my.vals$delins<-NULL
-      my.vals$raw.data<-NULL
-      name <- c()
-      ID.list <- c()
-      delin.list <- c()
-      max_num <- 0
-      modal_out <- shinyalert::shinyalert(
-        title = "Input Error.",
-        text = paste0(err.msg),
-        type = 'error',
-        showConfirmButton = TRUE
-      )
-    })
+    pixel <<- mIFTO::FOP.pixelbypixel(input, pixel$my.vals, TRUE, run, test.bool=TRUE)
+    if (pixel$err.msg != 0){
+      stop(pixel$err.msg)
+    }
+    shiny::showModal(FOP.another.ab.modal())
   })
   #
   # another dialog observe event launch
@@ -117,13 +70,14 @@ FOP.server.side <- function(input, output, session) {
     # show another ab modal input
     #
     shiny::removeModal()
-    shiny::showModal(FOP.another.ab.modal.input(my.vals, fm.object))
+    shiny::showModal(FOP.another.ab.modal.input(pixel$my.vals, fm.object))
     #
   })
   #
   # another dialog observe event functioning
   #
   shiny::observeEvent(input$run.secondary, {
+    run <<- run+1
     #
     # remove modal
     #
@@ -131,61 +85,11 @@ FOP.server.side <- function(input, output, session) {
     #
     # run with new inputs
     #
-    tryCatch({
-      #
-      len<-c()
-      my.vals$delin = input$Concentration2
-      len<-append(len,nchar(my.vals$delin))
-      my.vals$delins <- cbind(my.vals$delins, input$Concentration2)
-      len<-append(len,nchar(my.vals$delins))
-      my.vals$Opal1 <- input$Opal2
-      len<-append(len,nchar(my.vals$Opal2))
-      my.vals$Antibody <- input$Antibody2
-      len<-append(len,nchar(my.vals$Antibody2))
-      my.vals$IHC <- input$IHC2
-      my.vals$MoTiF <- input$MoTiF2
-      for (item in len){
-        if (item==0){
-          stop("Missing inputs.")
-        }
-      }
-      #
-      my.vals$Positive.table<-mIFTO::FOP.findpos(
-        my.vals$Positive.table, input, my.vals)
-      if (length(my.vals$Positive.table)==2){
-        stop(my.vals$Positive.table)
-      }
-      shiny::showModal(FOP.another.ab.modal())
-      #
-    }, warning = function(cond){
-      err.msg <- FOP.error.check(cond$message)
-      my.vals$delins<-NULL
-      my.vals$raw.data<-NULL
-      name <- c()
-      ID.list <- c()
-      delin.list <- c()
-      max_num <- 0
-      modal_out <- shinyalert::shinyalert(
-        title = "Second Window Input Warning.",
-        text = paste0(err.msg),
-        type = 'error',
-        showConfirmButton = TRUE
-      )
-    }, error = function(cond){
-      err.msg <- FOP.error.check(cond$message)
-      my.vals$delins<-NULL
-      my.vals$raw.data<-NULL
-      name <- c()
-      ID.list <- c()
-      delin.list <- c()
-      max_num <- 0
-      modal_out <- shinyalert::shinyalert(
-        title = "Second Window Input Error.",
-        text = paste0(err.msg),
-        type = 'error',
-        showConfirmButton = TRUE
-      )
-    })
+    pixel <<- mIFTO::FOP.pixelbypixel(input, pixel$my.vals, FALSE, run, test.bool=TRUE)
+    if (pixel$err.msg != 0){
+      stop(pixel$err.msg)
+    }
+    shiny::showModal(FOP.another.ab.modal())
     #
   })
   #
@@ -194,81 +98,18 @@ FOP.server.side <- function(input, output, session) {
   shiny::observeEvent(input$decline, {
     #
     shiny::removeModal()
-    wd<-choose.dir(my.vals$wd, caption = 'Output directory:')
-    tryCatch({
-      write.table(my.vals$Positive.table,file=paste0(
-        wd,'/ + ',input$fraction.type,'.csv'),
-        sep=',', row.names=F )
-      #
-      name <- c()
-      ID.list <- c()
-      delin.list <- c()
-      max_num <- 0
-      for(del in 1:length(my.vals$delins)){
-        con_list <-
-          my.vals$raw.data[my.vals$raw.data$Concentration == my.vals$delins[[del]],]
-        for(id in my.vals$Slide_ID){
-          num = sum(con_list$Slide.ID == id)
-          if(num>max_num){
-            max_num = num
-          }
-        }
-      }
-      max_num <- max_num+2
-      for(del in my.vals$delins){
-        delin.list <-
-          my.vals$raw.data[my.vals$raw.data$Concentration == del,]
-        for(id in my.vals$Slide_ID){
-
-          ID.list <-
-            delin.list[delin.list$Slide.ID == id,]
-          ID.list <- t(dplyr::select(ID.list, fop))
-          ID.list <- c(id, del, ID.list)
-
-          Id.length <- length(ID.list)
-          # tryCatch({
-          if(Id.length<max_num){
-            ID.list <- c(ID.list, paste(integer(max_num-Id.length)))
-          }
-          name <- rbind(name, ID.list)
-        }
-        rbind(name, NA)
-
-      }
-      # write.table(my.vals$raw.data,file=paste0(
-      #   wd,'/ + ',input$fraction.type,'_raw_data.csv'),
-      #   sep=',', row.names=F )
-      write.table(name,file=paste0(
-        wd,'/ + ',input$fraction.type,'_raw_data_ordered.csv'),
-        sep=',', row.names=F )
-
-      my.vals$raw.data=NULL
-      my.vals$delins=NULL
-
-      #
-      modal_out <- shinyalert::shinyalert(
-        title = "Finished",
-        text = paste(
-          ""
-        ),
-        type = 'success',
-        showConfirmButton = TRUE
-      )
-    }, warning = function(cond){
-      modal_out <- shinyalert::shinyalert(
-        title = "Failed to Save",
-        text = paste(cond),
-        type = 'error',
-        showConfirmButton = TRUE
-      )}, error = function(cond){
-        modal_out <- shinyalert::shinyalert(
-          title = "Failed to Save",
-          text = paste(cond),
-          type = 'error',
-          showConfirmButton = TRUE
-        )
-      })
-    #
+    results <<- mIFTO::FOP.export.data(pixel$my.vals, input, test.bool=TRUE)
+    modal_out <- shinyalert::shinyalert(
+      title = "Finished",
+      text = paste(
+        ""
+      ),
+      type = 'success',
+      showConfirmButton = TRUE
+    )
   })
+  session$onSessionEnded(function() {
+    stopApp()
+    })
   #
 }
