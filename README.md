@@ -2,17 +2,21 @@
 #### <div align="center">***v.2.00.196***</div>
 
 ## ***Section 1: Summary***
-This R package was developed to help organize and quantify the inForm Cell Analysis output for pixel-by-pixel, cell-by-bell, and tissue segmentation data. The primary goal of this package is to aid in the assessment and determination of optimum staining conditions for multiplex immunofluorescence titrations on Akoya’s scanning and staining platform. There are two primary functions of ```mIFTO```; ```FOP()``` and ```mIFTOapp()```. ```FOP()``` was designed to measure the ‘fractions of positivity’ for individual conditions. Then, with a unique identifier, the group conditions together into a single csv output file. The function uses the inForm output tables (IF or IHC) for cell segmented, colocalization data, or tissue segmented data as input. The other primary function, ```mIFTOapp()```, was developed to aid in determining an optimum condition for a series of reagent titrations. The output includes pixel histograms of intensity, t-statistics, signal-to-noise ratios, fractions of positivity, and boxplots of expression profiles. 
+This R package was developed to help organize and quantify the inForm Cell Analysis output for pixel-by-pixel, cell-by-bell, and tissue segmentation data. The primary goal of this package is to aid in the assessment and determination of optimum staining conditions for multiplex immunofluorescence titrations on Akoya’s scanning and staining platform. There are two primary functions of ```mIFTO```; ```FOP()``` and ```mIFTOapp()```. ```FOP()``` was designed to measure the ‘fractions of positivity’ for individual conditions. Then, with a unique identifier, the grouped conditions are exported together into a csv output file with the average fraction of positivity and a csv output file with the individual fractions of positivity per slide. The function uses the inForm output tables (IF or IHC) for cell segmented, colocalization data, or tissue segmented data as input. The other primary function, ```mIFTOapp()```, was developed to aid in determining an optimum condition for a series of reagent titrations. The output includes pixel histograms of intensity, t-statistics, signal-to-noise ratios, fractions of positivity, and boxplots of expression profiles. 
 ## ***Section 2: Getting Started***
 #### ***Section 2.1: Initial Package Install***
 Open an Rstudio session to get started. Next, install the package from github using the following commands:
 ```
-install.packages("devtools")
-library(devtools)
-install_github("AstroPathJHU/mIFTO")
+detach("package:mIFTO", unload=TRUE)
+detach("package:mIFTO", unload=TRUE)
 ```
-When the package begins to install a number of messages will appear in the console indicating the status of different events, especially during the initial install or just after R has been updated, this is normal. Some of the messages may be in red, this does not indicate an error. If there is an error during installation, usually the output message to the console will start with ```“Error:”``` or ```“Warning:”```, then describe the corresponding error. 
+It is helpful to run these lines before performing the installation incase the libraries are currently in use.
 
+If it says "Error in detach("package:mIFTO", unload = TRUE) : invalid 'name' argument" this is ok.
+<span style="color:blue">some *blue* text</span>.
+```
+install.packages("devtools")
+```
 The installation of ‘devtools’ is usually the most interactive and takes the longest. This is a provided R package which is used for external programmers to develop R packages. During the ```devtools``` installation command (command 1 above), R may require some user input, examples of this include: 
 
 1.	R may indicate that some packages should be updated. The user can either indicate to update all, some or none of the packages. It is usually best to select the update all option. 
@@ -26,6 +30,15 @@ For more advanced users of R, it may be easier to specific additional options du
 ```install.packages(‘devtools’, ask = FALSE, quiet = TRUE, verbose = FALSE)```
 
 This command will install ```‘devtools’``` without asking the user if it is okay to updated or compile a package and will carry out the procedures automatically. The command will also significantly reduce the output to the console. 
+```
+library(devtools)
+```
+```
+install_github("AstroPathJHU/mIFTO@beta-test", force=TRUE)
+```
+When the package begins to install a number of messages will appear in the console indicating the status of different events, especially during the initial install or just after R has been updated, this is normal. Some of the messages may be in red, this does not indicate an error. If there is an error during installation, usually the output message to the console will start with ```“Error:”``` or ```“Warning:”```, then describe the corresponding error. 
+
+
 
 When the ```install_github('AstroPathJHU/mIFTO')``` command is used, R will output the following messages, followed by a number of other messages. 
 
