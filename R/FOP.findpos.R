@@ -47,7 +47,7 @@ FOP.findpos<-function(Positive.table, out, my.vals, test.bool, wd=""){
   Slide_ID <- my.vals$Slide_ID
   fraction.type <- out$fraction.type
   #find working directory
-  if (wd==""){
+  if (!test.bool){
     wd<-choose.dir(my.vals$wd, caption = 'Data directory:')
   }
   if (is.na(wd)){
@@ -252,9 +252,9 @@ FOP.findpos<-function(Positive.table, out, my.vals, test.bool, wd=""){
     )
     return(Positive.table)}
   }, warning=function(cond){
-    return(cond)
+    stop(cond$message)
   }, error=function(cond){
-    return(cond)
+    stop(cond$message)
   }, finally={
   })
 }

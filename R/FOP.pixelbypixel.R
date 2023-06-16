@@ -64,6 +64,8 @@ FOP.pixelbypixel<-function(input, my.vals, first, run, test.bool, wd=""){
       len<-append(len,nchar(my.vals$Antibody))
       for (item in len){
         if (item==0){
+          my.vals$delins<-NULL
+          my.vals$raw.data<-NULL
           stop("Missing inputs.")
         }
       }
@@ -84,51 +86,57 @@ FOP.pixelbypixel<-function(input, my.vals, first, run, test.bool, wd=""){
       len<-append(len,nchar(my.vals$Antibody2))
       for (item in len){
         if (item==0){
+          my.vals$delins<-NULL
+          my.vals$raw.data<-NULL
           stop("Missing inputs.")
         }
       }
       my.vals$IHC <- input$IHC2
       my.vals$MoTiF <- input$MoTiF2
-      results <- mIFTO::FOP.findpos(my.vals$Positive.table, input, my.vals, test.bool, wd)
+      results <- mIFTO::FOP.findpos(my.vals$Positive.table, input, my.vals, test.bool, my.vals$wd)
       my.vals <- results$my.vals
       my.vals$Positive.table <- results$Positive.table
     }
-    if (length(my.vals$Positive.table)==2){
-      stop(my.vals$Positive.table)
-    }
+    # if (length(my.vals$Positive.table)==2){
+    #   stop(my.vals$Positive.table)
+    # }
     #
   }, warning = function(cond){
-    err.msg <- FOP.error.check(cond$message)
-    my.vals$delins<-NULL
-    my.vals$raw.data<-NULL
-    name <- c()
-    ID.list <- c()
-    delin.list <- c()
-    max_num <- 0
-    if (!test.bool){
-      modal_out <- shinyalert::shinyalert(
-        title = "Input Warning.",
-        text = paste0(err.msg),
-        type = 'error',
-        showConfirmButton = TRUE
-      )
-    } else {stop(err.msg)}
+    err.msg <<- FOP.error.check(cond$message)
+    # return(list(err.msg=err.msg))
+    # err.msg <- FOP.error.check(cond$message)
+    # my.vals$delins<-NULL
+    # my.vals$raw.data<-NULL
+    # name <- c()
+    # ID.list <- c()
+    # delin.list <- c()
+    # max_num <- 0
+    # if (!test.bool){
+    #   modal_out <- shinyalert::shinyalert(
+    #     title = "Input Warning.",
+    #     text = paste0(err.msg),
+    #     type = 'error',
+    #     showConfirmButton = TRUE
+    #   )
+    # } else {stop(err.msg)}
   }, error = function(cond){
-    err.msg <- FOP.error.check(cond$message)
-    my.vals$delins<-NULL
-    my.vals$raw.data<-NULL
-    name <- c()
-    ID.list <- c()
-    delin.list <- c()
-    max_num <- 0
-    if (!test.bool){
-      modal_out <- shinyalert::shinyalert(
-        title = "Input Error.",
-        text = paste0(err.msg),
-        type = 'error',
-        showConfirmButton = TRUE
-      )
-    } else {stop(err.msg)}
+    err.msg <<- FOP.error.check(cond$message)
+    # return(list(err.msg=err.msg))
+    # err.msg <- FOP.error.check(cond$message)
+    # my.vals$delins<-NULL
+    # my.vals$raw.data<-NULL
+    # name <- c()
+    # ID.list <- c()
+    # delin.list <- c()
+    # max_num <- 0
+    # if (!test.bool){
+    #   modal_out <- shinyalert::shinyalert(
+    #     title = "Input Error.",
+    #     text = paste0(err.msg),
+    #     type = 'error',
+    #     showConfirmButton = TRUE
+    #   )
+    # } else {stop(err.msg)}
   })
   if (test.bool){
     if (first){

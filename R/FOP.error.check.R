@@ -54,7 +54,7 @@ FOP.error.check <- function(
     ~ "Problems with previous run caused a read error. Please try again.",
     #
     grepl("not found in column name header", err.val, fixed = TRUE)
-    ~ "Primary Opal Identifier not found in data file. This could be due to the
+    ~ "Primary Opal Identifier not found in data file. This could be due to an
     incorrect Primary Opal entry or IHC being selected.\n
     Contact Sigfredo Soto at ssotodi1@jh.edu should you need any
     additional assistance.",

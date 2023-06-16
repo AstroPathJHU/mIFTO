@@ -56,11 +56,28 @@ FOP.server.side <- function(input, output, session) {
     #
     # run the code and catch any errors
     #
-    pixel <<- mIFTO::FOP.pixelbypixel(input, pixel$my.vals, TRUE, run, test.bool=TRUE)
+    pixel <<- mIFTO::FOP.pixelbypixel(input, pixel$my.vals, TRUE, run, test.bool=FALSE)
     if (pixel$err.msg != 0){
-      stop(pixel$err.msg)
+      my.vals$delins<-NULL
+      my.vals$raw.data<-NULL
+      name <- c()
+      ID.list <- c()
+      delin.list <- c()
+      max_num <- 0
+      modal_out <- shinyalert::shinyalert(
+        title = "Input Error.",
+        text = paste0(pixel$err.msg),
+        type = 'error',
+        showConfirmButton = TRUE
+      )
+      pixel<-list(my.vals <- reactiveValues(
+        Slide_ID=NULL, delin = NULL, delins=NULL,
+        Opal1 = NULL, Antibody = NULL, IHC = NULL, MoTiF=NULL, wd=NULL,
+        raw.data=NULL, Positive.table=NULL),
+        err.msg=0)
+    } else {
+      shiny::showModal(FOP.another.ab.modal())
     }
-    shiny::showModal(FOP.another.ab.modal())
   })
   #
   # another dialog observe event launch
@@ -70,7 +87,26 @@ FOP.server.side <- function(input, output, session) {
     # show another ab modal input
     #
     shiny::removeModal()
-    shiny::showModal(FOP.another.ab.modal.input(pixel$my.vals, fm.object))
+    tryCatch({
+      shiny::showModal(FOP.another.ab.modal.input(pixel$my.vals, fm.object))
+    }, warning = function(cond){
+      err.msg <- FOP.error.check(cond$message)
+      modal_out <- shinyalert::shinyalert(
+        title = "Input Error.",
+        text = paste0(pixel$err.msg),
+        type = 'error',
+        showConfirmButton = TRUE
+      )
+    }, error = function(cond){
+      err.msg <- FOP.error.check(cond$message)
+      modal_out <- shinyalert::shinyalert(
+        title = "Input Error.",
+        text = paste0(pixel$err.msg),
+        type = 'error',
+        showConfirmButton = TRUE
+      )
+    })
+
     #
   })
   #
@@ -85,11 +121,23 @@ FOP.server.side <- function(input, output, session) {
     #
     # run with new inputs
     #
-    pixel <<- mIFTO::FOP.pixelbypixel(input, pixel$my.vals, FALSE, run, test.bool=TRUE)
+    pixel <<- mIFTO::FOP.pixelbypixel(input, pixel$my.vals, FALSE, run, test.bool=FALSE)
     if (pixel$err.msg != 0){
-      stop(pixel$err.msg)
+      my.vals$delins<-NULL
+      my.vals$raw.data<-NULL
+      name <- c()
+      ID.list <- c()
+      delin.list <- c()
+      max_num <- 0
+      modal_out <- shinyalert::shinyalert(
+        title = "Input Error.",
+        text = paste0(pixel$err.msg),
+        type = 'error',
+        showConfirmButton = TRUE
+      )
+    } else {
+      shiny::showModal(FOP.another.ab.modal())
     }
-    shiny::showModal(FOP.another.ab.modal())
     #
   })
   #
@@ -98,15 +146,33 @@ FOP.server.side <- function(input, output, session) {
   shiny::observeEvent(input$decline, {
     #
     shiny::removeModal()
-    results <<- mIFTO::FOP.export.data(pixel$my.vals, input, test.bool=TRUE)
-    modal_out <- shinyalert::shinyalert(
-      title = "Finished",
-      text = paste(
-        ""
-      ),
-      type = 'success',
-      showConfirmButton = TRUE
-    )
+    tryCatch({
+      results <<- mIFTO::FOP.export.data(pixel$my.vals, input, test.bool=FALSE)
+      modal_out <- shinyalert::shinyalert(
+        title = "Finished",
+        text = paste(
+          ""
+        ),
+        type = 'success',
+        showConfirmButton = TRUE
+      )
+    }, warning = function(cond){
+      err.msg <- FOP.error.check(cond$message)
+      modal_out <- shinyalert::shinyalert(
+        title = "Export Error.",
+        text = paste0(pixel$err.msg),
+        type = 'error',
+        showConfirmButton = TRUE
+      )
+    }, error = function(cond){
+      err.msg <- FOP.error.check(cond$message)
+      modal_out <- shinyalert::shinyalert(
+        title = "Export Error.",
+        text = paste0(pixel$err.msg),
+        type = 'error',
+        showConfirmButton = TRUE
+      )
+    })
   })
   session$onSessionEnded(function() {
     stopApp()

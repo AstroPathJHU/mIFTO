@@ -36,7 +36,7 @@ mIFTO.error.check <- function(
              strsplit(strsplit(err.val, "Search: ")[[1]][2], " - ")[[1]][1],
              ' IHC exist. For data separated in folders by dilution, put IHC ',
              'data in an "IHC" or "',strsplit(err.val, " - ")[[1]][2],
-             '_IHC" folder'),
+             '_IHC" folder. Please do not include dilutions in IHC names.'),
     #
     err.val ==  "Number of paths"
     ~ "The number of paths for each concentration does not equal 1. Please
