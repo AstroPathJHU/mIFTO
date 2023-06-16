@@ -12,8 +12,8 @@ detach("package:mIFTO", unload=TRUE)
 ```
 It is helpful to run these lines before performing the installation incase the libraries are currently in use.
 
-If it says "Error in detach("package:mIFTO", unload = TRUE) : invalid 'name' argument" this is ok.
-<span style="color:blue">some *blue* text</span>.
+If it says *"Error in detach("package:mIFTO", unload = TRUE) : invalid 'name' argument"* this is ok.
+
 ```
 install.packages("devtools")
 ```
@@ -33,26 +33,44 @@ This command will install ```‘devtools’``` without asking the user if it is 
 ```
 library(devtools)
 ```
+Warning messages like these are fine. Let me know if something else comes up.  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*"1: package ‘devtools’ was built under R version 4.1.3"*   
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*"2: package ‘usethis’ was built under R version 4.1.3"*
+
 ```
 install_github("AstroPathJHU/mIFTO@beta-test", force=TRUE)
 ```
-When the package begins to install a number of messages will appear in the console indicating the status of different events, especially during the initial install or just after R has been updated, this is normal. Some of the messages may be in red, this does not indicate an error. If there is an error during installation, usually the output message to the console will start with ```“Error:”``` or ```“Warning:”```, then describe the corresponding error. 
 
-
-
-When the ```install_github('AstroPathJHU/mIFTO')``` command is used, R will output the following messages, followed by a number of other messages. 
-
+*	A list should pop up asking what you want to update. Enter ```1``` to update all. 
+*	If it looks like nothing is happening for a while, check the taskbar at the bottom of the screen. There might be a window that popped up asking the user if the package should ‘be compiled from source’. Click “OK”
+*	There may be warnings that certain packages couldn't be updated. This is fine. Make sure this shows ```-  building 'mIFTO_2.00.196.tar.gz'``` after the packages finish installing. The ```v.2.0...``` number at the top of this page is the latest. 
 ![Figure 1 Image](R/www/Fig1.PNG)
+*	If you see the following, that means it didn't install. Let me know. 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Execution halted   
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ERROR: lazy loading failed for package 'mIFTO'   
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* removing 'C:/Users/<user> /Documents/R/win-library/4.1/mIFTO'   
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* restoring previous 'C:/Users/<user>/Documents/R/win-library/4.1/mIFTO'    
+*	A lot of times there are problems with updating packages in R. If you get something like ```'vctrs' 0.5.1 is already loaded, but >= 0.6.0 is required```, try the following:    
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;run ```install.packages("vctrs")```.    
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If it says ```Problem copying ... vctrs package location ... Permission denied``` then you have to go into the location of your libraries and delete the ```vctrs``` folder.    
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;You can usually tell where the folder is from the outputs in RStudio. This user's libraries happen to be at *C:\Users\cnajera2\Documents\R\R-4.1.1\library*   
+![Figure 1 Image](R/www/Fig8.PNG)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Then ```install.packages("vctrs")``` should work and you can resume updating mIFTO.    
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This applies to any other package, not just ```vctrs```. ```rlang``` is another one that does this a lot.   
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If it doesn’t let you delete the folders, email **ssotodi1@jh.edu**    
+   
+You should see something that says ```* DONE (mIFTO)``` meaning that it installed correctly.
 
-It advisable to check the circled region above to make sure that the correct version of the package is installed. 
+
+*Note: When the package begins to install a number of messages will appear in the console indicating the status of different events, especially during the initial install or just after R has been updated, this is normal. Some of the messages may be in red, this does not indicate an error. If there is an error during installation, usually the output message to the console will start with ```“Error:”``` or ```“Warning:”```, then describe the corresponding error.*
 
 #### ***Section 2.2: Running Package***
 
-The installation calls and ```devtool``` library call will only be needed the first time the ```mIFTO``` package is used, unless additional updates to the package have been posted (see section 2.2). 
+The ```library(devtools)``` call will only be needed the first time the ```mIFTO``` package is used, unless additional updates to the package have been posted. 
 
 Once installed once for a user profile, the user can run the apps one of two ways: 
 
-1.	load a library into the current ‘workspace’ by using ```library(current_package)``` replacing ```‘current_package’``` for whichever library is needed. To load the ```mIFTO``` R package type: ```library(mIFTO)```. Afterward the call the apps using ```FOP()``` and ```mIFTOapp()```.
+1.	load a library into the current ‘workspace’ by using ```library(current_package)``` replacing ```‘current_package’``` for whichever library is needed. To load the ```mIFTO``` R package type: ```library(mIFTO)```. Afterward call the apps using ```FOP()``` and ```mIFTOapp()```.
 2.	Explicitly call the package and the functions simultaneously without loading the package into memory. In this case use the syntax ```package_name::function_name```. For the main apps described in this document use ```mIFTO::FOP()``` and ```mIFTO::mIFTOapp()```.
 
 Code performance is reliant on the local systems connection to the images as well as the computational resources of the local system. Since the image data for these images can be very large, it is advisable that either the images are kept local to the machine the software is run on or that they can be accessed by a high speed network connection. 
@@ -69,14 +87,12 @@ After the new R session is open, the advisable steps for updating the mIFTO R pa
 ```
 install.packages(‘devtools’)
 library(devtools)
-install_github('AstroPathJHU/mIFTO')
+install_github("AstroPathJHU/mIFTO@beta-test", force=TRUE)
 ```
 
 For additional details see section 2.1. If the most up to date package is already installed under the current user profile the following message may appear instead:
 
 ![Figure 3 Image](R/www/Fig3.PNG)
-
-If this is a potential mistake it is then possible to use ```install_github('AstroPathJHU/mIFTO', force = T)``` in order to force an updated installation of the R package. 
 
 A second installation may corrupt the package, in this case the following message will appear:
 
@@ -132,6 +148,9 @@ For all exports, do not name the opals in the ‘prepare’ tab of inForm, the c
       - Is this IHC?
         - Blank = no
         - Check = yes
+      - Is this MoTiF?
+        - Blank = no
+        - Check = yes
       - What kind of positivity measure?
         - Drop down box with the following options
           - PPC pixels
@@ -148,14 +167,15 @@ For all exports, do not name the opals in the ‘prepare’ tab of inForm, the c
      - Other condition delineation
      - Primary Opal
      - IHC?
+     - MoTiF?
    - Click Run
    - A windows explorer will ask you to point it to the directory with the data inside
    - The program will run and ask if there is more data 
 8. No:
    - A window explorer will open for the output directory
-9. A file called +pixels will be located in the output directory
+9. Two files called  **+ PPC Pixels_raw_data_ordered** and  **+ PPC Pixels** will be located in the output directory
 
-Once finished running the app will idle in the background and continue to wait for input. To stop the UI click the red ‘stop’ sign button just above the console window in RStudio and close the web browser.
+Once finished running the app will idle in the background and continue to wait for input. To stop the UI, either close out the web browser or click the red ‘stop’ sign button just above the console window in RStudio and close the web browser.
 
 ![Figure 7 Image](R/www/Fig7.PNG)
 
@@ -177,15 +197,16 @@ This function is used to select optimum dilutions from a titration series. For a
 #### ***Section 4.2: Setting up Slides Names***
 When scanning, so that the slides are compatible with the code, name the slides with the following naming convention switching out only the bracketed and italic expressions being sure to use underscores between words:
 
-\[*SlideID*\}_\[*PrimaryAntibody*\]_1to\[*CocentrationofPrimaryAntibody*\]_\[*PolymerUsed*\]_Opal\[*OpalUsed*\]_1to\[*OpalConcentrationUsed*\]. 
+\[*SlideID*\}_\[*PrimaryAntibody*\]_1to\[*CocentrationofPrimaryAntibody*\]_\[*PolymerUsed*\]_Opal\[*OpalUsed*\]_1to\[*OpalConcentrationUsed*\]_\[*MicroscopeUsedForScanning*\]. 
 
-An example of a properly named slide is *T6_PD1_1to150_PV50_Opal650_1to50*, which would be from slide ‘T6’, stained with ‘PD1’ at ‘1to150’, using a power vision polymer at 50 percent (PV50), in ‘Opal650’ with an opal concentration of ‘1to50’. 
+An example of a properly named slide is *T6_PD1_1to150_PV50_Opal650_1to50_JHUPolaris_1*, which would be from slide ‘T6’, stained with ‘PD1’ at ‘1to150’, using a power vision polymer at 50 percent (PV50), in ‘Opal650’ with an opal concentration of ‘1to50’, scanned using the 'JUPolaris_1' microscope. 
 
 It is important that the slides are named in this way at scanning as slide names are propagated to the image HPFs and the image data. The app looks for specific keys in the names to differentiate between conditions/ slides and to collect the correct data. For example, the app looks for the slide identifier at the beginning of the image name followed by an underscore. In the above example, this allows the code to differentiate between ‘T6’, ‘T60’, ‘T6A’, or ‘T600’. The most important aspect of this is in the dilution series identifiers where one might titrate 1to100 and 1to1000 in the same series, without this naming convention the code might mistake all these slides as 1to100. Additionally, since the slides can have different primary and opal concentrations, it is useful to always designate both as a standard so that the code searches for the concentration that directly follows the primary antibody or opal. 
 
 #### ***Section 4.3: Exctracting and Exporting Data from inForm***
 The pixel-by-pixel analysis and cell-by-cell analyses are performed by separate modules in the app as usually one modality or the other is used to determine the optimal dilution. Once the images have been stained and scanned, establish thresholds for pixel-by-pixel data or phenotype the data for cell-by-cell optimum accuracy in the respective modalities. 
-For cell-by-cell analysis, export the cell segmented for each HPF.  For pixel-by-pixel analysis export the component data images for each HPF. Dilutions\ conditions can either be exported into separate or a single folder. Be sure to follow naming conventions if the data is in separate folders by dilutions using the above naming convention for the folders. Remove the slide designations as well as the first underscore, e.g. this would be ‘PD1_1to150_PV50_Opal650_1to50’. 
+For cell-by-cell analysis, export the cell segmented for each HPF.  For pixel-by-pixel analysis export the component data images for each HPF. Dilutions\ conditions can either be exported into separate or a single folder.   
+Be sure to follow naming conventions if the data is in separate folders by dilutions using the above naming convention for the folders. Remove the slide designations as well as the first underscore, e.g. this would be **‘PD1_1to150_PV50_Opal650_1to50’**. For IHC outputs, save these in a folder named '\[*Antibody*\]_IHC'. **'PD1_IHC'** in this case.
 #### ***Section 4.4: GUI Input and Running***
 1. Open R Studio and install the package (see ‘Section 2: Getting Started’ for installation instructions)
 2. Type mIFTO::mIFTOapp() & ENTER
@@ -245,22 +266,18 @@ For cell-by-cell analysis, export the cell segmented for each HPF.  For pixel-by
 
 #### ***Section 4.5: Common things to check after running into errors***
 1. For most errors a dialog should open with a clear message of what went wrong. 
-2. If an 'undefined error' appears
-   - first check that the ```BiocManger``` and ```EBImage``` packages have installed correctly 
-   - if they have then the error must be a bug in the code, please report any bugs as quickly as possible so that they can be      resolved
-3. If the error causes the UI windows to grey out simply close the web browser window, select the red ‘stop sign’ in the RStudio console
+2. If the error causes the UI windows to grey out simply close the web browser window, select the red ‘stop sign’ in the RStudio console
    
    ![Figure 7 Image](R/www/Fig7.PNG)
    
    Then rerun the app using ```‘mIFTO::mIFTOapp()’```
 
-4. Sometimes it may be necessary to resize the window manually to get the UI to line up appropriately.
-
 
 ## ***Section 5. Credits***
 
 #### <div align="center">Created by: Benjamin Green & Charles Roberts</div>
+#### <div align="center">Edited by: Sigfredo Soto-Diaz</div>
 #### <div align="center">Based on code orginally written by Dr. Nicolas Giraldo-Castillo</div>
 #### <div align="center">Tumor Microenvironment Technology Development Center</div>
 #### <div align="center">The Johns Hopkins University Bloomberg~Kimmel Institute for Cancer Immunotherapy</div>
-#### <div align="center">Correspondence to: bgreen42@jhu.edu</div>
+#### <div align="center">Correspondence to: ssotodi1@jhu.edu</div>
