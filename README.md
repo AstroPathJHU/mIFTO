@@ -54,7 +54,7 @@ install_github("AstroPathJHU/mIFTO@beta-test", force=TRUE)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;run ```install.packages("vctrs")```.    
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If it says ```Problem copying ... vctrs package location ... Permission denied``` then you have to go into the location of your libraries and delete the ```vctrs``` folder.    
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;You can usually tell where the folder is from the outputs in RStudio. This user's libraries happen to be at *C:\Users\cnajera2\Documents\R\R-4.1.1\library*   
-![Figure 1 Image](R/www/Fig8.PNG)
+![Figure 1 Image](R/www/Fig8.png)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Then ```install.packages("vctrs")``` should work and you can resume updating mIFTO.    
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This applies to any other package, not just ```vctrs```. ```rlang``` is another one that does this a lot.   
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If it doesn’t let you delete the folders, email **ssotodi1@jh.edu**    
