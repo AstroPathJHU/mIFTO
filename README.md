@@ -8,7 +8,6 @@ This R package was developed to help organize and quantify the inForm Cell Analy
 Open an Rstudio session to get started. Next, install the package from github using the following commands:
 ```
 detach("package:mIFTO", unload=TRUE)
-detach("package:mIFTO", unload=TRUE)
 ```
 It is helpful to run these lines before performing the installation incase the libraries are currently in use.
 
@@ -25,7 +24,7 @@ The installation of ‘devtools’ is usually the most interactive and takes the
 
 Errors are common in this step, usually when updating packages. If a package fails to update properly and crashes the installation process an error message is usually output beginning with: ```“Error: package ‘failed_package_name’``` failed to install’. Installing the package separately may be necessary. Enter ```install.packages(‘failed_package_name’)```; replacing ‘failed_package_name’ with the name of the failed package.
 
-For more advanced users of R, it may be easier to specific additional options during a package installation. For example, when installing ‘devtools’ the following options can be specified:
+For more advanced users of R, it may be easier to specify additional options during a package installation. For example, when installing ‘devtools’ the following options can be specified:
 
 ```install.packages(‘devtools’, ask = FALSE, quiet = TRUE, verbose = FALSE)```
 
@@ -109,7 +108,7 @@ To fix this error, close the current R sessions completely, open a new session, 
 ## ***Section 3: FOP***
 #### ***Section 3.1: Description***
 
-This function is used to measure the fraction of positivity across a subset of images for uniquely named slide. The function is designed to count positivity for cell-by-cell, pixel-by-pixel, or tissue segmented data exported from inForm. 
+This function is used to measure the fraction of positivity across a subset of images for a uniquely named slide. The function is designed to count positivity for cell-by-cell, pixel-by-pixel, or tissue segmented data exported from inForm. 
 
 #### ***Section 3.2: Setting up Slide Names***
 
@@ -117,13 +116,13 @@ When naming slides for this protocol, be sure to name slides using unique slide 
 
 #### ***Section 3.3: Extracting and Exporting Data from inForm***
 a.	For **cell-by-cell data**: 
-  -	use the phenotype module and export the cell segmented inForm, name the positive phenotype with the same case as the input for ‘Primary Antibody’ in the GUI (see below). 
+  -	use the 'Phenotyping' module of inform and export the 'RBG', 'Segmentation Maps (multi-image TIFF)' and 'Cell Segmentation Data'. Name the positive phenotype with the same name (case sensitive) as the input for ‘Primary Antibody’ in the GUI (see below). Name the negative phenotype 'Other'. 
   
 b.	For **pixel-by-pixel**:
-  -	use the colocalization module of inForm and export the colocalization data. Do not name the opals in the ‘prepare’ tab of inForm.
+  -	use the 'cClocalization' module of inForm to export the 'RBG', 'Component Images (multi-image TIFF)' and 'Colocalization Data'. Do not name the opals in the ‘prepare’ tab of inForm.
   
 c.	For **tissue segmentation**:
-  -	use the tissue segmented module in inForm and export the tissue segmentation data. Name the categories ‘Tumor’ and ‘Non Tumor’ in inForm.
+  -	use the 'Segment Tissue' module in inForm to export the 'RBG', 'Segmentation Maps (multi-image TIFF)' and 'Tissue Segmentation Data'. Name the categories ‘Tumor’ and ‘Non Tumor’ in inForm.
 
 For all exports, do not name the opals in the ‘prepare’ tab of inForm, the code will not be able to find the correct columns. Note that the code will generate statistics for all slides in the selected folder (see below for more details in step 5).
 
@@ -195,39 +194,38 @@ Once finished running the app will idle in the background and continue to wait f
 
 ## ***Section 4: mIFTOapp***
 #### ***Section 4.1: Description***
-This function is used to select optimum dilutions from a titration series. For a titration series, at least 3 cases with 10HPFs each should be used. For best results stain at least 5 dilutions, one above and 4 below the manufactures recommended concentration. 
+This function is used to select optimum dilutions from a titration series. For a titration series, at least 3 cases with 10 HPFs each should be used. For best results stain at least 5 dilutions, one above and 4 below the manufactures recommended concentration. 
 #### ***Section 4.2: Setting up Slides Names***
 When scanning, so that the slides are compatible with the code, name the slides with the following naming convention switching out only the bracketed and italic expressions being sure to use underscores between words:
 
-\[*SlideID*\}_\[*PrimaryAntibody*\]_1to\[*CocentrationofPrimaryAntibody*\]_\[*PolymerUsed*\]_Opal\[*OpalUsed*\]_1to\[*OpalConcentrationUsed*\]_\[*MicroscopeUsedForScanning*\]. 
+\[*SlideID*\}_\[*PrimaryAntibody*\]_1to\[*ConcentrationofPrimaryAntibody*\]_\[*PolymerUsed*\]_Opal\[*OpalUsed*\]_1to\[*OpalConcentrationUsed*\]_\[*MicroscopeUsedForScanning*\]. 
 
 An example of a properly named slide is *T6_PD1_1to150_PV50_Opal650_1to50_JHUPolaris_1*, which would be from slide ‘T6’, stained with ‘PD1’ at ‘1to150’, using a power vision polymer at 50 percent (PV50), in ‘Opal650’ with an opal concentration of ‘1to50’, scanned using the 'JUPolaris_1' microscope. 
 
-It is important that the slides are named in this way at scanning as slide names are propagated to the image HPFs and the image data. The app looks for specific keys in the names to differentiate between conditions/ slides and to collect the correct data. For example, the app looks for the slide identifier at the beginning of the image name followed by an underscore. In the above example, this allows the code to differentiate between ‘T6’, ‘T60’, ‘T6A’, or ‘T600’. The most important aspect of this is in the dilution series identifiers where one might titrate 1to100 and 1to1000 in the same series, without this naming convention the code might mistake all these slides as 1to100. Additionally, since the slides can have different primary and opal concentrations, it is useful to always designate both as a standard so that the code searches for the concentration that directly follows the primary antibody or opal. 
+It is important that the slides are named in this way at scanning as slide names are propagated to the image HPFs and the image data. The app looks for specific keys in the names to differentiate between conditions/slides and to collect the correct data. For example, the app looks for the slide identifier at the beginning of the image name followed by an underscore. In the above example, this allows the code to differentiate between ‘T6’, ‘T60’, ‘T6A’, or ‘T600’. The most important aspect of this is in the dilution series identifiers where one might titrate 1to100 and 1to1000 in the same series, without this naming convention the code might mistake all these slides as 1to100. Additionally, since the slides can have different primary and opal concentrations, it is useful to always designate both as a standard so that the code searches for the concentration that directly follows the primary antibody or opal. 
 
 #### ***Section 4.3: Exctracting and Exporting Data from inForm***
-The pixel-by-pixel analysis and cell-by-cell analyses are performed by separate modules in the app as usually one modality or the other is used to determine the optimal dilution. Once the images have been stained and scanned, establish thresholds for pixel-by-pixel data or phenotype the data for cell-by-cell optimum accuracy in the respective modalities. 
-For cell-by-cell analysis, export the cell segmented for each HPF.  For pixel-by-pixel analysis export the component data images for each HPF. Dilutions\ conditions can either be exported into separate or a single folder.   
-Be sure to follow naming conventions if the data is in separate folders by dilutions using the above naming convention for the folders. Remove the slide designations as well as the first underscore, e.g. this would be **‘PD1_1to150_PV50_Opal650_1to50’**. For IHC outputs, save these in a folder named '\[*Antibody*\]_IHC'. **'PD1_IHC'** in this case.
+The pixel-by-pixel analysis and cell-by-cell analyses are performed by separate modules in the app as usually one modality or the other is used to determine the optimal dilution. Once the slides have been stained and scanned, establish thresholds for pixel-by-pixel data or phenotype the data for cell-by-cell data in the respective modalities. 
+For cell-by-cell analysis, export the cell segmented for each HPF.  For pixel-by-pixel analysis export the component data images for each HPF. Dilutions\conditions can either be exported into separate or a single folder. Be sure to follow naming conventions if the data is in separate folders by dilutions using the above naming convention for the folders. Remove the slide designations as well as the first underscore, e.g. this would be **‘PD1_1to150_PV50_Opal650_1to50’**. For IHC outputs, save these in a folder named '\[*Antibody*\]_IHC'. **'PD1_IHC'** in this case.
 #### ***Section 4.4: GUI Input and Running***
 1. Open R Studio and install the package (see ‘Section 2: Getting Started’ for installation instructions)
 2. Type mIFTO::mIFTOapp() & ENTER
 3. The app will open in a web browser with the following inputs: (Note: it may be necessary to resize the window to allow all fields to line up appropriately) 
    - Slide Identifier:
-     - This is where the specimen numbers or other slide distinction are located
-    	- Do not add – or spaces in names 
+     - This is where the specimen numbers or other slide distinctions are entered
+    	- Do not add '–' or spaces in names 
       - Place a comma between names
       - E.g. Melanoma1,Melanoma2
    - Primary Antibody: 
-     - This is the antibody the analysis is running for 
+     - This is the antibody the app is analyzing
      - E.g. CD8
    - Concentration: 
-     - Concentrations that have been completed
+     - Concentrations being tested
      - 100,200,400
    - Fluorophore (TSA)
-     - This is the wavelength used to detect the Flourophore (TSA) reagent
+     - This is the fluorophore used to detect the antibody
      - E.g. 540 OR 570
-     - The code only supports the use of component tiffs with image layers unmixed from Akoya’s 7 and 9 color libraries using        the following wavelengths:
+     - The code only supports the use of component tiffs with image layers unmixed from Akoya’s 7 and 9 color libraries using the following wavelengths:
        - DAPI, 480, 520, 540, 570, 620, 650, 690, 780
    - Was naming convention followed? (Was more than one dilution used in the name …)
      - Check Yes if the files are named using the naming convention described in section 4.2
@@ -243,7 +241,7 @@ Be sure to follow naming conventions if the data is in separate folders by dilut
        - Check = yes
          - add the connected pixels and threshold values to the end of their respective lists
          - This option also requires that the ‘component tiffs’ are exported from inForm for the IHC images
-           - For data separated in folders by dilution, put the IHC data into a folder named ‘IHC’ or ‘AntibodyX_IHC’          replacing ‘AntibodyX’ for the value in the ‘Primary Antibody’ field
+           - For data separated in folders by dilution, put the IHC data into a folder named ‘AntibodyX_IHC’ replacing ‘AntibodyX’ for the value in the ‘Primary Antibody’ field
        - Blank = no
      - Were thresholds different for each case
        - Check = yes
@@ -252,12 +250,12 @@ Be sure to follow naming conventions if the data is in separate folders by dilut
      - List the thresholds in order of increasing dilution separated by a comma
        - E.g. 12.5,13.6,14.7
        - Must be same length as number of concentrations
-     - List the thresholds in order of increasing dilution separated by a comma
+     - List the connected pixel values in order of increasing dilution separated by a comma
        - E.g. 12,13,14
        - Number of pixels above the threshold which must be connected for the values to be included in the positive signal, (setting can be set in inForm colocalization module and should be translated here) 
        - Must be same length as number of concentrations and should be whole numbers
      - Click ‘Run Pixel-by-Pixel’
-10. A windows explorer box will be generated to find data folder and a progress bar should open in the bottom right hand corner
+10. A windows explorer box will be generated to find a data folder and a progress bar should open in the bottom right hand corner
     - If data is in separate folders select the parent folder
     - The windows explorer may open behind the Rstudio or web browser window
 11.	The program will produce results in a Results.cell or Results.pixels folder for cell or pixel data respectively
