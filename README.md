@@ -77,6 +77,12 @@ Once installed once for a user profile, the user can run the apps one of two way
 Code performance is reliant on the local systems connection to the images as well as the computational resources of the local system. Since the image data for these images can be very large, it is advisable that either the images are kept local to the machine the software is run on or that they can be accessed by a high speed network connection. 
 
 #### ***Section 2.3: Updating the Package***
+Before attempting to update the package, run the following line and compare the version output with the version number at the top of this Readme. If they are the same, mIFTO does not need ot be updated.   
+
+```
+PackageVersion(mIFTO)
+```
+   
 When an update for the package is available on github, it is advisable that, if the user already had an R session open with an old version running, the user clear their R history, completely close their current R session or window, and open a new session. 
 
 To clear the R history, go to the ‘history’ tab on the top right of the R user interface and select the broom icon, as shown below:
@@ -103,18 +109,30 @@ Once ‘OK’ is clicked, the following lines will be printed into the console (
 
 ![Figure 5 Image](R/www/Fig5.PNG)
 
-To fix this error, close the current R sessions completely, open a new session, and reinstall the package.
+To fix this error, close the current R sessions completely, open a new session, and reinstall the package.   
 
-## ***Section 3: FOP***
-#### ***Section 3.1: Description***
+## ***Section 3: Slide and Folder Naming***   
+
+#### ***Section 3.1: Slide Names***
+
+For mIFTO to process the data correctly, the files and folders must follow the proper naming conventions and the structures of the folders need to be correct. A full naming protocol for the scans can be found [here](https://github.com/AstroPathJHU/Protocols/blob/main/MicroscopeOperation/GeneralIFScanningTipsInfo/docs/SlideNaming.md).   
+
+#### ***Section 3.2: Folder Names***
+
+For mIFTO, folders should also follow a specific naming convention. 
+ - IF - \[*PrimaryAntibody*\]\_1to\[*ConcentrationofPrimaryAntibody*\]\_\[*PolymerUsed*\]\_Opal\[*OpalUsed*\]\_1to\[*OpalConcentrationUsed*\]   
+   (e.g. **'PD1_1to150_PV50_Opal650_1to50'**)
+ - IHC - '\[*Antibody*\]\_IHC'   
+   (e.g. **'PD1_IHC'**)
+
+For FOP, the folder names don't matter. What is important is grouping same titrations together such that the cases that have the same variables are in the same folder. This should result in each folder having one of each tissue type.
+
+## ***Section 4: FOP***
+#### ***Section 4.1: Description***
 
 This function is used to measure the fraction of positivity across a subset of images for a uniquely named slide. The function is designed to count positivity for cell-by-cell, pixel-by-pixel, or tissue segmented data exported from inForm. 
 
-#### ***Section 3.2: Setting up Slide Names***
-
-When naming slides for this protocol, be sure to name slides using unique slide ids, followed by unique condition ids. An example of an acceptable name would be M1_Multiplex1 (M1 being the slide id and Multiplex the condition id). 
-
-#### ***Section 3.3: Extracting and Exporting Data from inForm***
+#### ***Section 4.2: Extracting and Exporting Data from inForm***
 a.	For **cell-by-cell data**: 
   -	use the 'Phenotyping' module of inform and export the 'RBG', 'Segmentation Maps (multi-image TIFF)' and 'Cell Segmentation Data'. Name the positive phenotype with the same name (case sensitive) as the input for ‘Primary Antibody’ in the GUI (see below). Name the negative phenotype 'Other'. 
   
@@ -126,7 +144,7 @@ c.	For **tissue segmentation**:
 
 For all exports, do not name the opals in the ‘prepare’ tab of inForm, the code will not be able to find the correct columns. Note that the code will generate statistics for all slides in the selected folder (see below for more details in step 5).
 
-#### ***Section 3.4: GUI Input and Running***
+#### ***Section 4.3: GUI Input and Running***
 1. Open R Studio and install the package (see ‘Section 2: Getting Started’ for installation instructions)
 2. Type ```mIFTO::FOP()``` & ```ENTER```
 3. The app will open in a web browser with the following inputs
@@ -180,7 +198,7 @@ Once finished running the app will idle in the background and continue to wait f
 
 ![Figure 7 Image](R/www/Fig7.PNG)
 
-#### ***Section 3.5: Common things to check after running into errors***
+#### ***Section 4.4: Common things to check after running into errors***
 1. Not putting conditions into separate folders
 2. Misspelling input to charts
 3. Not labeling Opals – AB pairs in inform output
@@ -192,22 +210,14 @@ Once finished running the app will idle in the background and continue to wait f
 9. In output, if some columns do not average
    - See 4 or 5
 
-## ***Section 4: mIFTOapp***
-#### ***Section 4.1: Description***
+## ***Section 5: mIFTOapp***
+#### ***Section 5.1: Description***
 This function is used to select optimum dilutions from a titration series. For a titration series, at least 3 cases with 10 HPFs each should be used. For best results stain at least 5 dilutions, one above and 4 below the manufactures recommended concentration. 
-#### ***Section 4.2: Setting up Slides Names***
-When scanning, so that the slides are compatible with the code, name the slides with the following naming convention switching out only the bracketed and italic expressions being sure to use underscores between words:
 
-\[*SlideID*\}_\[*PrimaryAntibody*\]_1to\[*ConcentrationofPrimaryAntibody*\]_\[*PolymerUsed*\]_Opal\[*OpalUsed*\]_1to\[*OpalConcentrationUsed*\]_\[*MicroscopeUsedForScanning*\]. 
-
-An example of a properly named slide is *T6_PD1_1to150_PV50_Opal650_1to50_JHUPolaris_1*, which would be from slide ‘T6’, stained with ‘PD1’ at ‘1to150’, using a power vision polymer at 50 percent (PV50), in ‘Opal650’ with an opal concentration of ‘1to50’, scanned using the 'JUPolaris_1' microscope. 
-
-It is important that the slides are named in this way at scanning as slide names are propagated to the image HPFs and the image data. The app looks for specific keys in the names to differentiate between conditions/slides and to collect the correct data. For example, the app looks for the slide identifier at the beginning of the image name followed by an underscore. In the above example, this allows the code to differentiate between ‘T6’, ‘T60’, ‘T6A’, or ‘T600’. The most important aspect of this is in the dilution series identifiers where one might titrate 1to100 and 1to1000 in the same series, without this naming convention the code might mistake all these slides as 1to100. Additionally, since the slides can have different primary and opal concentrations, it is useful to always designate both as a standard so that the code searches for the concentration that directly follows the primary antibody or opal. 
-
-#### ***Section 4.3: Exctracting and Exporting Data from inForm***
+#### ***Section 5.2: Exctracting and Exporting Data from inForm***
 The pixel-by-pixel analysis and cell-by-cell analyses are performed by separate modules in the app as usually one modality or the other is used to determine the optimal dilution. Once the slides have been stained and scanned, establish thresholds for pixel-by-pixel data or phenotype the data for cell-by-cell data in the respective modalities. 
-For cell-by-cell analysis, export the cell segmented for each HPF.  For pixel-by-pixel analysis export the component data images for each HPF. Dilutions\conditions can either be exported into separate or a single folder. Be sure to follow naming conventions if the data is in separate folders by dilutions using the above naming convention for the folders. Remove the slide designations as well as the first underscore, e.g. this would be **‘PD1_1to150_PV50_Opal650_1to50’**. For IHC outputs, save these in a folder named '\[*Antibody*\]_IHC'. **'PD1_IHC'** in this case.
-#### ***Section 4.4: GUI Input and Running***
+For cell-by-cell analysis, export the cell segmented for each HPF.  For pixel-by-pixel analysis export the component data images for each HPF. Dilutions\conditions can either be exported into separate or a single folder. 
+#### ***Section 5.3: GUI Input and Running***
 1. Open R Studio and install the package (see ‘Section 2: Getting Started’ for installation instructions)
 2. Type mIFTO::mIFTOapp() & ENTER
 3. The app will open in a web browser with the following inputs: (Note: it may be necessary to resize the window to allow all fields to line up appropriately) 
@@ -264,7 +274,7 @@ For cell-by-cell analysis, export the cell segmented for each HPF.  For pixel-by
 
 ![Figure 7 Image](R/www/Fig7.PNG)
 
-#### ***Section 4.5: Common things to check after running into errors***
+#### ***Section 5.4: Common things to check after running into errors***
 1. For most errors a dialog should open with a clear message of what went wrong. 
 2. If the error causes the UI windows to grey out simply close the web browser window, select the red ‘stop sign’ in the RStudio console
    
@@ -273,7 +283,7 @@ For cell-by-cell analysis, export the cell segmented for each HPF.  For pixel-by
    Then rerun the app using ```‘mIFTO::mIFTOapp()’```
 
 
-## ***Section 5. Credits***
+## ***Section 6. Credits***
 
 #### <div align="center">Created by: Benjamin Green & Charles Roberts</div>
 #### <div align="center">Edited by: Sigfredo Soto-Diaz</div>
