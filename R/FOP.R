@@ -34,6 +34,7 @@
 #'
 #' @export
 FOP<-function(){
+<<<<<<< HEAD
   fm.object <- mIFTO::ui.formats(1000, 1)
   #
   # create the UI tab  -------------------------------------
@@ -785,6 +786,9 @@ FOP<-function(){
   # run -------------------------------------
   #
   e = 0
+=======
+  err.msg = "Finished"
+>>>>>>> beta-test
   #
   tryCatch({
     #
@@ -794,21 +798,20 @@ FOP<-function(){
     ip <- ip[[1]]
     #
   }, error = function(cond){
-    message(
-      'cannot find local IP, using shiny default. Performance may suffer.')
-    ip = "127.0.0.1"
+    err.msg <<- mIFTO::mIFTO.error.check("Error finding IP")
+    message(err.msg)
+    ip <<- "127.0.0.1"
   }, warning = function(cond){
-    message(
-      'cannot find local IP, using shiny default. Performance may suffer.')
-    ip = "127.0.0.1"
+    err.msg <<- mIFTO::mIFTO.error.check("Error finding IP")
+    message(err.msg)
+    ip <<- "127.0.0.1"
   })
   #
   tryCatch({
-    options(
-      browser = "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe")
-    shiny::shinyApp(ui = FOP.ui, FOP.server.side,
+    shiny::shinyApp(ui = mIFTO::FOP.set.ui, mIFTO::FOP.server.side,
                     options = list(width = 1000, launch.browser = TRUE,
                                    host = ip, quiet = T))
+<<<<<<< HEAD
   }, warning = function(cond) {
     tryCatch({
       options(browser = "C:/Program Files/Google/Chrome/Application/chrome.exe")
@@ -833,5 +836,14 @@ FOP<-function(){
       stop('Error could not find supported web browser.')
     })
     #
+=======
+  },  warning = function(cond) {
+    err.msg <<- mIFTO::mIFTO.error.check(cond$message)
+    return(err.msg)
+  },  error = function(cond) {
+    err.msg <<- mIFTO::mIFTO.error.check(cond$message)
+    return(err.msg)
+  }, finally={
+>>>>>>> beta-test
   })
 }
