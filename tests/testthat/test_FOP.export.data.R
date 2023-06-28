@@ -35,7 +35,7 @@ test_that("FOP export data", {
   #   results <- rbind(results, ID.list)
   # }
   #
-  load(file="C:\\Users\\ssotodi1\\Documents\\Demon\\mIFTO\\tests\\testdat\\FOP.set.ui.RData")
+  load(file="C:\\Users\\ssotodi1\\Documents\\Demon\\mIFTO\\tests\\testdat\\FOP.export.data_1.RData")
   pixel<-list(export.vals=export.vals, err.msg=0)
   new.results <<- mIFTO::FOP.export.data(export.vals, input, wd=export.vals$wd)
   #
