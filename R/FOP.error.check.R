@@ -16,6 +16,7 @@
 #'
 FOP.error.check <- function(
     err.val) {
+  print(err.val)
   err.msg <- dplyr::case_when(
     err.val ==  "Error finding IP" ~ "Could not find IP address. Using default shiny IP address.",
     #
