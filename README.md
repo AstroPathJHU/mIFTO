@@ -37,7 +37,7 @@ Warning messages like these are fine. Let me know if something else comes up.
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*"2: package ‘usethis’ was built under R version 4.1.3"*
 
 ```
-install_github("AstroPathJHU/mIFTO@beta-test", force=TRUE)
+install_github("AstroPathJHU/mIFTO")
 ```
 
 *	A list should pop up asking what you want to update. Enter ```1``` to update all. 
@@ -94,7 +94,7 @@ After the new R session is open, the advisable steps for updating the mIFTO R pa
 ```
 install.packages(‘devtools’)
 library(devtools)
-install_github("AstroPathJHU/mIFTO@beta-test", force=TRUE)
+install_github("AstroPathJHU/mIFTO")
 ```
 
 For additional details see section 2.1. If the most up to date package is already installed under the current user profile the following message may appear instead:
