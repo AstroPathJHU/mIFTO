@@ -95,7 +95,7 @@ FOP.findpos<-function(Positive.table, out, my.vals, test.bool, wd=""){
     ##these two loops help shorten variable descriptions
     for(count3 in Slide_ID){
       CellSeg$Slide.ID<-gsub(
-        paste0('.*', count3,'.*'),
+        paste0('.*', count3,'_.*'),
         count3, CellSeg$Slide.ID)
     }
     fop <- (CellSeg$Antibody/CellSeg$Totals)
