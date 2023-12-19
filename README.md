@@ -80,7 +80,7 @@ Code performance is reliant on the local systems connection to the images as wel
 Before attempting to update the package, run the following line and compare the version output with the version number at the top of this Readme. If they are the same, mIFTO does not need ot be updated.   
 
 ```
-PackageVersion(mIFTO)
+packageVersion("mIFTO")
 ```
    
 When an update for the package is available on github, it is advisable that, if the user already had an R session open with an old version running, the user clear their R history, completely close their current R session or window, and open a new session. 
