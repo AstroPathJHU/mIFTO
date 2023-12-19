@@ -60,6 +60,15 @@ FOP.error.check <- function(
     Contact Sigfredo Soto at ssotodi1@jh.edu should you need any
     additional assistance.",
     #
+    grepl("positivity.data", err.val, fixed = TRUE)
+    ~ "Please attempt to update\\install BiocManager
+    separately. \nGo into the Rstudio window where you enter commands. Make sure
+    that mIFTO is closed out by hitting the little red stop button on the
+    top right. Then copy and paste the following commands: \n
+    install.packages('BiocManager')\n
+    BiocManager::install('EBImage')\n
+    Once those install, try rerunning mIFTO.",
+    #
     .default = as.character(paste0(err.val, '\nPlease email this error message
                                    to Sigfredo Soto at ssotodi1@jh.edu.'))
     )

@@ -73,6 +73,15 @@ mIFTO.error.check <- function(
     BiocManager::install('EBImage')\n
     Once those install, try rerunning mIFTO.",
     #
+    grepl("positivity.data", err.val, fixed = TRUE)
+    ~ "Please attempt to update\\install BiocManager
+    separately. \nGo into the Rstudio window where you enter commands. Make sure
+    that mIFTO is closed out by hitting the little red stop button on the
+    top right. Then copy and paste the following commands: \n
+    install.packages('BiocManager')\n
+    BiocManager::install('EBImage')\n
+    Once those install, try rerunning mIFTO.",
+    #
     grepl("Wrong number of layers", err.val, fixed = TRUE)
     ~ paste0(
           'Please make sure the staining protocol is correct.'),
