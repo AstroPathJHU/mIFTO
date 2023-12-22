@@ -149,6 +149,8 @@ FOP.findpos<-function(Positive.table, out, my.vals, test.bool, wd=""){
       CellSeg$Slide.ID<-gsub(
         paste0('.*', count3,'.*'),
         count3, CellSeg$Slide.ID)}
+    fop <- (CellSeg$`Antibody`/(CellSeg$`Antibody`+CellSeg$`Other`))
+    CellSeg<- cbind(CellSeg, fop)
     Positive.table<-rbind(
       Positive.table,dplyr::mutate(
         reshape2::dcast(
@@ -168,7 +170,8 @@ FOP.findpos<-function(Positive.table, out, my.vals, test.bool, wd=""){
         ), Concentration = Concentration
       )
     )
-    return(Positive.table)
+    my.vals$raw.data<-rbind(my.vals$raw.data,CellSeg)
+    return(list(Positive.table=Positive.table, my.vals=my.vals))
   }else if(fraction.type == 'Tissue' & MoTiF == F){
     ##read data in and organize it
     CellSeg<-dplyr::mutate(
@@ -193,6 +196,9 @@ FOP.findpos<-function(Positive.table, out, my.vals, test.bool, wd=""){
       CellSeg$`Sample Name`<-gsub(
         paste0('.*', count3,'.*'),
         count3, CellSeg$`Sample Name`)}
+    fop <- (CellSeg$`Tumor`/(CellSeg$`Tumor`+CellSeg$`Non Tumor`))
+    CellSeg<- cbind(CellSeg, fop)
+    names(CellSeg)[names(CellSeg) == "Sample Name"] <- "Slide.ID"
     ##find positive cells and generate output file
     ##Positive_cells data.table can be added to for additional
     # AB with the same SlideIDs.
@@ -200,16 +206,17 @@ FOP.findpos<-function(Positive.table, out, my.vals, test.bool, wd=""){
       dplyr::mutate(
         dplyr::summarise(
           dplyr::group_by(
-            CellSeg, `Sample Name`,Concentration
+            CellSeg, `Slide.ID`,Concentration
           ),
           Total.Tumor.Area = sum(`Tumor`),
           Total.NonTumor.Area = sum(`Non Tumor`), .groups = 'drop'
         ),
         Fraction=(Total.Tumor.Area/(Total.NonTumor.Area+Total.Tumor.Area))),
-      Concentration~ `Sample Name`, value.var = 'Fraction'
+      Concentration~ `Slide.ID`, value.var = 'Fraction'
     )
     )
-    return(Positive.table)
+    my.vals$raw.data<-rbind(my.vals$raw.data,CellSeg)
+    return(list(Positive.table=Positive.table, my.vals=my.vals))
   }  else if(fraction.type == 'Tissue' & MoTiF == T){
     ##read data in and organize it
     CellSeg<-dplyr::mutate(
@@ -234,6 +241,9 @@ FOP.findpos<-function(Positive.table, out, my.vals, test.bool, wd=""){
       CellSeg$`Annotation ID`<-gsub(
         paste0('.*', count3,'.*'),
         count3, CellSeg$`Annotation ID`)}
+    fop <- (CellSeg$`Tumor`/(CellSeg$`Tumor`+CellSeg$`Non Tumor`))
+    CellSeg<- cbind(CellSeg, fop)
+    names(CellSeg)[names(CellSeg) == "Annotation ID"] <- "Slide.ID"
     ##find positive cells and generate output file
     ##Positive_cells data.table can be added to for additional
     # AB with the same SlideIDs.
@@ -241,16 +251,17 @@ FOP.findpos<-function(Positive.table, out, my.vals, test.bool, wd=""){
       dplyr::mutate(
         dplyr::summarise(
           dplyr::group_by(
-            CellSeg, `Annotation ID`,Concentration
+            CellSeg, `Slide.ID`,Concentration
           ),
           Total.Tumor.Area = sum(`Tumor`),
           Total.NonTumor.Area = sum(`Non Tumor`), .groups = 'drop'
         ),
         Fraction=(Total.Tumor.Area/(Total.NonTumor.Area+Total.Tumor.Area))),
-      Concentration~ `Annotation ID`, value.var = 'Fraction'
+      Concentration~ `Slide.ID`, value.var = 'Fraction'
     )
     )
-    return(Positive.table)}
+    return(list(Positive.table=Positive.table, my.vals=my.vals))
+  }
   }, warning=function(cond){
     stop(cond$message)
   }, error=function(cond){
