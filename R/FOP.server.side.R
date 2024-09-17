@@ -58,19 +58,19 @@ FOP.server.side <- function(input, output, session) {
     #
     pixel <<- mIFTO::FOP.pixelbypixel(input, pixel$my.vals, TRUE, run, test.bool=FALSE)
     if (pixel$err.msg != 0){
-      my.vals$delins<-NULL
-      my.vals$raw.data<-NULL
+      my.vals$delins<<-NULL
+      my.vals$raw.data<<-NULL
       name <- c()
       ID.list <- c()
       delin.list <- c()
       max_num <- 0
       modal_out <- shinyalert::shinyalert(
-        title = "Input Error.",
+        title = "Input Error1.",
         text = paste0(pixel$err.msg),
         type = 'error',
         showConfirmButton = TRUE
       )
-      pixel<-list(my.vals <- reactiveValues(
+      pixel<<-list(my.vals <- reactiveValues(
         Slide_ID=NULL, delin = NULL, delins=NULL,
         Opal1 = NULL, Antibody = NULL, IHC = NULL, MoTiF=NULL, wd=NULL,
         raw.data=NULL, Positive.table=NULL),
@@ -92,7 +92,7 @@ FOP.server.side <- function(input, output, session) {
     }, warning = function(cond){
       err.msg <- FOP.error.check(cond$message)
       modal_out <- shinyalert::shinyalert(
-        title = "Input Error.",
+        title = "Input Error2.",
         text = paste0(pixel$err.msg),
         type = 'error',
         showConfirmButton = TRUE
@@ -100,11 +100,18 @@ FOP.server.side <- function(input, output, session) {
     }, error = function(cond){
       err.msg <- FOP.error.check(cond$message)
       modal_out <- shinyalert::shinyalert(
-        title = "Input Error.",
+        title = "Input Error3.",
         text = paste0(pixel$err.msg),
         type = 'error',
         showConfirmButton = TRUE
       )
+    }, finally = {
+      my.vals$delins<<-NULL
+      my.vals$raw.data<<-NULL
+      name <<- c()
+      ID.list <- c()
+      delin.list <- c()
+      max_num <- 0
     })
 
     #
@@ -123,18 +130,23 @@ FOP.server.side <- function(input, output, session) {
     #
     pixel <<- mIFTO::FOP.pixelbypixel(input, pixel$my.vals, FALSE, run, test.bool=FALSE)
     if (pixel$err.msg != 0){
-      my.vals$delins<-NULL
-      my.vals$raw.data<-NULL
-      name <- c()
+      my.vals$delins<<-NULL
+      my.vals$raw.data<<-NULL
+      name <<- c()
       ID.list <- c()
       delin.list <- c()
       max_num <- 0
       modal_out <- shinyalert::shinyalert(
-        title = "Input Error.",
+        title = "Input Error4.",
         text = paste0(pixel$err.msg),
         type = 'error',
         showConfirmButton = TRUE
       )
+      pixel<<-list(my.vals <- reactiveValues(
+        Slide_ID=NULL, delin = NULL, delins=NULL,
+        Opal1 = NULL, Antibody = NULL, IHC = NULL, MoTiF=NULL, wd=NULL,
+        raw.data=NULL, Positive.table=NULL),
+        err.msg=0)
     } else {
       shiny::showModal(FOP.another.ab.modal())
     }
@@ -172,6 +184,18 @@ FOP.server.side <- function(input, output, session) {
         type = 'error',
         showConfirmButton = TRUE
       )
+    }, finally = {
+      my.vals$delins<<-NULL
+      my.vals$raw.data<<-NULL
+      name <<- c()
+      ID.list <<- c()
+      delin.list <<- c()
+      max_num <<- 0
+      pixel<<-list(my.vals <- reactiveValues(
+        Slide_ID=NULL, delin = NULL, delins=NULL,
+        Opal1 = NULL, Antibody = NULL, IHC = NULL, MoTiF=NULL, wd=NULL,
+        raw.data=NULL, Positive.table=NULL),
+        err.msg=0)
     })
   })
   session$onSessionEnded(function() {
