@@ -93,11 +93,9 @@ FOP.findpos<-function(Positive.table, out, my.vals, test.bool, wd=""){
     # numerical variable so we change it here
     CellSeg$Antibody<-as.numeric(CellSeg$Antibody)
     ##these two loops help shorten variable descriptions
-    #for(count3 in Slide_ID){
-     # CellSeg$Slide.ID<-gsub(
-      #  paste0('.*', count3,'_.*'),
-       # count3, CellSeg$Slide.ID)
-    #}
+    for(count3 in Slide_ID){
+      CellSeg$Slide.ID<- count3
+    }
     fop <- (CellSeg$Antibody/CellSeg$Totals)
     CellSeg<- cbind(CellSeg, fop)
     ##this is the part of the script that determines the % +-ivity and
