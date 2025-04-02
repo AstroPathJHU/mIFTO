@@ -62,9 +62,7 @@ FOP.cleaned.file.list <- function(wd, str, Slide_ID){
   c <- c()
   lastline = ""
   for (file in cImage.IDs){
-    loc1 = gregexpr(']', file);
-    loc2 = gregexpr('\\[', file);
-    line = paste0('\\' , substring(file, loc2, loc1));
+    line <- sub("\\].*", "]", file);
     if (!lastline == line){
       b <- grep(line, cImage.IDs, ignore.case = T);
       while (length(b) > 1){

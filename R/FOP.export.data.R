@@ -49,6 +49,8 @@ FOP.export.data<-function(my.vals, input, test.bool=FALSE, wd=""){
   name <- c()
   ID.list <- c()
   delin.list <- c()
+  raw.name <- c()
+  raw.ID.list <- c()
   max_num <- 0
   for(del in 1:length(my.vals$delins)){
     con_list <-
@@ -65,24 +67,36 @@ FOP.export.data<-function(my.vals, input, test.bool=FALSE, wd=""){
     delin.list <-
       my.vals$raw.data[my.vals$raw.data$Concentration == del,]
     for(id in my.vals$Slide_ID){
+      raw.ID.list <-
+        delin.list[delin.list$Slide.ID == id,]
+      raw.ID.list <- t(dplyr::select(raw.ID.list, fop))
+      raw.ID.list <- c(id, del, raw.ID.list)
+      raw.Id.length <- length(raw.ID.list)
       ID.list <-
         delin.list[delin.list$Slide.ID == id,]
-      ID.list <- t(dplyr::select(ID.list, fop))
+      ID.list <- t(dplyr::select(ID.list, Coord))
       ID.list <- c(id, del, ID.list)
       Id.length <- length(ID.list)
       # tryCatch({
-      if(Id.length<max_num){
+      if(raw.Id.length<max_num){
+        raw.ID.list <- c(raw.ID.list, paste(integer(max_num-raw.Id.length)))
         ID.list <- c(ID.list, paste(integer(max_num-Id.length)))
       }
+      raw.name <- rbind(raw.name, raw.ID.list)
       name <- rbind(name, ID.list)
     }
+    rbind(raw.name, NA)
     rbind(name, NA)
   }
   # write.table(my.vals$raw.data,file=paste0(
   #   wd,'/ + ',input$fraction.type,'_raw_data.csv'),
   #   sep=',', row.names=F )
-  write.table(name,file=paste0(
+  write.table(raw.name,file=paste0(
     wd,'/ + ',input$fraction.type,'_raw_data_ordered.csv'),
+    sep=',', row.names=F )
+  #
+  write.table(name,file=paste0(
+    wd,'/ + ',input$fraction.type,'_raw_data_coords.csv'),
     sep=',', row.names=F )
   my.vals$raw.data=NULL
   my.vals$delins=NULL

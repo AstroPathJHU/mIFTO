@@ -89,6 +89,7 @@ FOP.findpos<-function(Positive.table, out, my.vals, test.bool, wd=""){
         ),
         Concentration=Concentration
       )
+    CellSeg$Coord <- sub(".*(\\[\\d+,\\d+\\]).*", "\\1", CellSeg$Slide.ID)
     ##Antibody is the positive pixel count R does not read it in as a
     # numerical variable so we change it here
     CellSeg$Antibody<-as.numeric(CellSeg$Antibody)
@@ -140,6 +141,7 @@ FOP.findpos<-function(Positive.table, out, my.vals, test.bool, wd=""){
                                             data.table = FALSE))),
           c('Slide.ID','Phenotype')),
         Slide.ID)
+    CellSeg$Coord <- sub(".*(\\[\\d+,\\d+\\]).*", "\\1", CellSeg$Slide.ID)
     ##change AB to a single variable
     CellSeg$Phenotype<-gsub(AB,'Antibody', CellSeg$Phenotype,perl=TRUE)
     ##find positive cells and generate output file
@@ -192,6 +194,7 @@ FOP.findpos<-function(Positive.table, out, my.vals, test.bool, wd=""){
       ),
       Concentration = Concentration
     )
+    CellSeg$Coord <- sub(".*(\\[\\d+,\\d+\\]).*", "\\1", CellSeg$Slide.ID)
     for(count3 in Slide_ID){
       CellSeg$`Sample Name`<-gsub(
         paste0('.*', count3,'.*'),
