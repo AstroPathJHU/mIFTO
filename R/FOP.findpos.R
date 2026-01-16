@@ -39,6 +39,8 @@
 #'
 #' @export
 FOP.findpos<-function(Positive.table, out, my.vals, test.bool, wd=""){
+  message("fraction.type = ", out$fraction.type)
+  message("MoTiF = ", my.vals$MoTiF, " | class = ", class(my.vals$MoTiF))
   AB <- my.vals$AB
   Opal1 <- my.vals$Opal1
   Concentration <- my.vals$delin
@@ -174,53 +176,80 @@ FOP.findpos<-function(Positive.table, out, my.vals, test.bool, wd=""){
     )
     my.vals$raw.data<-rbind(my.vals$raw.data,CellSeg)
     return(list(Positive.table=Positive.table, my.vals=my.vals))
-  }else if(fraction.type == 'Tissue' & MoTiF == F){
-    ##read data in and organize it
-    CellSeg<-dplyr::mutate(
-      reshape2::dcast(
-        do.call(
-          rbind,lapply(
-            mIFTO::FOP.cleaned.file.list(wd,
-                              '.*]_tissue_seg_data_summary.txt$', Slide_ID
+  }else if (
+    fraction.type == 'Tissue' &&
+    isFALSE(MoTiF)
+  ){
+    CellSeg <- reshape2::dcast(
+      do.call(
+        rbind,
+        lapply(
+          mIFTO::FOP.cleaned.file.list(
+            wd,
+            '.*]_tissue_seg_data_summary.txt$',
+            Slide_ID
+          ),
+          function(x) data.table::fread(
+            x,
+            na.strings = c('NA', '#N/A'),
+            select = c(
+              'Sample Name',
+              'Tissue Category',
+              'Region Area (pixels)'
             ),
-            function(x) data.table::fread(
-              x, na.strings=c('NA', '#N/A'),
-              select = c(
-                'Sample Name','Tissue Category','Region Area (pixels)'),
-              data.table= FALSE)
+            data.table = FALSE
           )
-        ),
-        `Sample Name`~`Tissue Category`, value.var = 'Region Area (pixels)'
+        )
       ),
-      Concentration = Concentration
+      `Sample Name` ~ `Tissue Category`,
+      value.var = 'Region Area (pixels)'
     )
-    CellSeg$Coord <- sub(".*(\\[\\d+,\\d+\\]).*", "\\1", CellSeg$Slide.ID)
-    for(count3 in Slide_ID){
-      CellSeg$`Sample Name`<-gsub(
-        paste0('.*', count3,'.*'),
-        count3, CellSeg$`Sample Name`)}
-    fop <- (CellSeg$`Tumor`/(CellSeg$`Tumor`+CellSeg$`Non Tumor`))
-    CellSeg<- cbind(CellSeg, fop)
+    for (count3 in Slide_ID) {
+      CellSeg$`Sample Name` <- gsub(
+        paste0('.*', count3, '.*'),
+        count3,
+        CellSeg$`Sample Name`
+      )
+    }
     names(CellSeg)[names(CellSeg) == "Sample Name"] <- "Slide.ID"
-    ##find positive cells and generate output file
-    ##Positive_cells data.table can be added to for additional
-    # AB with the same SlideIDs.
-    Positive.table<-rbind(Positive.table,reshape2::dcast(
+    if ("NonTumor" %in% colnames(CellSeg)) {
+      # already correct, do nothing
+    } else if ("Non Tumor" %in% colnames(CellSeg)) {
+      CellSeg$NonTumor <- CellSeg$`Non Tumor`
+    } else {
+      stop(
+        "Expected tissue column 'NonTumor' or 'Non Tumor' not found. ",
+        "Found columns: ", paste(colnames(CellSeg), collapse = ", ")
+      )
+    }
+
+    ## optional: drop the spaced version to avoid confusion
+    CellSeg$`Non Tumor` <- NULL
+    CellSeg$fop <- CellSeg$Tumor /
+      (CellSeg$Tumor + CellSeg$NonTumor)
+    CellSeg$Concentration <- rep(Concentration, nrow(CellSeg))
+    Pos <- reshape2::dcast(
       dplyr::mutate(
         dplyr::summarise(
-          dplyr::group_by(
-            CellSeg, `Slide.ID`,Concentration
-          ),
+          dplyr::group_by(CellSeg, Slide.ID, Concentration),
           Total.Tumor.Area = sum(`Tumor`),
-          Total.NonTumor.Area = sum(`Non Tumor`), .groups = 'drop'
+          Total.NonTumor.Area = sum(NonTumor),
+          .groups = 'drop'
         ),
-        Fraction=(Total.Tumor.Area/(Total.NonTumor.Area+Total.Tumor.Area))),
-      Concentration~ `Slide.ID`, value.var = 'Fraction'
+        Fraction = Total.Tumor.Area /
+          (Total.NonTumor.Area + Total.Tumor.Area)
+      ),
+      Concentration ~ Slide.ID,
+      value.var = 'Fraction'
     )
-    )
-    my.vals$raw.data<-rbind(my.vals$raw.data,CellSeg)
-    return(list(Positive.table=Positive.table, my.vals=my.vals))
-  }  else if(fraction.type == 'Tissue' & MoTiF == T){
+    Positive.table <- rbind(Positive.table, Pos)
+    my.vals$raw.data <- rbind(my.vals$raw.data, CellSeg)
+    return(list(
+      Positive.table = Positive.table,
+      my.vals = my.vals
+    ))
+  }
+    else if(fraction.type == 'Tissue' & MoTiF == T){
     ##read data in and organize it
     CellSeg<-dplyr::mutate(
       reshape2::dcast(

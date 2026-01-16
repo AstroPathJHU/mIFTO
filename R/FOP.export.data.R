@@ -69,13 +69,24 @@ FOP.export.data<-function(my.vals, input, test.bool=FALSE, wd=""){
     for(id in my.vals$Slide_ID){
       raw.ID.list <-
         delin.list[delin.list$Slide.ID == id,]
-      raw.ID.list <- t(dplyr::select(raw.ID.list, fop))
-      raw.ID.list <- c(id, del, raw.ID.list)
+
+      if ("fop" %in% colnames(raw.ID.list)) {
+        raw.ID.list <- t(dplyr::select(raw.ID.list, "fop"))
+        raw.ID.list <- c(id, del, raw.ID.list)
+      } else {
+        raw.ID.list <- c(id, del)
+      }
       raw.Id.length <- length(raw.ID.list)
       ID.list <-
         delin.list[delin.list$Slide.ID == id,]
-      ID.list <- t(dplyr::select(ID.list, Coord))
-      ID.list <- c(id, del, ID.list)
+
+      if ("Coord" %in% colnames(ID.list)) {
+        ID.list <- t(dplyr::select(ID.list, "Coord"))
+        ID.list <- c(id, del, ID.list)
+      } else {
+        # Tissue mode → no coordinates
+        ID.list <- c(id, del)
+      }
       Id.length <- length(ID.list)
       # tryCatch({
       if(raw.Id.length<max_num){

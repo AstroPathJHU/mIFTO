@@ -169,22 +169,29 @@ FOP.server.side <- function(input, output, session) {
         showConfirmButton = TRUE
       )
     }, warning = function(cond){
-      err.msg <- FOP.error.check(cond$message)
-      modal_out <- shinyalert::shinyalert(
+      msg <- conditionMessage(cond)
+      err.msg <- FOP.error.check(msg)
+
+      shinyalert::shinyalert(
         title = "Export Error.",
-        text = paste0(pixel$err.msg),
+        text = err.msg,
         type = 'error',
         showConfirmButton = TRUE
       )
-    }, error = function(cond){
-      err.msg <- FOP.error.check(cond$message)
-      modal_out <- shinyalert::shinyalert(
+    },
+
+    error = function(cond){
+      msg <- conditionMessage(cond)
+      err.msg <- FOP.error.check(msg)
+
+      shinyalert::shinyalert(
         title = "Export Error.",
-        text = paste0(pixel$err.msg),
+        text = err.msg,
         type = 'error',
         showConfirmButton = TRUE
       )
-    }, finally = {
+    }
+    , finally = {
       my.vals$delins<<-NULL
       my.vals$raw.data<<-NULL
       name <<- c()
