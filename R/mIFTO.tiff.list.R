@@ -93,7 +93,7 @@ mIFTO.tiff.list <- function(wd, pattern.in, Opal1="") {
     for (count2 in 1:length(image_names)) {
       v <- tiff::readTIFF(image_names[count2],native = F,all = T,as.is = F)
       if (!(length(v)-1) == length(types)){
-        return(err.val = 15)
+        return(list(err.val = 15))
       }
       v <- v[1:length(types)]
       names(v) <- types
