@@ -63,7 +63,8 @@ mIFTO.tiff.list <- function(wd, pattern.in, Opal1="") {
   tryCatch({
     for (i.1 in 1:length(a)){
       result.match.1 <- regmatches(
-        a[[i.1]]$description, regexec(pattern.match,a[[i.1]]$description)
+        # a[[i.1]]$description, regexec(pattern.match,a[[i.1]]$description)
+        a[[i.1]]$ImageDescription, regexec(pattern.match,a[[i.1]]$ImageDescription)
       )
       result.match.1 <- result.match.1[[1]][2]
       result.match.1 <- substring(
